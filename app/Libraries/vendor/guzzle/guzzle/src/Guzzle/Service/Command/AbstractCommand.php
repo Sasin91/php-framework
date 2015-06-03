@@ -4,14 +4,14 @@ namespace Guzzle\Service\Command;
 
 use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\InvalidArgumentException;
-use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Curl\CurlHandle;
+use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Service\Client;
 use Guzzle\Service\ClientInterface;
 use Guzzle\Service\Description\Operation;
 use Guzzle\Service\Description\OperationInterface;
-use Guzzle\Service\Description\ValidatorInterface;
 use Guzzle\Service\Description\SchemaValidator;
+use Guzzle\Service\Description\ValidatorInterface;
 use Guzzle\Service\Exception\CommandException;
 use Guzzle\Service\Exception\ValidationException;
 
@@ -59,7 +59,7 @@ abstract class AbstractCommand extends Collection implements CommandInterface
     protected $validator;
 
     /**
-     * @param array|Collection   $parameters Collection of parameters to set on the command
+     * @param array|Collection $parameters Collection of parameters to set on the command
      * @param OperationInterface $operation Command definition from description
      */
     public function __construct($parameters = array(), OperationInterface $operation = null)
@@ -77,7 +77,7 @@ abstract class AbstractCommand extends Collection implements CommandInterface
 
         $headers = $this[self::HEADERS_OPTION];
         if (!$headers instanceof Collection) {
-            $this[self::HEADERS_OPTION] = new Collection((array) $headers);
+            $this[self::HEADERS_OPTION] = new Collection((array)$headers);
         }
 
         // You can set a command.on_complete option in your parameters to set an onComplete callback
@@ -283,7 +283,9 @@ abstract class AbstractCommand extends Collection implements CommandInterface
     /**
      * Initialize the command (hook that can be implemented in subclasses)
      */
-    protected function init() {}
+    protected function init()
+    {
+    }
 
     /**
      * Create the request object that will carry out the command

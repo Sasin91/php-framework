@@ -934,6 +934,18 @@ class Mimetypes
     }
 
     /**
+     * Get a mimetype from a filename
+     *
+     * @param string $filename Filename to generate a mimetype from
+     *
+     * @return string|null
+     */
+    public function fromFilename($filename)
+    {
+        return $this->fromExtension(pathinfo($filename, PATHINFO_EXTENSION));
+    }
+
+    /**
      * Get a mimetype value from a file extension
      *
      * @param string $extension File extension
@@ -946,17 +958,5 @@ class Mimetypes
         $extension = strtolower($extension);
 
         return isset($this->mimetypes[$extension]) ? $this->mimetypes[$extension] : null;
-    }
-
-    /**
-     * Get a mimetype from a filename
-     *
-     * @param string $filename Filename to generate a mimetype from
-     *
-     * @return string|null
-     */
-    public function fromFilename($filename)
-    {
-        return $this->fromExtension(pathinfo($filename, PATHINFO_EXTENSION));
     }
 }

@@ -1,5 +1,5 @@
 <div class="jumbotron">
-	<div class="container">
+    <div class="container">
         <?php echo $this->md($this->content->get('content')); ?>
-	</div>
+    </div>
 </div>

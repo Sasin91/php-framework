@@ -97,8 +97,8 @@ interface ServiceDescriptionInterface extends \Serializable
     /**
      * Set arbitrary data on the service description
      *
-     * @param string $key   Data key to set
-     * @param mixed  $value Value to set
+     * @param string $key Data key to set
+     * @param mixed $value Value to set
      *
      * @return self
      */

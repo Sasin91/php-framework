@@ -2,17 +2,17 @@
 namespace System\Authentication;
 
 
-if ( ! defined('ROOT_PATH') ) exit('No direct script access allowed');
+if (!defined('ROOT_PATH')) exit('No direct script access allowed');
 
-class Session {
+class Session
+{
 
     /**
      * Initiates the PHP Session.
      */
     public static function init()
     {
-        if(session_id() == '')
-        {
+        if (session_id() == '') {
             session_start();
         }
     }
@@ -32,9 +32,9 @@ class Session {
      */
     public static function register(array $data = array())
     {
-       array_walk_recursive($data, function($value, $key){
-           static::set($key, $value);
-       });
+        array_walk_recursive($data, function ($value, $key) {
+            static::set($key, $value);
+        });
     }
 
     /**
@@ -43,23 +43,21 @@ class Session {
      */
     public static function set($key, $data, $profile = false)
     {
-        if($profile) {
-             return $_SESSION[$key] = $data;
+        if ($profile) {
+            return $_SESSION[$key] = $data;
         }
-        if(!empty($_SESSION[$key])) {
-                if(is_array($data))
-                {
-                    $keys = array_keys($data);
-                    $values = array_values($data);
-                    for($i = 0; $i < count($values); $i++)
-                    {
-                        $item = array_keys($values[$i]);
-                       return $_SESSION[$key][$keys[0]][$item[$i]] = $values[$i][$item[$i]];
-                    }
-                    return $_SESSION[$key];
+        if (!empty($_SESSION[$key])) {
+            if (is_array($data)) {
+                $keys = array_keys($data);
+                $values = array_values($data);
+                for ($i = 0; $i < count($values); $i++) {
+                    $item = array_keys($values[$i]);
+                    return $_SESSION[$key][$keys[0]][$item[$i]] = $values[$i][$item[$i]];
                 }
-              return $_SESSION[$key] = $data;
+                return $_SESSION[$key];
             }
+            return $_SESSION[$key] = $data;
+        }
         return $_SESSION[$key] = $data;
     }
 
@@ -71,7 +69,7 @@ class Session {
     public static function get($key)
     {
         $request = '';
-        if(is_array($key)) {
+        if (is_array($key)) {
             foreach ($key as $request) {
                 if (isset($_SESSION[$request]))
                     return $_SESSION[$request];
@@ -93,29 +91,24 @@ class Session {
     public static function remove($parent, $key)
     {
 
-        if(is_array($key)){
+        if (is_array($key)) {
             $keys = array_keys($key);
             $values = array_values($key)[0];
-            for($i = 0; $i < count($keys); $i++)
-            {
-                if(is_array($parent))
-                {
+            for ($i = 0; $i < count($keys); $i++) {
+                if (is_array($parent)) {
                     $first = $parent[0];
                 } else {
                     $first = $parent;
                 }
-                if(!empty($_SESSION[$first][$keys[$i]][$values[$i]]->qty))
-                {
-                    if($_SESSION[$first][$keys[$i]][$values[$i]]->qty <= 0)
-                    {
+                if (!empty($_SESSION[$first][$keys[$i]][$values[$i]]->qty)) {
+                    if ($_SESSION[$first][$keys[$i]][$values[$i]]->qty <= 0) {
                         unset($_SESSION[$first][$keys[$i]][$values[$i]]);
                     } else {
-                        $_SESSION[$first][$keys[$i]][$values[$i]]->qty = $_SESSION[$first][$keys[$i]][$values[$i]]->qty-1;
+                        $_SESSION[$first][$keys[$i]][$values[$i]]->qty = $_SESSION[$first][$keys[$i]][$values[$i]]->qty - 1;
                     }
                 } else {
-                    if($i === 0)
-                    {
-                      unset($_SESSION[$first][$key[0]]);
+                    if ($i === 0) {
+                        unset($_SESSION[$first][$key[0]]);
                     }
                     unset($_SESSION[$first][$keys[$i]][$values[$i]]);
                 }

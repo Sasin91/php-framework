@@ -3,9 +3,9 @@
 namespace Guzzle\Tests\Plugin\Redirect;
 
 use Guzzle\Http\Client;
+use Guzzle\Http\Message\Response;
 use Guzzle\Http\StaticClient;
 use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Http\Message\Response;
 use Guzzle\Stream\Stream;
 
 /**
@@ -24,7 +24,9 @@ class StaticClientTest extends \Guzzle\Tests\GuzzleTestCase
     public function requestProvider()
     {
         return array_map(
-            function ($m) { return array($m); },
+            function ($m) {
+                return array($m);
+            },
             array('GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS')
         );
     }
@@ -48,7 +50,7 @@ class StaticClientTest extends \Guzzle\Tests\GuzzleTestCase
         $this->getServer()->enqueue(array("HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\ntest"));
         $stream = StaticClient::get($this->getServer()->getUrl(), array('stream' => true));
         $this->assertInstanceOf('Guzzle\Stream\StreamInterface', $stream);
-        $this->assertEquals('test', (string) $stream);
+        $this->assertEquals('test', (string)$stream);
     }
 
     public function testCanCreateStreamsUsingCustomFactory()

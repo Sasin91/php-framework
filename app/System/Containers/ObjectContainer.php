@@ -8,46 +8,15 @@
 
 namespace System\Containers;
 
+use System\Compositor;
 use System\Traits\ArrayAccess;
+use System\Traits\canBacktraceParent;
+use System\Traits\hasInstances;
 
-class ObjectContainer implements \ArrayAccess {
+class ObjectContainer implements \ArrayAccess
+{
 
-    use ArrayAccess;
-
-    protected static $_instances = array();
-
-    public static function create($container)
-    {
-        $instance = new static;
-        self::$_instances[] = $instance;
-        $instance->set($container, array());
-        return $instance;
-    }
-
-
-    public function destroyInstance()
-    {
-        unset(self::$_instances[array_search($this, self::$_instances, true)]);
-    }
-
-    /**
-     * @param $includeSubclasses Optionally include subclasses in returned set
-     * @returns array array of objects
-     */
-    public static function getInstances($includeSubclasses = false)
-    {
-        $me = get_class(new static);
-        $return = array();
-        foreach(self::$_instances as $instance) {
-            if ($instance instanceof $me) {
-                if ($includeSubclasses || (get_class($instance) === $me)) {
-                    $return[] = $instance;
-                }
-            }
-        }
-        return $return;
-    }
-
+    use ArrayAccess, hasInstances, canBacktraceParent;
     /**
      * @return array
      */
@@ -64,20 +33,29 @@ class ObjectContainer implements \ArrayAccess {
      */
     public function set($name, $object)
     {
-        if($this->exists($name))
-        {
-            $content = $this->get($name);
-            $this->remove($name);
-            if(is_array($object))
-            {
-                return $this->offsetSet($name, $content + $object);
-            } else {
-                $array = array(array_pop(explode('\\', $object)) => $object);
-                return $this->offsetSet($name, $content + $array);
-            }
-        } else {
+        if (!$this->exists($name)) {
             return $this->offsetSet($name, $object);
         }
+    }
+
+    public function update($name, $object)
+    {
+        if ($this->exists($name)) {
+            $this->remove($name);
+        }
+        return $this->set($name, $object);
+    }
+
+    public function merge($nameOfOriginal, $newObject)
+    {
+        $original = $this->get($nameOfOriginal);
+
+        $this->remove($nameOfOriginal);
+
+        if ($this->objectHasNoMethods($newObject) && $this->objectHasNoMethods($original))
+            return $this->set($nameOfOriginal, (object)array_merge((array)$original, (array)$newObject));
+
+        return new Compositor(compact('original', 'object'));
     }
 
     /**
@@ -86,7 +64,9 @@ class ObjectContainer implements \ArrayAccess {
      */
     public function get($name)
     {
-        return $this->offsetGet($name);
+        if($this->exists($name))
+            return $this->offsetGet($name);
+        return false;
     }
 
     /**
@@ -104,16 +84,24 @@ class ObjectContainer implements \ArrayAccess {
      */
     public function remove($name)
     {
-        return $this->offsetUnset($name);
+        if($this->exists($name))
+            return $this->offsetUnset($name);
+        return false;
     }
 
     public static function __callStatic($method, $args)
     {
         $instance = new static;
-        if(method_exists(__CLASS__, $method)){
-            if($args)
+        if (method_exists(__CLASS__, $method)) {
+            if ($args)
                 return $instance->$method($args);
-            return$instance->$method();
+            return $instance->$method();
         }
+    }
+
+    protected function objectHasNoMethods($object)
+    {
+        $methods = get_class_methods($object);
+        return empty($methods) ? true : false;
     }
 }

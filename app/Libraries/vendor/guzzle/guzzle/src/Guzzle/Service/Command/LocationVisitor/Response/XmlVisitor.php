@@ -3,8 +3,8 @@
 namespace Guzzle\Service\Command\LocationVisitor\Response;
 
 use Guzzle\Http\Message\Response;
-use Guzzle\Service\Description\Parameter;
 use Guzzle\Service\Command\CommandInterface;
+use Guzzle\Service\Description\Parameter;
 
 /**
  * Location visitor used to marshal XML response data into a formatted array
@@ -22,8 +22,9 @@ class XmlVisitor extends AbstractResponseVisitor
         Response $response,
         Parameter $param,
         &$value,
-        $context =  null
-    ) {
+        $context = null
+    )
+    {
         $sentAs = $param->getWireName();
         $name = $param->getName();
         if (isset($value[$sentAs])) {
@@ -39,7 +40,7 @@ class XmlVisitor extends AbstractResponseVisitor
      * Recursively process a parameter while applying filters
      *
      * @param Parameter $param API parameter being processed
-     * @param mixed     $value Value to validate and process. The value may change during this process.
+     * @param mixed $value Value to validate and process. The value may change during this process.
      */
     protected function recursiveProcess(Parameter $param, &$value)
     {
@@ -68,7 +69,7 @@ class XmlVisitor extends AbstractResponseVisitor
      * Process an array
      *
      * @param Parameter $param API parameter being parsed
-     * @param mixed     $value Value to process
+     * @param mixed $value Value to process
      */
     protected function processArray(Parameter $param, &$value)
     {
@@ -102,7 +103,7 @@ class XmlVisitor extends AbstractResponseVisitor
      * Process an object
      *
      * @param Parameter $param API parameter being parsed
-     * @param mixed     $value Value to process
+     * @param mixed $value Value to process
      */
     protected function processObject(Parameter $param, &$value)
     {
@@ -135,7 +136,7 @@ class XmlVisitor extends AbstractResponseVisitor
      * Process an XML attribute property
      *
      * @param Parameter $property Property to process
-     * @param array     $value    Value to process and update
+     * @param array $value Value to process and update
      */
     protected function processXmlAttribute(Parameter $property, array &$value)
     {

@@ -37,7 +37,8 @@ class ChunkedIteratorTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $actual);
     }
 
-    public function testSizeOfZeroMakesIteratorInvalid() {
+    public function testSizeOfZeroMakesIteratorInvalid()
+    {
         $chunked = new ChunkedIterator(new \ArrayIterator(range(1, 5)), 0);
         $chunked->rewind();
         $this->assertFalse($chunked->valid());
@@ -46,7 +47,8 @@ class ChunkedIteratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testSizeLowerZeroThrowsException() {
+    public function testSizeLowerZeroThrowsException()
+    {
         new ChunkedIterator(new \ArrayIterator(range(1, 5)), -1);
     }
 }

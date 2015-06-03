@@ -2,9 +2,8 @@
 
 namespace Guzzle\Tests\Plugin\ErrorResponse;
 
-use Guzzle\Service\Client;
-use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\ErrorResponse\ErrorResponsePlugin;
+use Guzzle\Service\Client;
 use Guzzle\Service\Description\ServiceDescription;
 use Guzzle\Tests\Mock\ErrorResponseMock;
 

@@ -15,32 +15,10 @@ class OperationCommand extends AbstractCommand
     /** @var ResponseParserInterface Response parser */
     protected $responseParser;
 
-    /**
-     * Set the response parser used with the command
-     *
-     * @param ResponseParserInterface $parser Response parser
-     *
-     * @return self
-     */
-    public function setResponseParser(ResponseParserInterface $parser)
+    protected function build()
     {
-        $this->responseParser = $parser;
-
-        return $this;
-    }
-
-    /**
-     * Set the request serializer used with the command
-     *
-     * @param RequestSerializerInterface $serializer Request serializer
-     *
-     * @return self
-     */
-    public function setRequestSerializer(RequestSerializerInterface $serializer)
-    {
-        $this->requestSerializer = $serializer;
-
-        return $this;
+        // Prepare and serialize the request
+        $this->request = $this->getRequestSerializer()->prepare($this);
     }
 
     /**
@@ -59,6 +37,28 @@ class OperationCommand extends AbstractCommand
     }
 
     /**
+     * Set the request serializer used with the command
+     *
+     * @param RequestSerializerInterface $serializer Request serializer
+     *
+     * @return self
+     */
+    public function setRequestSerializer(RequestSerializerInterface $serializer)
+    {
+        $this->requestSerializer = $serializer;
+
+        return $this;
+    }
+
+    protected function process()
+    {
+        // Do not process the response if 'command.response_processing' is set to 'raw'
+        $this->result = $this[self::RESPONSE_PROCESSING] == self::TYPE_RAW
+            ? $this->request->getResponse()
+            : $this->getResponseParser()->parse($this);
+    }
+
+    /**
      * Get the response parser used for the operation
      *
      * @return ResponseParserInterface
@@ -73,17 +73,17 @@ class OperationCommand extends AbstractCommand
         return $this->responseParser;
     }
 
-    protected function build()
+    /**
+     * Set the response parser used with the command
+     *
+     * @param ResponseParserInterface $parser Response parser
+     *
+     * @return self
+     */
+    public function setResponseParser(ResponseParserInterface $parser)
     {
-        // Prepare and serialize the request
-        $this->request = $this->getRequestSerializer()->prepare($this);
-    }
+        $this->responseParser = $parser;
 
-    protected function process()
-    {
-        // Do not process the response if 'command.response_processing' is set to 'raw'
-        $this->result = $this[self::RESPONSE_PROCESSING] == self::TYPE_RAW
-            ? $this->request->getResponse()
-            : $this->getResponseParser()->parse($this);
+        return $this;
     }
 }

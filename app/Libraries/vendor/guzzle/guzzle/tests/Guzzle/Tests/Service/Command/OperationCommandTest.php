@@ -5,12 +5,12 @@ namespace Guzzle\Tests\Service\Command;
 use Guzzle\Http\Message\EntityEnclosingRequest;
 use Guzzle\Http\Message\Response;
 use Guzzle\Service\Client;
+use Guzzle\Service\Command\DefaultRequestSerializer;
+use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Service\Description\Operation;
 use Guzzle\Service\Description\ServiceDescription;
-use Guzzle\Service\Command\DefaultRequestSerializer;
 use Guzzle\Service\Resource\Model;
-use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 
 /**
  * @covers Guzzle\Service\Command\OperationCommand
@@ -86,7 +86,7 @@ class OperationCommandTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $description = new ServiceDescription(array(
             'operations' => array('foo' => array('responseClass' => 'bar', 'responseType' => 'model')),
-            'models'     => array('bar' => array())
+            'models' => array('bar' => array())
         ));
         $op = new OperationCommand(array(
             OperationCommand::RESPONSE_PROCESSING => OperationCommand::TYPE_RAW

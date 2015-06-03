@@ -40,19 +40,9 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
     /** @var bool Whether or not the current value is known to be invalid */
     protected $invalid;
 
-    public static function getAllEvents()
-    {
-        return array(
-            // About to issue another command to get more results
-            'resource_iterator.before_send',
-            // Issued another command to get more results
-            'resource_iterator.after_send'
-        );
-    }
-
     /**
      * @param CommandInterface $command Initial command used for iteration
-     * @param array            $data    Associative array of additional parameters. You may specify any number of custom
+     * @param array $data Associative array of additional parameters. You may specify any number of custom
      *     options for an iterator. Among these options, you may also specify the following values:
      *     - limit: Attempt to limit the maximum number of resources to this amount
      *     - page_size: Attempt to retrieve this number of resources per request
@@ -66,6 +56,16 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
         $this->data = $data;
         $this->limit = array_key_exists('limit', $data) ? $data['limit'] : 0;
         $this->pageSize = array_key_exists('page_size', $data) ? $data['page_size'] : false;
+    }
+
+    public static function getAllEvents()
+    {
+        return array(
+            // About to issue another command to get more results
+            'resource_iterator.before_send',
+            // Issued another command to get more results
+            'resource_iterator.after_send'
+        );
     }
 
     /**
@@ -84,6 +84,18 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
         $this->resetState();
 
         return $this;
+    }
+
+    /**
+     * Reset the internal state of the iterator without triggering a rewind()
+     */
+    protected function resetState()
+    {
+        $this->iteratedCount = 0;
+        $this->retrievedCount = 0;
+        $this->nextToken = false;
+        $this->resources = null;
+        $this->invalid = false;
     }
 
     public function setPageSize($pageSize)
@@ -109,8 +121,8 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
     /**
      * Set an option on the iterator
      *
-     * @param string $key   Key of the option to set
-     * @param mixed  $value Value to set for the option
+     * @param string $key Key of the option to set
+     * @param mixed $value Value to set for the option
      *
      * @return ResourceIterator
      */
@@ -119,11 +131,6 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
         $this->data[$key] = $value;
 
         return $this;
-    }
-
-    public function current()
-    {
-        return $this->resources ? current($this->resources) : false;
     }
 
     public function key()
@@ -157,12 +164,6 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
         $this->next();
     }
 
-    public function valid()
-    {
-        return !$this->invalid && (!$this->resources || $this->current() || $this->nextToken)
-            && (!$this->limit || $this->iteratedCount < $this->limit + 1);
-    }
-
     public function next()
     {
         $this->iteratedCount++;
@@ -180,7 +181,7 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
         if ($sendRequest) {
 
             $this->dispatch('resource_iterator.before_send', array(
-                'iterator'  => $this,
+                'iterator' => $this,
                 'resources' => $this->resources
             ));
 
@@ -202,10 +203,28 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
             }
 
             $this->dispatch('resource_iterator.after_send', array(
-                'iterator'  => $this,
+                'iterator' => $this,
                 'resources' => $this->resources
             ));
         }
+    }
+
+    /**
+     * Send a request to retrieve the next page of results. Hook for subclasses to implement.
+     *
+     * @return array Returns the newly loaded resources
+     */
+    abstract protected function sendRequest();
+
+    public function valid()
+    {
+        return !$this->invalid && (!$this->resources || $this->current() || $this->nextToken)
+        && (!$this->limit || $this->iteratedCount < $this->limit + 1);
+    }
+
+    public function current()
+    {
+        return $this->resources ? current($this->resources) : false;
     }
 
     /**
@@ -230,25 +249,6 @@ abstract class ResourceIterator extends AbstractHasDispatcher implements Resourc
             return 1 + ($this->limit - $this->iteratedCount);
         }
 
-        return (int) $this->pageSize;
+        return (int)$this->pageSize;
     }
-
-    /**
-     * Reset the internal state of the iterator without triggering a rewind()
-     */
-    protected function resetState()
-    {
-        $this->iteratedCount = 0;
-        $this->retrievedCount = 0;
-        $this->nextToken = false;
-        $this->resources = null;
-        $this->invalid = false;
-    }
-
-    /**
-     * Send a request to retrieve the next page of results. Hook for subclasses to implement.
-     *
-     * @return array Returns the newly loaded resources
-     */
-    abstract protected function sendRequest();
 }

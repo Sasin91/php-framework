@@ -6,6 +6,7 @@
  * Time: 15:57
  */
 namespace Modules;
+
 use IDS\Init;
 use IDS\Monitor;
 
@@ -14,9 +15,11 @@ use IDS\Monitor;
  * This takes note of attempted intrusions, eg. SQL injection and writes a log file containing details.
  * Class IDS
  */
-class IDS {
+class IDS
+{
 
     protected $request = array();
+
     public function __construct()
     {
         $this->request[] = array(
@@ -31,12 +34,12 @@ class IDS {
         $ids_init = Init::init(\Config::get('IDS.ini'));
         $ids = new Monitor($ids_init);
         $ids_result = $ids->run($this->request);
-        if(!$ids_result->isEmpty()) {
-            if (is_writeable(ROOT_PATH . DS  . '/Storage/Logs/intrusionAttempt.log')) {
+        if (!$ids_result->isEmpty()) {
+            if (is_writeable(ROOT_PATH . DS . '/Storage/Logs/intrusionAttempt.log')) {
                 file_put_contents(ROOT_PATH . DS . '/Storage/Logs/intrusionAttempt.log', $ids_result);
                 return true;
             } else {
-            throw new \System\Exception\FilesystemException('Storage/Logs/ is NOT writeable.');
+                throw new \System\Exception\FilesystemException('Storage/Logs/ is NOT writeable.');
             }
         }
     }

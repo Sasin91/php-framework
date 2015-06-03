@@ -3,9 +3,9 @@
 namespace Guzzle\Service\Command\LocationVisitor\Request;
 
 use Guzzle\Http\EntityBody;
+use Guzzle\Http\EntityBodyInterface;
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Http\EntityBodyInterface;
 use Guzzle\Service\Command\CommandInterface;
 use Guzzle\Service\Description\Parameter;
 
@@ -34,8 +34,8 @@ class BodyVisitor extends AbstractRequestVisitor
      * Add the appropriate expect header to a request
      *
      * @param EntityEnclosingRequestInterface $request Request to update
-     * @param EntityBodyInterface             $body    Entity body of the request
-     * @param string|int                      $expect  Expect header setting
+     * @param EntityBodyInterface $body Entity body of the request
+     * @param string|int $expect Expect header setting
      */
     protected function addExpectHeader(EntityEnclosingRequestInterface $request, EntityBodyInterface $body, $expect)
     {

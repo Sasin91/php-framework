@@ -2,12 +2,12 @@
 
 namespace Guzzle\Service;
 
-use Guzzle\Common\FromConfigInterface;
 use Guzzle\Common\Exception\InvalidArgumentException;
+use Guzzle\Common\FromConfigInterface;
 use Guzzle\Http\ClientInterface as HttpClientInterface;
-use Guzzle\Service\Exception\CommandTransferException;
 use Guzzle\Service\Command\CommandInterface;
 use Guzzle\Service\Description\ServiceDescriptionInterface;
+use Guzzle\Service\Exception\CommandTransferException;
 use Guzzle\Service\Resource\ResourceIteratorInterface;
 
 /**
@@ -21,7 +21,7 @@ interface ClientInterface extends HttpClientInterface, FromConfigInterface
      * command class exists matching the name supplied. If neither are found, an InvalidArgumentException is thrown.
      *
      * @param string $name Name of the command to retrieve
-     * @param array  $args Arguments to pass to the command
+     * @param array $args Arguments to pass to the command
      *
      * @return CommandInterface
      * @throws InvalidArgumentException if no command can be found by name
@@ -58,9 +58,9 @@ interface ClientInterface extends HttpClientInterface, FromConfigInterface
     /**
      * Get a resource iterator from the client.
      *
-     * @param string|CommandInterface $command         Command class or command name.
-     * @param array                   $commandOptions  Command options used when creating commands.
-     * @param array                   $iteratorOptions Iterator options passed to the iterator when it is instantiated.
+     * @param string|CommandInterface $command Command class or command name.
+     * @param array $commandOptions Command options used when creating commands.
+     * @param array $iteratorOptions Iterator options passed to the iterator when it is instantiated.
      *
      * @return ResourceIteratorInterface
      */

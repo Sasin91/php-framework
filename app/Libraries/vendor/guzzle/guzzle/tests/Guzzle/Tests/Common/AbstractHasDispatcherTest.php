@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Common;
 
-use Guzzle\Common\Event;
 use Guzzle\Common\AbstractHasDispatcher;
+use Guzzle\Common\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -34,7 +34,7 @@ class AbstractHasAdapterTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $data = array();
         $mock = $this->getMockForAbstractClass('Guzzle\Common\AbstractHasDispatcher');
-        $mock->getEventDispatcher()->addListener('test', function(Event $e) use (&$data) {
+        $mock->getEventDispatcher()->addListener('test', function (Event $e) use (&$data) {
             $data = $e->getIterator()->getArrayCopy();
         });
         $mock->dispatch('test', array(

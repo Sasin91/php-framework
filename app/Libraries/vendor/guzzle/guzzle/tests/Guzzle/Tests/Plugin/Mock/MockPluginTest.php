@@ -3,11 +3,11 @@
 namespace Guzzle\Tests\Plugin\Mock;
 
 use Guzzle\Common\Event;
+use Guzzle\Http\Client;
 use Guzzle\Http\EntityBody;
+use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Http\Client;
-use Guzzle\Http\Exception\CurlException;
 
 /**
  * @covers Guzzle\Plugin\Mock\MockPlugin

@@ -3,16 +3,16 @@
 namespace Guzzle\Tests\Http\Message;
 
 use Guzzle\Common\Collection;
-use Guzzle\Http\EntityBody;
-use Guzzle\Http\Url;
 use Guzzle\Http\Client;
-use Guzzle\Plugin\Async\AsyncPlugin;
-use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\RequestFactory;
-use Guzzle\Http\RedirectPlugin;
+use Guzzle\Http\EntityBody;
 use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Http\Message\Response;
+use Guzzle\Http\RedirectPlugin;
+use Guzzle\Http\Url;
+use Guzzle\Plugin\Async\AsyncPlugin;
 
 /**
  * @group server
@@ -77,7 +77,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         ));
         $this->assertNull($request->getUserName());
         $this->assertNull($request->getPassword());
-        $this->assertEquals('Foo bar', (string) $request->getHeader('Authorization'));
+        $this->assertEquals('Foo bar', (string)$request->getHeader('Authorization'));
     }
 
     public function testRequestsCanBeConvertedToRawMessageStrings()
@@ -107,7 +107,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
             ->setAuth('michael', '123', CURLAUTH_BASIC);
         $request->send();
 
-        $this->assertContains('Authorization: Basic ' . $auth, (string) $request);
+        $this->assertContains('Authorization: Basic ' . $auth, (string)$request);
     }
 
     public function testGetEventDispatcher()
@@ -211,11 +211,11 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
     public function testRequestHasHost()
     {
         $this->assertEquals('127.0.0.1', $this->request->getHost());
-        $this->assertEquals('127.0.0.1:8124', (string) $this->request->getHeader('Host'));
+        $this->assertEquals('127.0.0.1:8124', (string)$this->request->getHeader('Host'));
 
         $this->assertSame($this->request, $this->request->setHost('www2.google.com'));
         $this->assertEquals('www2.google.com', $this->request->getHost());
-        $this->assertEquals('www2.google.com:8124', (string) $this->request->getHeader('Host'));
+        $this->assertEquals('www2.google.com:8124', (string)$this->request->getHeader('Host'));
 
         $this->assertSame($this->request, $this->request->setHost('www.test.com:8081'));
         $this->assertEquals('www.test.com', $this->request->getHost());
@@ -392,7 +392,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         // Remove the cookie header
         $this->assertSame($this->request, $this->request->addCookie('test', 'abc'));
         $this->request->removeHeader('Cookie');
-        $this->assertEquals('', (string) $this->request->getHeader('Cookie'));
+        $this->assertEquals('', (string)$this->request->getHeader('Cookie'));
 
         // Remove a cookie value
         $this->request->addCookie('foo', 'bar')->addCookie('baz', 'boo');
@@ -402,7 +402,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         ), $this->request->getCookies());
 
         $this->request->addCookie('foo', 'bar');
-        $this->assertEquals('baz=boo; foo=bar', (string) $this->request->getHeader('Cookie'));
+        $this->assertEquals('baz=boo; foo=bar', (string)$this->request->getHeader('Cookie'));
     }
 
     /**
@@ -452,7 +452,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $response = $request->send();
 
         $this->assertEquals('data', $response->getBody(true));
-        $this->assertEquals(200, (int) $response->getStatusCode());
+        $this->assertEquals(200, (int)$response->getStatusCode());
         $this->assertEquals('OK', $response->getReasonPhrase());
         $this->assertEquals(4, $response->getContentLength());
         $this->assertEquals('Thu, 01 Dec 1994 16:00:00 GMT', $response->getExpires());
@@ -516,13 +516,13 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $request->setResponse($response, true);
         $out = '';
         $that = $this;
-        $request->getEventDispatcher()->addListener('request.error', function($event) use (&$out, $that) {
+        $request->getEventDispatcher()->addListener('request.error', function ($event) use (&$out, $that) {
             $out .= $event['request'] . "\n" . $event['response'] . "\n";
             $event->stopPropagation();
         });
         $request->send();
-        $this->assertContains((string) $request, $out);
-        $this->assertContains((string) $request->getResponse(), $out);
+        $this->assertContains((string)$request, $out);
+        $this->assertContains((string)$request->getResponse(), $out);
         $this->assertSame($response, $request->getResponse());
     }
 
@@ -541,7 +541,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $newResponse = null;
 
         $request = $this->request;
-        $request->getEventDispatcher()->addListener('request.error', function($event) use (&$newResponse) {
+        $request->getEventDispatcher()->addListener('request.error', function ($event) use (&$newResponse) {
             if ($event['response']->getStatusCode() == 404) {
                 $newRequest = clone $event['request'];
                 $newResponse = $newRequest->send();
@@ -564,7 +564,7 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $request = new Request('GET', 'http://www.example.com/foo?abc=d');
         $this->assertInstanceOf('Guzzle\Http\Url', $request->getUrl(true));
         $this->assertEquals('http://www.example.com/foo?abc=d', $request->getUrl());
-        $this->assertEquals('http://www.example.com/foo?abc=d', (string) $request->getUrl(true));
+        $this->assertEquals('http://www.example.com/foo?abc=d', (string)$request->getUrl(true));
     }
 
     public function testUnresolvedRedirectsReturnResponse()
@@ -590,8 +590,8 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $response = $request->send();
         $requests = $this->getServer()->getReceivedRequests(true);
         $this->assertEquals('PROPFIND', $requests[0]->getMethod());
-        $this->assertEquals(3, (string) $requests[0]->getHeader('Content-Length'));
-        $this->assertEquals('foo', (string) $requests[0]->getBody());
+        $this->assertEquals(3, (string)$requests[0]->getHeader('Content-Length'));
+        $this->assertEquals('foo', (string)$requests[0]->getBody());
     }
 
     /**
@@ -620,20 +620,20 @@ class RequestTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->client->get();
         $request->setResponseBody($en);
         $request->setResponse(new Response(200, array(), 'foo'));
-        $this->assertEquals('foo', (string) $en);
+        $this->assertEquals('foo', (string)$en);
     }
 
     public function testCanChangePortThroughScheme()
     {
         $request = new Request('GET', 'http://foo.com');
         $request->setScheme('https');
-        $this->assertEquals('https://foo.com', (string) $request->getUrl());
+        $this->assertEquals('https://foo.com', (string)$request->getUrl());
         $this->assertEquals('foo.com', $request->getHost());
         $request->setScheme('http');
-        $this->assertEquals('http://foo.com', (string) $request->getUrl());
+        $this->assertEquals('http://foo.com', (string)$request->getUrl());
         $this->assertEquals('foo.com', $request->getHost());
         $request->setPort(null);
-        $this->assertEquals('http://foo.com', (string) $request->getUrl());
+        $this->assertEquals('http://foo.com', (string)$request->getUrl());
         $this->assertEquals('foo.com', $request->getHost());
     }
 }

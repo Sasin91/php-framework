@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Http;
 
-use Guzzle\Http\EntityBody;
 use Guzzle\Http\CachingEntityBody;
+use Guzzle\Http\EntityBody;
 
 /**
  * @covers Guzzle\Http\CachingEntityBody
@@ -100,7 +100,7 @@ class CachingEntityBodyTest extends \Guzzle\Tests\GuzzleTestCase
         $this->body->read(2);
         $this->body->write('hi');
         $this->body->rewind();
-        $this->assertEquals('tehiing', (string) $this->body);
+        $this->assertEquals('tehiing', (string)$this->body);
     }
 
     public function testReadLinesFromBothStreams()
@@ -155,7 +155,7 @@ class CachingEntityBodyTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals("0000\nABCD\nTEST\n0003\n0004\n0005\n0006\n1234\n0008\n0009\n", $body->read(50));
 
         // Ensure that casting it to a string does not include the bit that was overwritten
-        $this->assertContains("0000\nABCD\nTEST\n0003\n0004\n0005\n0006\n1234\n0008\n0009\n", (string) $body);
+        $this->assertContains("0000\nABCD\nTEST\n0003\n0004\n0005\n0006\n1234\n0008\n0009\n", (string)$body);
     }
 
     public function testWrapsContentType()

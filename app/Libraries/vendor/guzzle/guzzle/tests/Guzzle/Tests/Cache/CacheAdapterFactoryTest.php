@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Cache;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Guzzle\Cache\CacheAdapterFactory;
 use Guzzle\Cache\DoctrineCacheAdapter;
-use Doctrine\Common\Cache\ArrayCache;
 use Zend\Cache\StorageFactory;
 
 /**

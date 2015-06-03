@@ -7,11 +7,14 @@
  */
 
 namespace Modules\Generators;
+
 use Faker\Factory;
 
-class Generator extends \System\Factories\Factory {
+class Generator extends \System\Factories\Factory
+{
 
     protected static $faker;
+
     function __construct()
     {
         parent::__construct(__DIR__);

@@ -2,10 +2,10 @@
 
 namespace Guzzle\Tests\Plugin\Oauth;
 
+use Guzzle\Common\Event;
 use Guzzle\Http\Message\RequestFactory;
 use Guzzle\Http\QueryAggregator\CommaAggregator;
 use Guzzle\Plugin\Oauth\OauthPlugin;
-use Guzzle\Common\Event;
 
 /**
  * @covers Guzzle\Plugin\Oauth\OauthPlugin
@@ -16,10 +16,10 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
     const NONCE = 'e7aa11195ca58349bec8b5ebe351d3497eb9e603';
 
     protected $config = array(
-        'consumer_key'    => 'foo',
+        'consumer_key' => 'foo',
         'consumer_secret' => 'bar',
-        'token'           => 'count',
-        'token_secret'    => 'dracula'
+        'token' => 'count',
+        'token_secret' => 'dracula'
     );
 
     protected function getRequest()
@@ -90,11 +90,11 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $this->getRequest();
         $request->setHeader('Content-Type', 'Foo');
         $this->assertEquals(
-            // Method and URL
+        // Method and URL
             'POST&http%3A%2F%2Fwww.test.com%2Fpath' .
             // Sorted parameters from query string and body
             '&a%3Db%26c%3Dd%26oauth_consumer_key%3Dfoo' .
-            '%26oauth_nonce%3D'. self::NONCE .'%26' .
+            '%26oauth_nonce%3D' . self::NONCE . '%26' .
             'oauth_signature_method%3DHMAC-SHA1' .
             '%26oauth_timestamp%3D' . self::TIMESTAMP . '%26oauth_token%3Dcount%26oauth_version%3D1.0',
             $p->getStringToSign($request, self::TIMESTAMP, self::NONCE)
@@ -116,25 +116,25 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
     public function testCreatesStringToSignFromPostRequestWithNullValues()
     {
         $config = array(
-            'consumer_key'    => 'foo',
+            'consumer_key' => 'foo',
             'consumer_secret' => 'bar',
-            'token'           => null,
-            'token_secret'    => 'dracula'
+            'token' => null,
+            'token_secret' => 'dracula'
         );
 
-        $p          = new OauthPlugin($config);
-        $request    = $this->getRequest();
+        $p = new OauthPlugin($config);
+        $request = $this->getRequest();
         $signString = $p->getStringToSign($request, self::TIMESTAMP, self::NONCE);
 
         $this->assertContains('&e=f', rawurldecode($signString));
 
         $expectedSignString = // Method and URL
-                'POST&http%3A%2F%2Fwww.test.com%2Fpath' .
-                // Sorted parameters from query string and body
-                '&a%3Db%26c%3Dd%26e%3Df%26oauth_consumer_key%3Dfoo' .
-                '%26oauth_nonce%3De7aa11195ca58349bec8b5ebe351d3497eb9e603%26' .
-                'oauth_signature_method%3DHMAC-SHA1' .
-                '%26oauth_timestamp%3D' . self::TIMESTAMP . '%26oauth_version%3D1.0';
+            'POST&http%3A%2F%2Fwww.test.com%2Fpath' .
+            // Sorted parameters from query string and body
+            '&a%3Db%26c%3Dd%26e%3Df%26oauth_consumer_key%3Dfoo' .
+            '%26oauth_nonce%3De7aa11195ca58349bec8b5ebe351d3497eb9e603%26' .
+            'oauth_signature_method%3DHMAC-SHA1' .
+            '%26oauth_timestamp%3D' . self::TIMESTAMP . '%26oauth_version%3D1.0';
 
         $this->assertEquals($expectedSignString, $signString);
     }
@@ -171,7 +171,7 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
     public function testSignsStrings()
     {
         $p = new OauthPlugin(array_merge($this->config, array(
-            'signature_callback' => function($string, $key) {
+            'signature_callback' => function ($string, $key) {
                 return "_{$string}|{$key}_";
             }
         )));
@@ -179,7 +179,7 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
         $sig = $p->getSignature($request, self::TIMESTAMP, self::NONCE);
         $this->assertEquals(
             '_POST&http%3A%2F%2Fwww.test.com%2Fpath&a%3Db%26c%3Dd%26e%3Df%26oauth_consumer_key%3Dfoo' .
-            '%26oauth_nonce%3D'. self::NONCE .'%26oauth_signature_method%3DHMAC-SHA1' .
+            '%26oauth_nonce%3D' . self::NONCE . '%26oauth_signature_method%3DHMAC-SHA1' .
             '%26oauth_timestamp%3D' . self::TIMESTAMP . '%26oauth_token%3Dcount%26oauth_version%3D1.0|' .
             'bar&dracula_',
             base64_decode($sig)
@@ -207,8 +207,8 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
 
         $stringsToCheck = array(
             'oauth_consumer_key="foo"',
-            'oauth_nonce="'.urlencode($params['oauth_nonce']).'"',
-            'oauth_signature="'.urlencode($params['oauth_signature']).'"',
+            'oauth_nonce="' . urlencode($params['oauth_nonce']) . '"',
+            'oauth_signature="' . urlencode($params['oauth_signature']) . '"',
             'oauth_signature_method="HMAC-SHA1"',
             'oauth_timestamp="' . self::TIMESTAMP . '"',
             'oauth_token="count"',
@@ -253,15 +253,15 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
             'a=b',
             'c=d',
             'oauth_consumer_key=foo',
-            'oauth_nonce='.urlencode($params['oauth_nonce']),
-            'oauth_signature='.urlencode($params['oauth_signature']),
+            'oauth_nonce=' . urlencode($params['oauth_nonce']),
+            'oauth_signature=' . urlencode($params['oauth_signature']),
             'oauth_signature_method=HMAC-SHA1',
-            'oauth_timestamp='.self::TIMESTAMP,
+            'oauth_timestamp=' . self::TIMESTAMP,
             'oauth_token=count',
             'oauth_version=1.0',
         );
 
-        $queryString = (string) $event['request']->getQuery();
+        $queryString = (string)$event['request']->getQuery();
 
         $totalLength = strlen('?');
 
@@ -307,15 +307,15 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
         $event = new Event(array('request' => $this->getRequest(), 'timestamp' => self::TIMESTAMP));
         $p->onRequestBeforeSend($event);
         $this->assertTrue($event['request']->hasHeader('Authorization'));
-        $this->assertNotContains('oauth_token=', (string) $event['request']->getHeader('Authorization'));
+        $this->assertNotContains('oauth_token=', (string)$event['request']->getHeader('Authorization'));
     }
 
     public function testOptionalOauthParametersAreNotAutomaticallyAdded()
     {
         // The only required Oauth parameters are the consumer key and secret. That is enough credentials
         // for signing oauth requests.
-         $config = array(
-            'consumer_key'    => 'foo',
+        $config = array(
+            'consumer_key' => 'foo',
             'consumer_secret' => 'bar',
         );
 
@@ -332,10 +332,10 @@ class OauthPluginTest extends \Guzzle\Tests\GuzzleTestCase
         $paramsToSign = $plugin->getParamsToSign($request, $timestamp, $nonce);
 
         $optionalParams = array(
-            'callback'      => 'oauth_callback',
-            'token'         => 'oauth_token',
-            'verifier'      => 'oauth_verifier',
-            'token_secret'  => 'token_secret'
+            'callback' => 'oauth_callback',
+            'token' => 'oauth_token',
+            'verifier' => 'oauth_verifier',
+            'token_secret' => 'token_secret'
         );
 
         foreach ($optionalParams as $optionName => $oauthName) {

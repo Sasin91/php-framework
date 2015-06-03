@@ -9,12 +9,13 @@
 namespace System\Exception;
 
 
-class CacheException extends Exception {
+class CacheException extends Exception
+{
 
 
     function __construct($message, $code = 404, Exception $previous = null)
     {
-        $msg = $message.' was not found in cache.';
+        $msg = $message . ' was not found in cache.';
         parent::__construct($msg, $code, $previous);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Iterator;
 
-use Guzzle\Iterator\MethodProxyIterator;
 use Guzzle\Iterator\ChunkedIterator;
+use Guzzle\Iterator\MethodProxyIterator;
 
 /**
  * @covers Guzzle\Iterator\MethodProxyIterator

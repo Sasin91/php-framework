@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Http;
 
-use Guzzle\Http\QueryString;
 use Guzzle\Http\QueryAggregator\CommaAggregator as Ag;
+use Guzzle\Http\QueryString;
 
 class CommaAggregatorTest extends \Guzzle\Tests\GuzzleTestCase
 {

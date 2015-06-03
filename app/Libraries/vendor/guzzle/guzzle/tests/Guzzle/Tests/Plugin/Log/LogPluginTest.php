@@ -2,13 +2,13 @@
 
 namespace Guzzle\Tests\Plugin\Log;
 
-use Guzzle\Log\ClosureLogAdapter;
+use Guzzle\Common\Event;
 use Guzzle\Http\Client;
 use Guzzle\Http\EntityBody;
 use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\Response;
+use Guzzle\Log\ClosureLogAdapter;
 use Guzzle\Plugin\Log\LogPlugin;
-use Guzzle\Common\Event;
 
 /**
  * @group server
@@ -43,7 +43,7 @@ class LogPluginTest extends \Guzzle\Tests\GuzzleTestCase
         }), '{method} {resource} | {code} {res_body}');
 
         $p->onRequestSent(new Event(array(
-            'request'  => new Request('GET', 'http://foo.com'),
+            'request' => new Request('GET', 'http://foo.com'),
             'response' => new Response(200, array(), 'Foo')
         )));
 

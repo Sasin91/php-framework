@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Batch;
 
-use Guzzle\Batch\FlushingBatch;
 use Guzzle\Batch\Batch;
+use Guzzle\Batch\FlushingBatch;
 
 /**
  * @covers Guzzle\Batch\FlushingBatch

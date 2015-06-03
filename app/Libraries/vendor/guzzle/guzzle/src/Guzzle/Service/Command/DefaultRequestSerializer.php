@@ -43,8 +43,8 @@ class DefaultRequestSerializer implements RequestSerializerInterface
     /**
      * Add a location visitor to the serializer
      *
-     * @param string                   $location Location to associate with the visitor
-     * @param RequestVisitorInterface  $visitor  Visitor to attach
+     * @param string $location Location to associate with the visitor
+     * @param RequestVisitorInterface $visitor Visitor to attach
      *
      * @return self
      */
@@ -99,10 +99,10 @@ class DefaultRequestSerializer implements RequestSerializerInterface
     /**
      * Serialize additional parameters
      *
-     * @param OperationInterface $operation  Operation that owns the command
-     * @param CommandInterface   $command    Command to prepare
-     * @param RequestInterface   $request    Request to serialize
-     * @param Parameter          $additional Additional parameters
+     * @param OperationInterface $operation Operation that owns the command
+     * @param CommandInterface $command Command to prepare
+     * @param RequestInterface $request Request to serialize
+     * @param Parameter $additional Additional parameters
      *
      * @return null|RequestVisitorInterface
      */
@@ -111,7 +111,8 @@ class DefaultRequestSerializer implements RequestSerializerInterface
         CommandInterface $command,
         RequestInterface $request,
         Parameter $additional
-    ) {
+    )
+    {
         if (!($location = $additional->getLocation())) {
             return;
         }
@@ -158,7 +159,7 @@ class DefaultRequestSerializer implements RequestSerializerInterface
                 if (isset($command[$name])) {
                     $variables[$name] = $arg->filter($command[$name]);
                     if (!is_array($variables[$name])) {
-                        $variables[$name] = (string) $variables[$name];
+                        $variables[$name] = (string)$variables[$name];
                     }
                 }
             }

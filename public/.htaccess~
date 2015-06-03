@@ -1,0 +1,13 @@
+## Sets multiviews and enables the rewrite engine
+#Options -MultiViews
+RewriteEngine On
+
+RewriteBase /~lotd/php-framework/public/
+
+## Sets our rewrite condition to not include files or folders that exists.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+## Set our rewrite rule to pass all url indexs as arguments to our 
+## index page.
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]

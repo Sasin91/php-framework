@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Service;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Guzzle\Cache\DoctrineCacheAdapter;
 use Guzzle\Service\CachingConfigLoader;
-use Doctrine\Common\Cache\ArrayCache;
 
 /**
  * @covers Guzzle\Service\CachingConfigLoader

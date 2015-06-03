@@ -4,9 +4,9 @@ namespace Guzzle\Plugin\ErrorResponse;
 
 use Guzzle\Common\Event;
 use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Plugin\ErrorResponse\Exception\ErrorResponseException;
 use Guzzle\Service\Command\CommandInterface;
 use Guzzle\Service\Description\Operation;
-use Guzzle\Plugin\ErrorResponse\Exception\ErrorResponseException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -37,9 +37,9 @@ class ErrorResponsePlugin implements EventSubscriberInterface
     }
 
     /**
-     * @param RequestInterface $request   Request that received an error
-     * @param CommandInterface $command   Command that created the request
-     * @param Operation        $operation Operation that defines the request and errors
+     * @param RequestInterface $request Request that received an error
+     * @param CommandInterface $command Command that created the request
+     * @param Operation $operation Operation that defines the request and errors
      *
      * @return \Closure Returns a closure
      * @throws ErrorResponseException

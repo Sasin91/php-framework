@@ -9,32 +9,36 @@
 namespace System\Authentication\Providers;
 
 
-
 use app;
-use System\Authentication\Session;
+use Config;
+use Http\Models\User;
+use MaxMind\Db\Reader;
 use System\Authentication\Auth;
 use System\Authentication\Role;
-use Http\Models\User;
-use Config\Config;
-use MaxMind\Db\Reader;
+use System\Authentication\Session;
 
-class System extends Provider {
+class System extends Provider
+{
 
     protected $model;
-    public function getAuthUrl(){}
+
+    public function getAuthUrl()
+    {
+    }
 
     public function authenticate($data, User $model)
     {
         $this->model = $model;
         if ($this->check($data)) {
+
             $account = $model->query("SELECT * FROM members INNER JOIN users ON members.uid = users.id WHERE members.uid = :id LIMIT 1", array(':id' => $this->id));
             $account[0]->type = 'Account';
+
             foreach ($account as $r) {
                 if (password_verify($data['psw'], $r->psw)) {
                     $user = Auth::what('user')->register($r);
                     if (is_object($user)) {
-                        if($user->has()->role(array('role' => $r->role)) && $user->has()->permission(array('permission' => 'read')))
-                        {
+                        if ($user->has()->role(array('role' => $r->role)) && $user->has()->permission(array('permission' => 'read'))) {
                             $this->isGranted($r);
                         }
                     }
@@ -50,7 +54,7 @@ class System extends Provider {
     private function isGranted($user)
     {
         if (Role::getBitMask($user->role) >= 3) {
-                Session::set('feedback_positive', 'Welcome, staff member ' . $user->label . '. Your curent position is: ' . $user->position);
+            Session::set('feedback_positive', 'Welcome, staff member ' . $user->label . '. Your curent position is: ' . $user->position);
         } else {
             Session::set("feedback_positive", 'Welcome, ' . $user->label . '.');
         }
@@ -58,6 +62,7 @@ class System extends Provider {
     }
 
     private $id;
+
     /**
      * Checks whether a user exists with given input
      * @param $data
@@ -65,7 +70,12 @@ class System extends Provider {
      */
     function check($user)
     {
-        $q = $this->model->query("SELECT id FROM users WHERE label = :username OR email = :email", array(':username' => $user['username'], ':email' => $user['email']));
+        if(isset($user['username']))
+        {
+            $q = $this->model->query("SELECT id FROM users WHERE label = :username", array(':username' => $user['username']));
+        } else {
+            $q = $this->model->query("SELECT id FROM users WHERE email = :email", array(':email' => $user['email']));
+        }
         $this->id = $q[0]->id;
         return !is_null($this->id) ? true : false;
     }
@@ -73,9 +83,9 @@ class System extends Provider {
 
     public function create($data, User $model)
     {
-        $user = $model->select('id', 'users')->where(array('label' => $data['username']))->execute();
+        $user = $model->select('id', 'users')->where('label', '=', $data['username'])->execute();
         if (count($user) > 0) {
-            Session::set("feedback_negative", $data['username'].' already taken.');
+            Session::set("feedback_negative", $data['username'] . ' already taken.');
             return app::redirect('users');
         } else {
 
@@ -83,24 +93,26 @@ class System extends Provider {
             $location = '';
             if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) {
                 $lan = substr($ip, 0, 6);
-                if ($this->match('192.168.',$lan)) {
+                if ($this->match('192.168.', $lan)) {
                     $location = 'Class C';
                 }
-                if ($this->match('172.16.',$lan)) {
+                if ($this->match('172.16.', $lan)) {
                     $location = 'Class B';
                 }
 
                 $tryWiderLan = trim(substr($ip, 0, 4));
-                if ($this->match('10.',$tryWiderLan)) {
+                if ($this->match('10.', $tryWiderLan)) {
                     $location = 'Class A';
                 }
-                if ($this->match('127.',$tryWiderLan)) {
+                if ($this->match('127.', $tryWiderLan)) {
                     $location = 'Local';
                 }
 
             }
-            if($location == '') {
-                $reader = new Reader(Config::get()->file('User')['GeoIP']['path']);
+
+            if ($location == '') {
+                $path = BASE_PATH . Config::get('Config')['User']['GeoIP']['path'];
+                $reader = new Reader($path . '/GeoLite2-Country.mmdb');
                 $location = $reader->get($ip);
             }
 
@@ -113,19 +125,18 @@ class System extends Provider {
                 'joindate' => $data['joindate'],
                 'image' => 'smiley.png'
             ];
-            if(is_array($model->insert('label, email, psw, ip, location, joindate, image', (array)$user, 'users')))
-            {
-                $id = $model->select('id', 'users')->where(array(':label' => $data['username']))->execute();
+            if (is_array($model->insert('label, email, psw, ip, location, joindate, image', (array)$user, 'users'))) {
+                $id = $model->select('id', 'users')->where('label', '=', $data['username'])->execute();
                 $member = [
                     'uid' => $id[0]->id,
                     'role' => 'member',
                     'position' => 'user'
                 ];
-                if(is_array($model->insert('uid, role, position', (array)$member, 'members'))) {
+                if (is_array($model->insert('uid, role, position', (array)$member, 'members'))) {
                     Session::set('feedback_positive', 'Konto ' . $data['username'] . ' oprettet!');
                 }
             } else {
-                Session::set('feedback_negative', 'Der var et problem med oprettelse af konto tilhørende '.$data['username']);
+                Session::set('feedback_negative', 'Der var et problem med oprettelse af konto tilhørende ' . $data['username']);
             }
             return app::redirect('users');
         }
@@ -133,7 +144,7 @@ class System extends Provider {
 
     private function match($pattern, $subject)
     {
-        $prepend = '/^'.$pattern.'/';
+        $prepend = '/^' . $pattern . '/';
         return preg_match($prepend, $subject) ? true : false;
     }
 }

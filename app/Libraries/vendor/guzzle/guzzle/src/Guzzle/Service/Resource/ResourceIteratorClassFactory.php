@@ -2,8 +2,8 @@
 
 namespace Guzzle\Service\Resource;
 
-use Guzzle\Inflection\InflectorInterface;
 use Guzzle\Inflection\Inflector;
+use Guzzle\Inflection\InflectorInterface;
 use Guzzle\Service\Command\CommandInterface;
 
 /**
@@ -20,12 +20,12 @@ class ResourceIteratorClassFactory extends AbstractResourceIteratorFactory
     protected $inflector;
 
     /**
-     * @param string|array       $namespaces List of namespaces for iterator objects
-     * @param InflectorInterface $inflector  Inflector used to resolve class names
+     * @param string|array $namespaces List of namespaces for iterator objects
+     * @param InflectorInterface $inflector Inflector used to resolve class names
      */
     public function __construct($namespaces = array(), InflectorInterface $inflector = null)
     {
-        $this->namespaces = (array) $namespaces;
+        $this->namespaces = (array)$namespaces;
         $this->inflector = $inflector ?: Inflector::getDefault();
     }
 

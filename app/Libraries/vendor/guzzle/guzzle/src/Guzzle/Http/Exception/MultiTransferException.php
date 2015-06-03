@@ -55,16 +55,16 @@ class MultiTransferException extends ExceptionCollection
     /**
      * Add to the array of failed requests and associate with exceptions
      *
-     * @param RequestInterface $request   Failed request
-     * @param \Exception       $exception Exception to add and associate with
+     * @param RequestInterface $request Failed request
+     * @param \Exception $exception Exception to add and associate with
      *
      * @return self
      */
     public function addFailedRequestWithException(RequestInterface $request, \Exception $exception)
     {
         $this->add($exception)
-             ->addFailedRequest($request)
-             ->exceptionForRequest[spl_object_hash($request)] = $exception;
+            ->addFailedRequest($request)
+            ->exceptionForRequest[spl_object_hash($request)] = $exception;
 
         return $this;
     }
@@ -84,6 +84,16 @@ class MultiTransferException extends ExceptionCollection
     }
 
     /**
+     * Get an array of successful requests sent in the multi transfer
+     *
+     * @return array
+     */
+    public function getSuccessfulRequests()
+    {
+        return $this->successfulRequests;
+    }
+
+    /**
      * Set all of the successful requests
      *
      * @param array Array of requests
@@ -98,6 +108,16 @@ class MultiTransferException extends ExceptionCollection
     }
 
     /**
+     * Get an array of failed requests sent in the multi transfer
+     *
+     * @return array
+     */
+    public function getFailedRequests()
+    {
+        return $this->failedRequests;
+    }
+
+    /**
      * Set all of the failed requests
      *
      * @param array Array of requests
@@ -109,26 +129,6 @@ class MultiTransferException extends ExceptionCollection
         $this->failedRequests = $requests;
 
         return $this;
-    }
-
-    /**
-     * Get an array of successful requests sent in the multi transfer
-     *
-     * @return array
-     */
-    public function getSuccessfulRequests()
-    {
-        return $this->successfulRequests;
-    }
-
-    /**
-     * Get an array of failed requests sent in the multi transfer
-     *
-     * @return array
-     */
-    public function getFailedRequests()
-    {
-        return $this->failedRequests;
     }
 
     /**

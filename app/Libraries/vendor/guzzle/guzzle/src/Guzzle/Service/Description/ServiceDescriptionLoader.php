@@ -26,26 +26,26 @@ class ServiceDescriptionLoader extends AbstractConfigLoader
         }
 
         return new ServiceDescription(array(
-            'apiVersion'  => isset($config['apiVersion']) ? $config['apiVersion'] : null,
-            'baseUrl'     => isset($config['baseUrl']) ? $config['baseUrl'] : null,
-            'description' => isset($config['description']) ? $config['description'] : null,
-            'operations'  => $operations,
-            'models'      => isset($config['models']) ? $config['models'] : null
-        ) + $config);
+                'apiVersion' => isset($config['apiVersion']) ? $config['apiVersion'] : null,
+                'baseUrl' => isset($config['baseUrl']) ? $config['baseUrl'] : null,
+                'description' => isset($config['description']) ? $config['description'] : null,
+                'operations' => $operations,
+                'models' => isset($config['models']) ? $config['models'] : null
+            ) + $config);
     }
 
     /**
-     * @param string $name       Name of the operation
-     * @param array  $op         Operation value array
-     * @param array  $operations Currently loaded operations
+     * @param string $name Name of the operation
+     * @param array $op Operation value array
+     * @param array $operations Currently loaded operations
      * @throws DescriptionBuilderException when extending a non-existent operation
      */
     protected function resolveExtension($name, array &$op, array &$operations)
     {
         $resolved = array();
-        $original = empty($op['parameters']) ? false: $op['parameters'];
+        $original = empty($op['parameters']) ? false : $op['parameters'];
         $hasClass = !empty($op['class']);
-        foreach ((array) $op['extends'] as $extendedCommand) {
+        foreach ((array)$op['extends'] as $extendedCommand) {
             if (empty($operations[$extendedCommand])) {
                 throw new DescriptionBuilderException("{$name} extends missing operation {$extendedCommand}");
             }

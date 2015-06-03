@@ -15,17 +15,17 @@ class Header implements HeaderInterface
     protected $glue;
 
     /**
-     * @param string       $header Name of the header
+     * @param string $header Name of the header
      * @param array|string $values Values of the header as an array or a scalar
-     * @param string       $glue   Glue used to combine multiple values into a string
+     * @param string $glue Glue used to combine multiple values into a string
      */
     public function __construct($header, $values = array(), $glue = ',')
     {
         $this->header = trim($header);
         $this->glue = $glue;
 
-        foreach ((array) $values as $value) {
-            foreach ((array) $value as $v) {
+        foreach ((array)$values as $value) {
+            foreach ((array)$value as $v) {
                 $this->values[] = $v;
             }
         }
@@ -34,6 +34,11 @@ class Header implements HeaderInterface
     public function __toString()
     {
         return implode($this->glue . ' ', $this->toArray());
+    }
+
+    public function toArray()
+    {
+        return $this->values;
     }
 
     public function add($value)
@@ -55,41 +60,14 @@ class Header implements HeaderInterface
         return $this;
     }
 
-    public function setGlue($glue)
-    {
-        $this->glue = $glue;
-
-        return $this;
-    }
-
     public function getGlue()
     {
         return $this->glue;
     }
 
-    /**
-     * Normalize the header to be a single header with an array of values.
-     *
-     * If any values of the header contains the glue string value (e.g. ","), then the value will be exploded into
-     * multiple entries in the header.
-     *
-     * @return self
-     */
-    public function normalize()
+    public function setGlue($glue)
     {
-        $values = $this->toArray();
-
-        for ($i = 0, $total = count($values); $i < $total; $i++) {
-            if (strpos($values[$i], $this->glue) !== false) {
-                // Explode on glue when the glue is not inside of a comma
-                foreach (preg_split('/' . preg_quote($this->glue) . '(?=([^"]*"[^"]*")*[^"]*$)/', $values[$i]) as $v) {
-                    $values[] = trim($v);
-                }
-                unset($values[$i]);
-            }
-        }
-
-        $this->values = array_values($values);
+        $this->glue = $glue;
 
         return $this;
     }
@@ -106,11 +84,6 @@ class Header implements HeaderInterface
         }));
 
         return $this;
-    }
-
-    public function toArray()
-    {
-        return $this->values;
     }
 
     public function count()
@@ -144,6 +117,33 @@ class Header implements HeaderInterface
         }
 
         return $params;
+    }
+
+    /**
+     * Normalize the header to be a single header with an array of values.
+     *
+     * If any values of the header contains the glue string value (e.g. ","), then the value will be exploded into
+     * multiple entries in the header.
+     *
+     * @return self
+     */
+    public function normalize()
+    {
+        $values = $this->toArray();
+
+        for ($i = 0, $total = count($values); $i < $total; $i++) {
+            if (strpos($values[$i], $this->glue) !== false) {
+                // Explode on glue when the glue is not inside of a comma
+                foreach (preg_split('/' . preg_quote($this->glue) . '(?=([^"]*"[^"]*")*[^"]*$)/', $values[$i]) as $v) {
+                    $values[] = trim($v);
+                }
+                unset($values[$i]);
+            }
+        }
+
+        $this->values = array_values($values);
+
+        return $this;
     }
 
     /**

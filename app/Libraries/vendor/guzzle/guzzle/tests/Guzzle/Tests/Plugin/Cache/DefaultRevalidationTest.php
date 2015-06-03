@@ -2,19 +2,18 @@
 
 namespace Guzzle\Tests\Plugin\Cache;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Guzzle\Cache\DoctrineCacheAdapter;
 use Guzzle\Http\Client;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
 use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Cache\CachePlugin;
-use Guzzle\Cache\DoctrineCacheAdapter;
-use Doctrine\Common\Cache\ArrayCache;
 use Guzzle\Plugin\Cache\DefaultCacheStorage;
 use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Tests\Http\Server;
 
 /**
  * @covers Guzzle\Plugin\Cache\DefaultRevalidation
@@ -97,7 +96,7 @@ class DefaultRevalidationTest extends \Guzzle\Tests\GuzzleTestCase
             $request->getResponse()->removeHeader('Date');
             $request->getResponse()->removeHeader('Connection');
             // Get rid of dates
-            $this->assertEquals((string) $result, (string) $request->getResponse());
+            $this->assertEquals((string)$result, (string)$request->getResponse());
         }
 
         if ($validate) {
@@ -171,9 +170,9 @@ class DefaultRevalidationTest extends \Guzzle\Tests\GuzzleTestCase
         $lm = gmdate('c', time() - 60);
         $mock = new MockPlugin(array(
             new Response(200, array(
-                'Date'           => $lm,
-                'Cache-Control'  => 'max-age=100, must-revalidate, stale-if-error=9999',
-                'Last-Modified'  => $lm,
+                'Date' => $lm,
+                'Cache-Control' => 'max-age=100, must-revalidate, stale-if-error=9999',
+                'Last-Modified' => $lm,
                 'Content-Length' => 2
             ), 'hi'),
             new CurlException('Bleh'),
@@ -210,8 +209,8 @@ class DefaultRevalidationTest extends \Guzzle\Tests\GuzzleTestCase
         $response = $client->get()->send();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertCount(0, $mock);
-        $this->assertEquals('HIT from GuzzleCache', (string) $response->getHeader('X-Cache-Lookup'));
-        $this->assertEquals('HIT_ERROR from GuzzleCache', (string) $response->getHeader('X-Cache'));
+        $this->assertEquals('HIT from GuzzleCache', (string)$response->getHeader('X-Cache-Lookup'));
+        $this->assertEquals('HIT_ERROR from GuzzleCache', (string)$response->getHeader('X-Cache'));
     }
 
     /**
@@ -239,7 +238,8 @@ class DefaultRevalidationTest extends \Guzzle\Tests\GuzzleTestCase
         ));
         $client = new Client($this->getServer()->getUrl());
         $client->addSubscriber(new CachePlugin());
-        $client->getEventDispatcher()->addListener('command.after_send', function(){});
+        $client->getEventDispatcher()->addListener('command.after_send', function () {
+        });
         $this->assertEquals(200, $client->get()->send()->getStatusCode());
         $this->assertEquals(200, $client->get()->send()->getStatusCode());
         $this->assertEquals(200, $client->get()->send()->getStatusCode());

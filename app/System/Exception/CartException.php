@@ -9,7 +9,8 @@
 namespace System\Exception;
 
 
-class CartException extends Exception {
+class CartException extends Exception
+{
 
     function __construct($message, $code = 5, Exception $previous = null)
     {

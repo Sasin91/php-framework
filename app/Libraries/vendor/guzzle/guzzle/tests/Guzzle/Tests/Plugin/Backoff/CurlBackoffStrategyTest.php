@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Plugin\Backoff;
 
+use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Backoff\CurlBackoffStrategy;
-use Guzzle\Http\Exception\CurlException;
 
 /**
  * @covers Guzzle\Plugin\Backoff\CurlBackoffStrategy

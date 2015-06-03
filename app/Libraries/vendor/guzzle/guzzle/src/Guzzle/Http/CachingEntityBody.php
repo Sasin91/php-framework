@@ -47,9 +47,9 @@ class CachingEntityBody extends AbstractEntityBodyDecorator
         return $str;
     }
 
-    public function getSize()
+    public function rewind()
     {
-        return max($this->body->getSize(), $this->remoteStream->getSize());
+        return $this->seek(0);
     }
 
     /**
@@ -76,19 +76,9 @@ class CachingEntityBody extends AbstractEntityBodyDecorator
         return $this->body->seek($byte);
     }
 
-    public function rewind()
+    public function isConsumed()
     {
-        return $this->seek(0);
-    }
-
-    /**
-     * Does not support custom rewind functions
-     *
-     * @throws RuntimeException
-     */
-    public function setRewindFunction($callable)
-    {
-        throw new RuntimeException(__CLASS__ . ' does not support custom stream rewind functions');
+        return $this->body->isConsumed() && $this->remoteStream->isConsumed();
     }
 
     public function read($length)
@@ -115,6 +105,21 @@ class CachingEntityBody extends AbstractEntityBodyDecorator
         }
 
         return $data;
+    }
+
+    public function getSize()
+    {
+        return max($this->body->getSize(), $this->remoteStream->getSize());
+    }
+
+    /**
+     * Does not support custom rewind functions
+     *
+     * @throws RuntimeException
+     */
+    public function setRewindFunction($callable)
+    {
+        throw new RuntimeException(__CLASS__ . ' does not support custom stream rewind functions');
     }
 
     public function write($string)
@@ -147,11 +152,6 @@ class CachingEntityBody extends AbstractEntityBodyDecorator
         }
 
         return $buffer;
-    }
-
-    public function isConsumed()
-    {
-        return $this->body->isConsumed() && $this->remoteStream->isConsumed();
     }
 
     /**

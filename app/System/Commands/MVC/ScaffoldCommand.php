@@ -13,7 +13,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ScaffoldCommand extends \Wizard {
+class ScaffoldCommand extends \Wizard
+{
 
     protected function configure()
     {
@@ -40,6 +41,7 @@ class ScaffoldCommand extends \Wizard {
 
     private $skeleton = false;
     private $options = array();
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->options = $input->getArgument('options');
@@ -58,7 +60,7 @@ class ScaffoldCommand extends \Wizard {
 
     private function make()
     {
-        if($this->skeleton)
+        if ($this->skeleton)
             $this->options['skeleton'] = true;
         $this->model();
         $this->view();

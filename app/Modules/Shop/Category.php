@@ -1,11 +1,12 @@
 <?php
 
-namespace Core\Application\Cart;
+namespace Modules\Shop;
 /**
  * Class Category
- * @package Core\Application\Cart
+ * @package Modules\Shop
  */
-class Category {
+class Category
+{
 
     public $label;
     public $description;

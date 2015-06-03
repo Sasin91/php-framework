@@ -42,6 +42,6 @@ class IoEmittingEntityBodyTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('there', $e['write']);
         $this->assertEquals(5, $e['result']);
         $this->assertSame($this->body, $e['body']);
-        $this->assertEquals('hellothere', (string) $this->body);
+        $this->assertEquals('hellothere', (string)$this->body);
     }
 }

@@ -28,7 +28,7 @@ class Batch implements BatchInterface
 
     /**
      * @param BatchTransferInterface $transferStrategy Strategy used to transfer items
-     * @param BatchDivisorInterface  $divisionStrategy Divisor used to create batches
+     * @param BatchDivisorInterface $divisionStrategy Divisor used to create batches
      */
     public function __construct(BatchTransferInterface $transferStrategy, BatchDivisorInterface $divisionStrategy)
     {
@@ -69,11 +69,6 @@ class Batch implements BatchInterface
         return $items;
     }
 
-    public function isEmpty()
-    {
-        return count($this->queue) == 0 && count($this->dividedBatches) == 0;
-    }
-
     /**
      * Create batches for any queued items
      */
@@ -88,5 +83,10 @@ class Batch implements BatchInterface
                 $this->dividedBatches[] = $batches;
             }
         }
+    }
+
+    public function isEmpty()
+    {
+        return count($this->queue) == 0 && count($this->dividedBatches) == 0;
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Guzzle\Tests\Plugin\Cache;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Guzzle\Cache\DoctrineCacheAdapter;
 use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\RequestFactory;
 use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Cache\DefaultCacheStorage;
-use Doctrine\Common\Cache\ArrayCache;
 
 /**
  * @covers Guzzle\Plugin\Cache\DefaultCacheStorage
@@ -71,8 +71,8 @@ class DefaultCacheStorageTest extends \Guzzle\Tests\GuzzleTestCase
         $response = $cache['storage']->fetch($cache['request']);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($response->hasHeader('Connection'));
-        $this->assertEquals('Bar', (string) $response->getHeader('X-Foo'));
-        $this->assertEquals('test', (string) $response->getBody());
+        $this->assertEquals('Bar', (string)$response->getHeader('X-Foo'));
+        $this->assertEquals('test', (string)$response->getBody());
         $this->assertTrue(in_array($cache['serialized'], $this->readAttribute($cache['cache'], 'data')));
     }
 

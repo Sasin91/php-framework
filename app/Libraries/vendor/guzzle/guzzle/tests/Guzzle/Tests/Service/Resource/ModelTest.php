@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Service\Resource;
 
-use Guzzle\Service\Resource\Model;
-use Guzzle\Service\Description\Parameter;
 use Guzzle\Common\Collection;
+use Guzzle\Service\Description\Parameter;
+use Guzzle\Service\Resource\Model;
 
 /**
  * @covers Guzzle\Service\Resource\Model
@@ -50,7 +50,7 @@ class ModelTest extends \Guzzle\Tests\GuzzleTestCase
     public function testDoesNotIncludeEmptyStructureInString()
     {
         $model = new Model(array('Foo' => 'baz'));
-        $str = (string) $model;
+        $str = (string)$model;
         $this->assertContains('Debug output of model', $str);
         $this->assertNotContains('Model structure', $str);
     }
@@ -58,7 +58,7 @@ class ModelTest extends \Guzzle\Tests\GuzzleTestCase
     public function testDoesIncludeModelStructureInString()
     {
         $model = new Model(array('Foo' => 'baz'), new Parameter(array('name' => 'Foo')));
-        $str = (string) $model;
+        $str = (string)$model;
         $this->assertContains('Debug output of Foo model', $str);
         $this->assertContains('Model structure', $str);
     }

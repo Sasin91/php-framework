@@ -3,21 +3,17 @@
 namespace Http\Controllers;
 
 
-use Core\Http\Models\Layout\Page;
-use Core\Http\Toolbox\StringTools;
+use Http\Models\Page;
 
-class Home extends BaseController {
-
-    public function __construct()
+class Home extends BaseController
+{
+    public function home($action, $arguments)
     {
-        parent::__construct();
-    }
-
-    public function home($action, array $arguments = array())
-    {
+        $page = new Page();
         $content = array(
             'title' => 'Home',
-            );
+            'content' => $page->get(__FUNCTION__)
+        );
         $this->view->render('Home/index', $content);
     }
 }

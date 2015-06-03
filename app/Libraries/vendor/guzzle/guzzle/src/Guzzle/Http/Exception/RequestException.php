@@ -14,6 +14,16 @@ class RequestException extends RuntimeException implements HttpException
     protected $request;
 
     /**
+     * Get the request that caused the exception
+     *
+     * @return RequestInterface
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
      * Set the request that caused the exception
      *
      * @param RequestInterface $request Request to set
@@ -25,15 +35,5 @@ class RequestException extends RuntimeException implements HttpException
         $this->request = $request;
 
         return $this;
-    }
-
-    /**
-     * Get the request that caused the exception
-     *
-     * @return RequestInterface
-     */
-    public function getRequest()
-    {
-        return $this->request;
     }
 }

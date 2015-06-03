@@ -3,9 +3,9 @@
 namespace Guzzle\Tests\Http\Curl;
 
 use Guzzle\Http\Client;
+use Guzzle\Http\Curl\RequestMediator;
 use Guzzle\Http\Message\EntityEnclosingRequest;
 use Guzzle\Http\Message\Response;
-use Guzzle\Http\Curl\RequestMediator;
 
 /**
  * @covers Guzzle\Http\Curl\RequestMediator

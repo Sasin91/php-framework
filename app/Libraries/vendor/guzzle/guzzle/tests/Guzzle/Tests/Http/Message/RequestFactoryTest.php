@@ -4,14 +4,13 @@ namespace Guzzle\Tests\Http\Message;
 
 use Guzzle\Common\Collection;
 use Guzzle\Http\Client;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Url;
 use Guzzle\Http\EntityBody;
-use Guzzle\Http\Message\RequestFactory;
 use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\Response;
 use Guzzle\Http\QueryString;
+use Guzzle\Http\Url;
 use Guzzle\Parser\Message\MessageParser;
-use Guzzle\Plugin\Log\LogPlugin;
 use Guzzle\Plugin\Mock\MockPlugin;
 
 /**
@@ -60,25 +59,25 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('/path', $request->getPath());
         $this->assertEquals('/path?q=1&v=2', $request->getResource());
         $this->assertInstanceOf('Guzzle\\Http\\EntityBody', $request->getBody());
-        $this->assertEquals('Data', (string) $request->getBody());
+        $this->assertEquals('Data', (string)$request->getBody());
         unset($request);
 
         // Test using an EntityBody
         $request = RequestFactory::getInstance()->create('PUT', 'http://www.google.com/path?q=1&v=2', null, EntityBody::factory('Data'));
         $this->assertInstanceOf('Guzzle\\Http\\Message\\EntityEnclosingRequest', $request);
-        $this->assertEquals('Data', (string) $request->getBody());
+        $this->assertEquals('Data', (string)$request->getBody());
 
         // Test using a resource
         $resource = fopen('php://temp', 'w+');
         fwrite($resource, 'Data');
         $request = RequestFactory::getInstance()->create('PUT', 'http://www.google.com/path?q=1&v=2', null, $resource);
         $this->assertInstanceOf('Guzzle\\Http\\Message\\EntityEnclosingRequest', $request);
-        $this->assertEquals('Data', (string) $request->getBody());
+        $this->assertEquals('Data', (string)$request->getBody());
 
         // Test using an object that can be cast as a string
         $request = RequestFactory::getInstance()->create('PUT', 'http://www.google.com/path?q=1&v=2', null, Url::factory('http://www.example.com/'));
         $this->assertInstanceOf('Guzzle\\Http\\Message\\EntityEnclosingRequest', $request);
-        $this->assertEquals('http://www.example.com/', (string) $request->getBody());
+        $this->assertEquals('http://www.example.com/', (string)$request->getBody());
     }
 
     public function testCreatesHeadAndDeleteRequests()
@@ -99,7 +98,7 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
     public function testCreatesNewPutRequestWithBody()
     {
         $request = RequestFactory::getInstance()->create('PUT', 'http://www.google.com/path?q=1&v=2', null, 'Data');
-        $this->assertEquals('Data', (string) $request->getBody());
+        $this->assertEquals('Data', (string)$request->getBody());
     }
 
     public function testCreatesNewPostRequestWithFields()
@@ -150,7 +149,7 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('/path', $request->getPath());
         $this->assertEquals('/path?q=1&v=2', $request->getResource());
         $this->assertInstanceOf('Guzzle\\Http\\EntityBody', $request->getBody());
-        $this->assertEquals('Data', (string) $request->getBody());
+        $this->assertEquals('Data', (string)$request->getBody());
         $this->assertEquals('michael', $request->getUsername());
         $this->assertEquals('123', $request->getPassword());
         $this->assertEquals('8080', $request->getPort());
@@ -177,8 +176,8 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('/path', $request->getPath());
         $this->assertEquals('/path?q=1&v=2', $request->getResource());
         $this->assertInstanceOf('Guzzle\\Http\\EntityBody', $request->getBody());
-        $this->assertEquals('Data', (string) $request->getBody());
-        $this->assertEquals("Basic {$auth}", (string) $request->getHeader('Authorization'));
+        $this->assertEquals('Data', (string)$request->getBody());
+        $this->assertEquals("Basic {$auth}", (string)$request->getHeader('Authorization'));
         $this->assertEquals('8080', $request->getPort());
 
         // Test passing a blank message returns false
@@ -195,8 +194,8 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('/path', $request->getPath());
         $this->assertEquals('/path?q=1&v=2', $request->getResource());
         $this->assertInstanceOf('Guzzle\\Http\\EntityBody', $request->getBody());
-        $this->assertEquals('Data', (string) $request->getBody());
-        $this->assertEquals("Basic {$auth}", (string) $request->getHeader('Authorization'));
+        $this->assertEquals('Data', (string)$request->getBody());
+        $this->assertEquals("Basic {$auth}", (string)$request->getHeader('Authorization'));
         $this->assertEquals(80, $request->getPort());
     }
 
@@ -229,11 +228,11 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
             . "zoo:456\r\n\r\n";
 
         $parts = $parser->parseRequest($message);
-        $this->assertEquals(array (
+        $this->assertEquals(array(
             'DATE' => 'Mon, 09 Sep 2011 23:36:00 GMT',
             'host' => 'host.foo.com',
-            'ZOO'  => array('abc', '123', 'HI'),
-            'zoo'  => '456',
+            'ZOO' => array('abc', '123', 'HI'),
+            'zoo' => '456',
         ), $parts['headers']);
 
         $request = RequestFactory::getInstance()->fromMessage($message);
@@ -246,27 +245,27 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
     public function testCreatesHttpMessagesWithBodiesAndNormalizesLineEndings()
     {
         $message = "POST / http/1.1\r\n"
-                 . "Content-Type:application/x-www-form-urlencoded; charset=utf8\r\n"
-                 . "Date:Mon, 09 Sep 2011 23:36:00 GMT\r\n"
-                 . "Host:host.foo.com\r\n\r\n"
-                 . "foo=bar";
+            . "Content-Type:application/x-www-form-urlencoded; charset=utf8\r\n"
+            . "Date:Mon, 09 Sep 2011 23:36:00 GMT\r\n"
+            . "Host:host.foo.com\r\n\r\n"
+            . "foo=bar";
 
         $request = RequestFactory::getInstance()->fromMessage($message);
-        $this->assertEquals('application/x-www-form-urlencoded; charset=utf8', (string) $request->getHeader('Content-Type'));
-        $this->assertEquals('foo=bar', (string) $request->getBody());
+        $this->assertEquals('application/x-www-form-urlencoded; charset=utf8', (string)$request->getHeader('Content-Type'));
+        $this->assertEquals('foo=bar', (string)$request->getBody());
 
         $message = "POST / http/1.1\n"
-                 . "Content-Type:application/x-www-form-urlencoded; charset=utf8\n"
-                 . "Date:Mon, 09 Sep 2011 23:36:00 GMT\n"
-                 . "Host:host.foo.com\n\n"
-                 . "foo=bar";
+            . "Content-Type:application/x-www-form-urlencoded; charset=utf8\n"
+            . "Date:Mon, 09 Sep 2011 23:36:00 GMT\n"
+            . "Host:host.foo.com\n\n"
+            . "foo=bar";
         $request = RequestFactory::getInstance()->fromMessage($message);
-        $this->assertEquals('foo=bar', (string) $request->getBody());
+        $this->assertEquals('foo=bar', (string)$request->getBody());
 
         $message = "PUT / HTTP/1.1\r\nContent-Length: 0\r\n\r\n";
         $request = RequestFactory::getInstance()->fromMessage($message);
         $this->assertTrue($request->hasHeader('Content-Length'));
-        $this->assertEquals(0, (string) $request->getHeader('Content-Length'));
+        $this->assertEquals(0, (string)$request->getHeader('Content-Length'));
     }
 
     public function testBugPathIncorrectlyHandled()
@@ -275,7 +274,7 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $request = RequestFactory::getInstance()->fromMessage($message);
         $this->assertSame('POST', $request->getMethod());
         $this->assertSame('/foo', $request->getPath());
-        $this->assertSame('BODY', (string) $request->getBody());
+        $this->assertSame('BODY', (string)$request->getBody());
     }
 
     public function testHandlesChunkedTransferEncoding()
@@ -304,7 +303,7 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $request->getCurlOptions()->set('foo', 'bar');
         $cloned = $f->cloneRequestWithMethod($request, 'PUT');
         $this->assertEquals('PUT', $cloned->getMethod());
-        $this->assertEquals('Bar', (string) $cloned->getHeader('X-Foo'));
+        $this->assertEquals('Bar', (string)$cloned->getHeader('X-Foo'));
         $this->assertEquals('http://www.test.com', $cloned->getUrl());
         // Ensure params are cloned and cleaned up
         $this->assertEquals(1, count($cloned->getParams()->getAll()));
@@ -334,7 +333,7 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $request = $client->put('http://www.test.com', array('Content-Length' => 4), 'test');
         $cloned = $f->cloneRequestWithMethod($request, 'POST');
         $this->assertEquals('POST', $cloned->getMethod());
-        $this->assertEquals('test', (string) $cloned->getBody());
+        $this->assertEquals('test', (string)$cloned->getBody());
     }
 
     public function testCanDisableRedirects()
@@ -398,7 +397,9 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $client->addSubscriber(new MockPlugin(array(new Response(200))));
         $request = $client->get($this->getServer()->getUrl(), array(), array(
             'events' => array(
-                'request.before_send' => function () use (&$foo) { $foo = true; }
+                'request.before_send' => function () use (&$foo) {
+                    $foo = true;
+                }
             )
         ));
         $request->send();
@@ -412,7 +413,9 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $client->addSubscriber(new MockPlugin(array(new Response(200))));
         $request = $client->get($this->getServer()->getUrl(), array(), array(
             'events' => array(
-                'request.before_send' => array(function () use (&$foo) { $foo = true; }, 100)
+                'request.before_send' => array(function () use (&$foo) {
+                    $foo = true;
+                }, 100)
             )
         ));
         $request->send();
@@ -446,11 +449,12 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
     public function testCanDisableExceptionsWithErrorListener()
     {
         $client = new Client();
-        $client->getEventDispatcher()->addListener('request.error', function () {});
+        $client->getEventDispatcher()->addListener('request.error', function () {
+        });
         $request = $client->get('/', array(), array(
-                'plugins' => array(new MockPlugin(array(new Response(500)))),
-                'exceptions' => false
-            ));
+            'plugins' => array(new MockPlugin(array(new Response(500)))),
+            'exceptions' => false
+        ));
         $this->assertEquals(500, $request->send()->getStatusCode());
     }
 
@@ -463,7 +467,7 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
             'save_to' => $r
         ));
         $request->send();
-        $this->assertEquals('testing', (string) $r);
+        $this->assertEquals('testing', (string)$r);
     }
 
     public function testCanSetProxy()
@@ -477,7 +481,7 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $client = new Client();
         $request = $client->get('/', array(), array('headers' => array('Foo' => 'Bar')));
-        $this->assertEquals('Bar', (string) $request->getHeader('Foo'));
+        $this->assertEquals('Bar', (string)$request->getHeader('Foo'));
     }
 
     public function testCanSetDefaultHeadersOptions()
@@ -486,15 +490,15 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         RequestFactory::getInstance()->applyOptions($request, array(
             'headers' => array('Foo' => 'Baz', 'Bam' => 't123')
         ), RequestFactory::OPTIONS_AS_DEFAULTS);
-        $this->assertEquals('Bar', (string) $request->getHeader('Foo'));
-        $this->assertEquals('t123', (string) $request->getHeader('Bam'));
+        $this->assertEquals('Bar', (string)$request->getHeader('Foo'));
+        $this->assertEquals('t123', (string)$request->getHeader('Bam'));
     }
 
     public function testCanSetBodyOption()
     {
         $client = new Client();
         $request = $client->put('/', array(), null, array('body' => 'test'));
-        $this->assertEquals('test', (string) $request->getBody());
+        $this->assertEquals('test', (string)$request->getBody());
     }
 
     /**
@@ -556,7 +560,9 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function inputValidation()
     {
-        return array_map(function ($option) { return array($option); }, array(
+        return array_map(function ($option) {
+            return array($option);
+        }, array(
             'headers', 'query', 'cookies', 'auth', 'events', 'plugins', 'params'
         ));
     }
@@ -611,6 +617,6 @@ class HttpRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
     public function testCreatesBodyWithoutZeroString()
     {
         $request = RequestFactory::getInstance()->create('PUT', 'http://test.com', array(), '0');
-        $this->assertSame('0', (string) $request->getBody());
+        $this->assertSame('0', (string)$request->getBody());
     }
 }

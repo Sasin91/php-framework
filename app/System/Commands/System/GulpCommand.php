@@ -8,10 +8,11 @@ namespace System\Commands\System;
  * Date: 24-04-15
  * Time: 19:46
  */
-use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class GulpCommand extends \Wizard {
+class GulpCommand extends \Wizard
+{
 
     protected function configure()
     {
@@ -22,7 +23,7 @@ class GulpCommand extends \Wizard {
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        chdir(ROOT_PATH.DS.'Application/Storage/Configurations/Application/Java/npm');
+        chdir(ROOT_PATH . DS . 'Application/Storage/Configurations/Application/Java/npm');
         shell_exec('gulp');
     }
 }

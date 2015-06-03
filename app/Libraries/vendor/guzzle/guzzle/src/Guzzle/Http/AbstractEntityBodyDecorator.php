@@ -22,14 +22,14 @@ class AbstractEntityBodyDecorator implements EntityBodyInterface
 
     public function __toString()
     {
-        return (string) $this->body;
+        return (string)$this->body;
     }
 
     /**
      * Allow decorators to implement custom methods
      *
      * @param string $method Missing method name
-     * @param array  $args   Method arguments
+     * @param array $args Method arguments
      *
      * @return mixed
      */
@@ -68,6 +68,11 @@ class AbstractEntityBodyDecorator implements EntityBodyInterface
     public function getContentLength()
     {
         return $this->getSize();
+    }
+
+    public function getSize()
+    {
+        return $this->body->getSize();
     }
 
     public function getContentType()
@@ -131,9 +136,14 @@ class AbstractEntityBodyDecorator implements EntityBodyInterface
         return $this->body->getUri();
     }
 
-    public function getSize()
+    public function isRepeatable()
     {
-        return $this->body->getSize();
+        return $this->isSeekable() && $this->isReadable();
+    }
+
+    public function isSeekable()
+    {
+        return $this->body->isSeekable();
     }
 
     public function isReadable()
@@ -141,19 +151,9 @@ class AbstractEntityBodyDecorator implements EntityBodyInterface
         return $this->body->isReadable();
     }
 
-    public function isRepeatable()
-    {
-        return $this->isSeekable() && $this->isReadable();
-    }
-
     public function isWritable()
     {
         return $this->body->isWritable();
-    }
-
-    public function isConsumed()
-    {
-        return $this->body->isConsumed();
     }
 
     /**
@@ -165,14 +165,14 @@ class AbstractEntityBodyDecorator implements EntityBodyInterface
         return $this->isConsumed();
     }
 
+    public function isConsumed()
+    {
+        return $this->body->isConsumed();
+    }
+
     public function isLocal()
     {
         return $this->body->isLocal();
-    }
-
-    public function isSeekable()
-    {
-        return $this->body->isSeekable();
     }
 
     public function setSize($size)

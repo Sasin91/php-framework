@@ -174,16 +174,16 @@ class ServiceBuilderTest extends \Guzzle\Tests\GuzzleTestCase
                 'class' => 'Guzzle\Tests\Service\Mock\MockClient',
                 'params' => array(
                     'other_client' => '{b}',
-                    'username'     => 'x',
-                    'password'     => 'y',
-                    'subdomain'    => 'z'
+                    'username' => 'x',
+                    'password' => 'y',
+                    'subdomain' => 'z'
                 )
             ),
             'b' => array(
                 'class' => 'Guzzle\Tests\Service\Mock\MockClient',
                 'params' => array(
-                    'username'  => '1',
-                    'password'  => '2',
+                    'username' => '1',
+                    'password' => '2',
                     'subdomain' => '3'
                 )
             )
@@ -205,8 +205,8 @@ class ServiceBuilderTest extends \Guzzle\Tests\GuzzleTestCase
             'a' => array(
                 'class' => 'Guzzle\Tests\Service\Mock\MockClient',
                 'params' => array(
-                    'username'  => 'test',
-                    'password'  => '123',
+                    'username' => 'test',
+                    'password' => '123',
                     'subdomain' => 'z'
                 )
             )
@@ -214,7 +214,7 @@ class ServiceBuilderTest extends \Guzzle\Tests\GuzzleTestCase
 
         // Add an event listener to pick up client creation events
         $emits = 0;
-        $builder->getEventDispatcher()->addListener('service_builder.create_client', function($event) use (&$emits) {
+        $builder->getEventDispatcher()->addListener('service_builder.create_client', function ($event) use (&$emits) {
             $emits++;
         });
 
@@ -229,7 +229,7 @@ class ServiceBuilderTest extends \Guzzle\Tests\GuzzleTestCase
     public function testCanAddGlobalParametersToServicesOnLoad()
     {
         $builder = ServiceBuilder::factory($this->arrayData, array(
-            'username'  => 'fred',
+            'username' => 'fred',
             'new_value' => 'test'
         ));
 

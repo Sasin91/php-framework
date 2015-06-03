@@ -45,7 +45,7 @@ class LinkTest extends GuzzleTestCase
         $link->addLink('http://test.com', 'test', array('foo' => 'bar'));
         $this->assertEquals(
             '<http://foo>; rel=a; type="image/jpeg", <http://test.com>; rel="test"; foo="bar"',
-            (string) $link
+            (string)$link
         );
     }
 

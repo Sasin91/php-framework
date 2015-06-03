@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Plugin\Backoff;
 
-use Guzzle\Plugin\Backoff\ReasonPhraseBackoffStrategy;
 use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Backoff\ReasonPhraseBackoffStrategy;
 
 /**
  * @covers Guzzle\Plugin\Backoff\ReasonPhraseBackoffStrategy

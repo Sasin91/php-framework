@@ -8,11 +8,11 @@
 
 namespace System\Commands\Database;
 
-use System\Commands\Database\Seeder\TableSeeder;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use System\Commands\Database\Seeder\TableSeeder;
 
 class DatabaseCommand extends \Wizard
 {
@@ -63,10 +63,9 @@ class DatabaseCommand extends \Wizard
         return $this;
     }
 
-    private function seed($table  = '')
+    private function seed($table = '')
     {
-        if(isset($this->client) && isset($this->db) && isset($table))
-        {
+        if (isset($this->client) && isset($this->db) && isset($table)) {
             $seeder = new TableSeeder($this->db);
             $seeder->seed($table);
         }

@@ -14,12 +14,12 @@ class MonologLogAdapter extends AbstractLogAdapter
      * syslog to Monolog mappings
      */
     private static $mapping = array(
-        LOG_DEBUG   => Logger::DEBUG,
-        LOG_INFO    => Logger::INFO,
+        LOG_DEBUG => Logger::DEBUG,
+        LOG_INFO => Logger::INFO,
         LOG_WARNING => Logger::WARNING,
-        LOG_ERR     => Logger::ERROR,
-        LOG_CRIT    => Logger::CRITICAL,
-        LOG_ALERT   => Logger::ALERT
+        LOG_ERR => Logger::ERROR,
+        LOG_CRIT => Logger::CRITICAL,
+        LOG_ALERT => Logger::ALERT
     );
 
     public function __construct(Logger $logObject)

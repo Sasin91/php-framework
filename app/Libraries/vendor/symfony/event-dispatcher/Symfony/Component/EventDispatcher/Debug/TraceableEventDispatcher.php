@@ -11,11 +11,11 @@
 
 namespace Symfony\Component\EventDispatcher\Debug;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Stopwatch\Stopwatch;
-use Psr\Log\LoggerInterface;
 
 /**
  * Collects some data about event listeners.
@@ -31,13 +31,14 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
 
     private $called;
     private $dispatcher;
+    private $wrappedListeners;
 
     /**
      * Constructor.
      *
      * @param EventDispatcherInterface $dispatcher An EventDispatcherInterface instance
-     * @param Stopwatch                $stopwatch  A Stopwatch instance
-     * @param LoggerInterface          $logger     A LoggerInterface instance
+     * @param Stopwatch $stopwatch A Stopwatch instance
+     * @param LoggerInterface $logger A LoggerInterface instance
      */
     public function __construct(EventDispatcherInterface $dispatcher, Stopwatch $stopwatch, LoggerInterface $logger = null)
     {
@@ -45,6 +46,7 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
         $this->stopwatch = $stopwatch;
         $this->logger = $logger;
         $this->called = array();
+        $this->wrappedListeners = array();
     }
 
     /**
@@ -68,6 +70,16 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
      */
     public function removeListener($eventName, $listener)
     {
+        if (isset($this->wrappedListeners[$eventName])) {
+            foreach ($this->wrappedListeners[$eventName] as $index => $wrappedListener) {
+                if ($wrappedListener->getWrappedListener() === $listener) {
+                    $listener = $wrappedListener;
+                    unset($this->wrappedListeners[$eventName][$index]);
+                    break;
+                }
+            }
+        }
+
         return $this->dispatcher->removeListener($eventName, $listener);
     }
 
@@ -130,7 +142,7 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
         foreach ($this->called as $eventName => $listeners) {
             foreach ($listeners as $listener) {
                 $info = $this->getListenerInfo($listener->getWrappedListener(), $eventName);
-                $called[$eventName.'.'.$info['pretty']] = $info;
+                $called[$eventName . '.' . $info['pretty']] = $info;
             }
         }
 
@@ -169,7 +181,7 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
 
                 if (!$called) {
                     $info = $this->getListenerInfo($listener, $eventName);
-                    $notCalled[$eventName.'.'.$info['pretty']] = $info;
+                    $notCalled[$eventName . '.' . $info['pretty']] = $info;
                 }
             }
         }
@@ -180,8 +192,8 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
     /**
      * Proxies all method calls to the original event dispatcher.
      *
-     * @param string $method    The method name
-     * @param array  $arguments The method arguments
+     * @param string $method The method name
+     * @param array $arguments The method arguments
      *
      * @return mixed
      */
@@ -194,7 +206,7 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
      * Called before dispatching the event.
      *
      * @param string $eventName The event name
-     * @param Event  $event     The event
+     * @param Event $event The event
      */
     protected function preDispatch($eventName, Event $event)
     {
@@ -204,7 +216,7 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
      * Called after dispatching the event.
      *
      * @param string $eventName The event name
-     * @param Event  $event     The event
+     * @param Event $event The event
      */
     protected function postDispatch($eventName, Event $event)
     {
@@ -216,12 +228,15 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
             $this->dispatcher->removeListener($eventName, $listener);
             $info = $this->getListenerInfo($listener, $eventName);
             $name = isset($info['class']) ? $info['class'] : $info['type'];
-            $this->dispatcher->addListener($eventName, new WrappedListener($listener, $name, $this->stopwatch, $this));
+            $wrappedListener = new WrappedListener($listener, $name, $this->stopwatch, $this);
+            $this->wrappedListeners[$eventName][] = $wrappedListener;
+            $this->dispatcher->addListener($eventName, $wrappedListener);
         }
     }
 
     private function postProcess($eventName)
     {
+        unset($this->wrappedListeners[$eventName]);
         $skipped = false;
         foreach ($this->dispatcher->getListeners($eventName) as $listener) {
             if (!$listener instanceof WrappedListener) { // #12845: a new listener was added during dispatch.
@@ -259,9 +274,9 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
     }
 
     /**
-     * Returns information about the listener
+     * Returns information about the listener.
      *
-     * @param object $listener  The listener
+     * @param object $listener The listener
      * @param string $eventName The event name
      *
      * @return array Information about the listener
@@ -311,7 +326,7 @@ class TraceableEventDispatcher implements TraceableEventDispatcherInterface
                 'method' => $listener[1],
                 'file' => $file,
                 'line' => $line,
-                'pretty' => $class.'::'.$listener[1],
+                'pretty' => $class . '::' . $listener[1],
             );
         }
 

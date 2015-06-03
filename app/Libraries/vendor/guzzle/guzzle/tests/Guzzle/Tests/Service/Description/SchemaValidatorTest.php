@@ -28,6 +28,29 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
         );
     }
 
+    protected function getComplexParam()
+    {
+        return new Parameter(array(
+            'name' => 'Foo',
+            'type' => 'array',
+            'required' => true,
+            'min' => 1,
+            'items' => array(
+                'type' => 'object',
+                'properties' => array(
+                    'Baz' => array(
+                        'type' => 'string',
+                    ),
+                    'Bar' => array(
+                        'required' => true,
+                        'type' => 'boolean',
+                        'default' => true
+                    )
+                )
+            )
+        ));
+    }
+
     public function testValidatesArrayListsContainProperItems()
     {
         $value = array(true);
@@ -73,8 +96,8 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testAllowsInstanceOf()
     {
         $p = new Parameter(array(
-            'name'       => 'foo',
-            'type'       => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'instanceOf' => get_class($this)
         ));
         $this->assertTrue($this->validator->validate($p, $this));
@@ -85,8 +108,8 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testEnforcesInstanceOfOnlyWhenObject()
     {
         $p = new Parameter(array(
-            'name'       => 'foo',
-            'type'       => array('object', 'string'),
+            'name' => 'foo',
+            'type' => array('object', 'string'),
             'instanceOf' => get_class($this)
         ));
         $this->assertTrue($this->validator->validate($p, $this));
@@ -105,8 +128,8 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
                 'foo' => 'bar'
             )));
         $p = new Parameter(array(
-            'name'       => 'test',
-            'type'       => 'object',
+            'name' => 'test',
+            'type' => 'object',
             'properties' => array(
                 'foo' => array('required' => 'true')
             )
@@ -117,11 +140,11 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testMergesValidationErrorsInPropertiesWithParent()
     {
         $p = new Parameter(array(
-            'name'       => 'foo',
-            'type'       => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'properties' => array(
-                'bar'   => array('type' => 'string', 'required' => true, 'description' => 'This is what it does'),
-                'test'  => array('type' => 'string', 'minLength' => 2, 'maxLength' => 5),
+                'bar' => array('type' => 'string', 'required' => true, 'description' => 'This is what it does'),
+                'test' => array('type' => 'string', 'minLength' => 2, 'maxLength' => 5),
                 'test2' => array('type' => 'string', 'minLength' => 2, 'maxLength' => 2),
                 'test3' => array('type' => 'integer', 'minimum' => 100),
                 'test4' => array('type' => 'integer', 'maximum' => 10),
@@ -130,10 +153,10 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
                 'test7' => array('type' => 'string', 'pattern' => '/[0-9]+/'),
                 'test8' => array('type' => 'number'),
                 'baz' => array(
-                    'type'     => 'array',
+                    'type' => 'array',
                     'minItems' => 2,
                     'required' => true,
-                    "items"    => array("type" => "string")
+                    "items" => array("type" => "string")
                 )
             )
         ));
@@ -151,7 +174,7 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
         );
 
         $this->assertFalse($this->validator->validate($p, $value));
-        $this->assertEquals(array (
+        $this->assertEquals(array(
             '[foo][bar] is a required string: This is what it does',
             '[foo][baz] must contain 2 or more elements',
             '[foo][baz][0] must be of type string',
@@ -169,9 +192,9 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testHandlesNullValuesInArraysWithDefaults()
     {
         $p = new Parameter(array(
-            'name'       => 'foo',
-            'type'       => 'object',
-            'required'   => true,
+            'name' => 'foo',
+            'type' => 'object',
+            'required' => true,
             'properties' => array(
                 'bar' => array(
                     'type' => 'object',
@@ -190,9 +213,9 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testFailsWhenNullValuesInArraysWithNoDefaults()
     {
         $p = new Parameter(array(
-            'name'       => 'foo',
-            'type'       => 'object',
-            'required'   => true,
+            'name' => 'foo',
+            'type' => 'object',
+            'required' => true,
             'properties' => array(
                 'bar' => array(
                     'type' => 'object',
@@ -234,8 +257,8 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testValidatesFalseAdditionalProperties()
     {
         $param = new Parameter(array(
-            'name'      => 'foo',
-            'type'      => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'properties' => array('bar' => array('type' => 'string')),
             'additionalProperties' => false
         ));
@@ -249,8 +272,8 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testAllowsUndefinedAdditionalProperties()
     {
         $param = new Parameter(array(
-            'name'      => 'foo',
-            'type'      => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'properties' => array('bar' => array('type' => 'string'))
         ));
         $value = array('test' => '123');
@@ -260,8 +283,8 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
     public function testValidatesAdditionalProperties()
     {
         $param = new Parameter(array(
-            'name'      => 'foo',
-            'type'      => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'properties' => array('bar' => array('type' => 'string')),
             'additionalProperties' => array('type' => 'integer')
         ));
@@ -276,7 +299,7 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
             'name' => 'foo',
             'type' => 'object',
             'additionalProperties' => array(
-                'type'  => 'array',
+                'type' => 'array',
                 'items' => array('type' => 'string')
             )
         ));
@@ -299,28 +322,5 @@ class SchemaValidatorTest extends \Guzzle\Tests\GuzzleTestCase
         $value = null;
         $this->assertFalse($this->validator->validate($param, $value));
         $this->assertEquals(array('[test] is a required string or boolean'), $this->validator->getErrors());
-    }
-
-    protected function getComplexParam()
-    {
-        return new Parameter(array(
-            'name'     => 'Foo',
-            'type'     => 'array',
-            'required' => true,
-            'min'      => 1,
-            'items'    => array(
-                'type'       => 'object',
-                'properties' => array(
-                    'Baz' => array(
-                        'type'    => 'string',
-                    ),
-                    'Bar' => array(
-                        'required' => true,
-                        'type'     => 'boolean',
-                        'default'  => true
-                    )
-                )
-            )
-        ));
     }
 }

@@ -9,7 +9,8 @@
 namespace System\Exception;
 
 
-class AccessDeniedException extends Exception {
+class AccessDeniedException extends Exception
+{
 
     public function __construct($message)
     {

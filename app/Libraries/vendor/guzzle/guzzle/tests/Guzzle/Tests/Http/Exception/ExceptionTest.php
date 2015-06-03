@@ -2,10 +2,10 @@
 
 namespace Guzzle\Tests\Http\Exception;
 
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Exception\RequestException;
 use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Http\Exception\RequestException;
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\Response;
 
 class ExceptionTest extends \Guzzle\Tests\GuzzleTestCase
 {

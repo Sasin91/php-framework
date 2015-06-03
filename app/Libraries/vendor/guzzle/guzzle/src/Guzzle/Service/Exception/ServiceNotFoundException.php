@@ -2,4 +2,6 @@
 
 namespace Guzzle\Service\Exception;
 
-class ServiceNotFoundException extends ServiceBuilderException {}
+class ServiceNotFoundException extends ServiceBuilderException
+{
+}

@@ -2,9 +2,8 @@
 
 namespace Guzzle\Tests\Service\Command\LocationVisitor\Response;
 
-use Guzzle\Service\Description\Parameter;
-use Guzzle\Http\Message\Response;
 use Guzzle\Service\Command\LocationVisitor\Response\BodyVisitor as Visitor;
+use Guzzle\Service\Description\Parameter;
 
 /**
  * @covers Guzzle\Service\Command\LocationVisitor\Response\BodyVisitor
@@ -16,6 +15,6 @@ class BodyVisitorTest extends AbstractResponseVisitorTest
         $visitor = new Visitor();
         $param = new Parameter(array('location' => 'body', 'name' => 'foo'));
         $visitor->visit($this->command, $this->response, $param, $this->value);
-        $this->assertEquals('Foo', (string) $this->value['foo']);
+        $this->assertEquals('Foo', (string)$this->value['foo']);
     }
 }

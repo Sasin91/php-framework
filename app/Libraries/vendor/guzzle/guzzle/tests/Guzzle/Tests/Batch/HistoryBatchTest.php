@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Batch;
 
-use Guzzle\Batch\HistoryBatch;
 use Guzzle\Batch\Batch;
+use Guzzle\Batch\HistoryBatch;
 
 /**
  * @covers Guzzle\Batch\HistoryBatch

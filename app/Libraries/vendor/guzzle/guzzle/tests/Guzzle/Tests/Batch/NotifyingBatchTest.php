@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Batch;
 
-use Guzzle\Batch\NotifyingBatch;
 use Guzzle\Batch\Batch;
+use Guzzle\Batch\NotifyingBatch;
 
 /**
  * @covers Guzzle\Batch\NotifyingBatch

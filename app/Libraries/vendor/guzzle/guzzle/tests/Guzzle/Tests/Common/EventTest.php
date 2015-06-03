@@ -9,18 +9,6 @@ use Guzzle\Common\Event;
  */
 class EventTest extends \Guzzle\Tests\GuzzleTestCase
 {
-    /**
-     * @return Event
-     */
-    private function getEvent()
-    {
-        return new Event(array(
-            'test'  => '123',
-            'other' => '456',
-            'event' => 'test.notify'
-        ));
-    }
-
     public function testAllowsParameterInjection()
     {
         $event = new Event(array(
@@ -45,6 +33,18 @@ class EventTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('new', $event['test']);
     }
 
+    /**
+     * @return Event
+     */
+    private function getEvent()
+    {
+        return new Event(array(
+            'test' => '123',
+            'other' => '456',
+            'event' => 'test.notify'
+        ));
+    }
+
     public function testImplementsIteratorAggregate()
     {
         $event = $this->getEvent();
@@ -54,7 +54,7 @@ class EventTest extends \Guzzle\Tests\GuzzleTestCase
     public function testConvertsToArray()
     {
         $this->assertEquals(array(
-            'test'  => '123',
+            'test' => '123',
             'other' => '456',
             'event' => 'test.notify'
         ), $this->getEvent()->toArray());

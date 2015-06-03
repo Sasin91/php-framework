@@ -16,7 +16,7 @@ class SchemaFormatter
      * Format a value by a registered format name
      *
      * @param string $format Registered format used to format the value
-     * @param mixed  $value  Value being formatted
+     * @param mixed $value Value being formatted
      *
      * @return mixed
      */
@@ -50,6 +50,48 @@ class SchemaFormatter
     public static function formatDateTime($value)
     {
         return self::dateFormatter($value, 'Y-m-d\TH:i:s\Z');
+    }
+
+    /**
+     * Perform the actual DateTime formatting
+     *
+     * @param int|string|\DateTime $dateTime Date time value
+     * @param string $format Format of the result
+     *
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    protected static function dateFormatter($dateTime, $format)
+    {
+        if (is_numeric($dateTime)) {
+            return gmdate($format, (int)$dateTime);
+        }
+
+        if (is_string($dateTime)) {
+            $dateTime = new \DateTime($dateTime);
+        }
+
+        if ($dateTime instanceof \DateTime) {
+            return $dateTime->setTimezone(self::getUtcTimeZone())->format($format);
+        }
+
+        throw new InvalidArgumentException('Date/Time values must be either a string, integer, or DateTime object');
+    }
+
+    /**
+     * Get a UTC DateTimeZone object
+     *
+     * @return \DateTimeZone
+     */
+    protected static function getUtcTimeZone()
+    {
+        // @codeCoverageIgnoreStart
+        if (!self::$utcTimeZone) {
+            self::$utcTimeZone = new \DateTimeZone('UTC');
+        }
+        // @codeCoverageIgnoreEnd
+
+        return self::$utcTimeZone;
     }
 
     /**
@@ -89,6 +131,18 @@ class SchemaFormatter
     }
 
     /**
+     * Return a UNIX timestamp in the UTC timezone
+     *
+     * @param string|integer|\DateTime $value Time value
+     *
+     * @return int
+     */
+    public static function formatTimestamp($value)
+    {
+        return (int)self::dateFormatter($value, 'U');
+    }
+
+    /**
      * Formats a boolean value as a string
      *
      * @param string|integer|bool $value Value to convert to a boolean 'true' / 'false' value
@@ -98,59 +152,5 @@ class SchemaFormatter
     public static function formatBooleanAsString($value)
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false';
-    }
-
-    /**
-     * Return a UNIX timestamp in the UTC timezone
-     *
-     * @param string|integer|\DateTime $value Time value
-     *
-     * @return int
-     */
-    public static function formatTimestamp($value)
-    {
-        return (int) self::dateFormatter($value, 'U');
-    }
-
-    /**
-     * Get a UTC DateTimeZone object
-     *
-     * @return \DateTimeZone
-     */
-    protected static function getUtcTimeZone()
-    {
-        // @codeCoverageIgnoreStart
-        if (!self::$utcTimeZone) {
-            self::$utcTimeZone = new \DateTimeZone('UTC');
-        }
-        // @codeCoverageIgnoreEnd
-
-        return self::$utcTimeZone;
-    }
-
-    /**
-     * Perform the actual DateTime formatting
-     *
-     * @param int|string|\DateTime $dateTime Date time value
-     * @param string               $format   Format of the result
-     *
-     * @return string
-     * @throws InvalidArgumentException
-     */
-    protected static function dateFormatter($dateTime, $format)
-    {
-        if (is_numeric($dateTime)) {
-            return gmdate($format, (int) $dateTime);
-        }
-
-        if (is_string($dateTime)) {
-            $dateTime = new \DateTime($dateTime);
-        }
-
-        if ($dateTime instanceof \DateTime) {
-            return $dateTime->setTimezone(self::getUtcTimeZone())->format($format);
-        }
-
-        throw new InvalidArgumentException('Date/Time values must be either a string, integer, or DateTime object');
     }
 }

@@ -33,20 +33,6 @@ class HeaderCollection implements \IteratorAggregate, \Countable, \ArrayAccess, 
     }
 
     /**
-     * Set a header on the collection
-     *
-     * @param HeaderInterface $header Header to add
-     *
-     * @return self
-     */
-    public function add(HeaderInterface $header)
-    {
-        $this->headers[strtolower($header->getName())] = $header;
-
-        return $this;
-    }
-
-    /**
      * Get an array of header objects
      *
      * @return array
@@ -64,6 +50,13 @@ class HeaderCollection implements \IteratorAggregate, \Countable, \ArrayAccess, 
         return $this->offsetGet($key);
     }
 
+    public function offsetGet($offset)
+    {
+        $l = strtolower($offset);
+
+        return isset($this->headers[$l]) ? $this->headers[$l] : null;
+    }
+
     public function count()
     {
         return count($this->headers);
@@ -74,16 +67,23 @@ class HeaderCollection implements \IteratorAggregate, \Countable, \ArrayAccess, 
         return isset($this->headers[strtolower($offset)]);
     }
 
-    public function offsetGet($offset)
-    {
-        $l = strtolower($offset);
-
-        return isset($this->headers[$l]) ? $this->headers[$l] : null;
-    }
-
     public function offsetSet($offset, $value)
     {
         $this->add($value);
+    }
+
+    /**
+     * Set a header on the collection
+     *
+     * @param HeaderInterface $header Header to add
+     *
+     * @return self
+     */
+    public function add(HeaderInterface $header)
+    {
+        $this->headers[strtolower($header->getName())] = $header;
+
+        return $this;
     }
 
     public function offsetUnset($offset)

@@ -5,8 +5,8 @@ namespace Guzzle\Http;
 use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\RuntimeException;
 use Guzzle\Http\QueryAggregator\DuplicateAggregator;
-use Guzzle\Http\QueryAggregator\QueryAggregatorInterface;
 use Guzzle\Http\QueryAggregator\PhpAggregator;
+use Guzzle\Http\QueryAggregator\QueryAggregatorInterface;
 
 /**
  * Query string object to handle managing query string parameters and aggregating those parameters together as a string.
@@ -238,7 +238,7 @@ class QueryString extends Collection
         } elseif ($this->urlEncode == self::FORM_URLENCODED) {
             return urlencode($value);
         } else {
-            return (string) $value;
+            return (string)$value;
         }
     }
 
@@ -275,8 +275,8 @@ class QueryString extends Collection
      * Converts a key value pair that can contain strings, nulls, false, or arrays
      * into a single string.
      *
-     * @param string $name  Name of the field
-     * @param mixed  $value Value of the field
+     * @param string $name Name of the field
+     * @param mixed $value Value of the field
      * @return string
      */
     private function convertKvp($name, $value)

@@ -61,12 +61,12 @@ class StreamTest extends \Guzzle\Tests\GuzzleTestCase
         $handle = fopen('php://temp', 'w+');
         fwrite($handle, 'data');
         $stream = new Stream($handle);
-        $this->assertEquals('data', (string) $stream);
+        $this->assertEquals('data', (string)$stream);
         unset($stream);
 
         $handle = fopen(__DIR__ . '/../TestData/FileBody.txt', 'r');
         $stream = new Stream($handle);
-        $this->assertEquals('', (string) $stream);
+        $this->assertEquals('', (string)$stream);
         unset($stream);
     }
 
@@ -76,7 +76,7 @@ class StreamTest extends \Guzzle\Tests\GuzzleTestCase
         $stream = new Stream($handle);
         $stream->write('foobazbar');
         $stream->seek(3);
-        $this->assertEquals('foobazbar', (string) $stream);
+        $this->assertEquals('foobazbar', (string)$stream);
         $this->assertEquals(3, $stream->ftell());
     }
 

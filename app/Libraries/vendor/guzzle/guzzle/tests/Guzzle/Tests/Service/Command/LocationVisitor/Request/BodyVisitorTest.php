@@ -15,7 +15,7 @@ class BodyVisitorTest extends AbstractVisitorTestCase
         $visitor = new Visitor();
         $param = $this->getNestedCommand('body')->getParam('foo')->setSentAs('Foo');
         $visitor->visit($this->command, $this->request, $param, '123');
-        $this->assertEquals('123', (string) $this->request->getBody());
+        $this->assertEquals('123', (string)$this->request->getBody());
         $this->assertNull($this->request->getHeader('Expect'));
     }
 
@@ -25,7 +25,7 @@ class BodyVisitorTest extends AbstractVisitorTestCase
         $param = $this->getNestedCommand('body')->getParam('foo')->setSentAs('Foo');
         $param->setData('expect_header', true);
         $visitor->visit($this->command, $this->request, $param, '123');
-        $this->assertEquals('123', (string) $this->request->getBody());
+        $this->assertEquals('123', (string)$this->request->getBody());
     }
 
     public function testCanDisableExpectHeader()
@@ -48,7 +48,7 @@ class BodyVisitorTest extends AbstractVisitorTestCase
         // Now check when the body is greater than the cutoff
         $param->setData('expect_header', 2);
         $visitor->visit($this->command, $this->request, $param, '123');
-        $this->assertEquals('100-Continue', (string) $this->request->getHeader('Expect'));
+        $this->assertEquals('100-Continue', (string)$this->request->getHeader('Expect'));
     }
 
     public function testAddsContentEncodingWhenSetOnBody()
@@ -58,6 +58,6 @@ class BodyVisitorTest extends AbstractVisitorTestCase
         $body = EntityBody::factory('foo');
         $body->compress();
         $visitor->visit($this->command, $this->request, $param, $body);
-        $this->assertEquals('gzip', (string) $this->request->getHeader('Content-Encoding'));
+        $this->assertEquals('gzip', (string)$this->request->getHeader('Content-Encoding'));
     }
 }

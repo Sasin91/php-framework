@@ -9,7 +9,8 @@
 namespace System\Interfaces;
 
 
-interface ActiveRecord {
+interface ActiveRecord
+{
 
     public function hasMany(array $params = array());
 

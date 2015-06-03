@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Batch;
 
-use Guzzle\Batch\ExceptionBufferingBatch;
 use Guzzle\Batch\Batch;
 use Guzzle\Batch\BatchSizeDivisor;
+use Guzzle\Batch\ExceptionBufferingBatch;
 
 /**
  * @covers Guzzle\Batch\ExceptionBufferingBatch

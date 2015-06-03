@@ -1,0 +1,3 @@
+/app/Libraries/vendor/*
+/app/Storage/Logs/*
+/app/Cache/*

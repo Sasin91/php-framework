@@ -3,10 +3,10 @@
 namespace Guzzle\Tests\Service\Command\LocationVisitor\Request;
 
 use Guzzle\Http\Message\EntityEnclosingRequest;
+use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Service\Description\Operation;
 use Guzzle\Service\Description\Parameter;
 use Guzzle\Service\Description\SchemaValidator;
-use Guzzle\Service\Command\OperationCommand;
 use Guzzle\Tests\Service\Mock\Command\MockCommand;
 use Guzzle\Tests\Service\Mock\MockClient;
 
@@ -38,23 +38,23 @@ abstract class AbstractVisitorTestCase extends \Guzzle\Tests\GuzzleTestCase
             'httpMethod' => 'POST',
             'parameters' => array(
                 'foo' => new Parameter(array(
-                    'type'         => 'object',
-                    'location'     => $location,
-                    'sentAs'       => 'Foo',
-                    'required'     => true,
-                    'properties'   => array(
+                    'type' => 'object',
+                    'location' => $location,
+                    'sentAs' => 'Foo',
+                    'required' => true,
+                    'properties' => array(
                         'test' => array(
-                            'type'      => 'object',
-                            'required'  => true,
+                            'type' => 'object',
+                            'required' => true,
                             'properties' => array(
                                 'baz' => array(
-                                    'type'    => 'boolean',
+                                    'type' => 'boolean',
                                     'default' => true
                                 ),
                                 'jenga' => array(
-                                    'type'    => 'string',
+                                    'type' => 'string',
                                     'default' => 'hello',
-                                    'sentAs'  => 'Jenga_Yall!',
+                                    'sentAs' => 'Jenga_Yall!',
                                     'filters' => array('strtoupper')
                                 )
                             )
@@ -68,12 +68,12 @@ abstract class AbstractVisitorTestCase extends \Guzzle\Tests\GuzzleTestCase
                     )
                 )),
                 'arr' => new Parameter(array(
-                    'type'         => 'array',
-                    'location'     => $location,
+                    'type' => 'array',
+                    'location' => $location,
                     'items' => array(
                         'type' => 'string',
                         'filters' => array('strtoupper')
-                     )
+                    )
                 )),
             )
         ));

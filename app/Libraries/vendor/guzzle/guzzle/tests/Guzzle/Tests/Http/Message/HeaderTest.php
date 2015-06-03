@@ -11,8 +11,8 @@ use Guzzle\Http\Message\Response;
 class HeaderTest extends \Guzzle\Tests\GuzzleTestCase
 {
     protected $test = array(
-        'zoo'   => array('foo', 'Foo'),
-        'Zoo'   => 'bar',
+        'zoo' => array('foo', 'Foo'),
+        'Zoo' => 'bar',
     );
 
     public function testStoresHeaderName()
@@ -24,9 +24,9 @@ class HeaderTest extends \Guzzle\Tests\GuzzleTestCase
     public function testConvertsToString()
     {
         $i = new Header('Zoo', $this->test);
-        $this->assertEquals('foo, Foo, bar', (string) $i);
+        $this->assertEquals('foo, Foo, bar', (string)$i);
         $i->setGlue(';');
-        $this->assertEquals('foo; Foo; bar', (string) $i);
+        $this->assertEquals('foo; Foo; bar', (string)$i);
     }
 
     public function testNormalizesGluedHeaders()
@@ -69,22 +69,22 @@ class HeaderTest extends \Guzzle\Tests\GuzzleTestCase
     {
         // Allows 0
         $h = new Header('Foo', 0, ';');
-        $this->assertEquals('0', (string) $h);
+        $this->assertEquals('0', (string)$h);
         $this->assertEquals(1, count($h));
         $this->assertEquals(';', $h->getGlue());
 
         // Does not add a null header by default
         $h = new Header('Foo');
-        $this->assertEquals('', (string) $h);
+        $this->assertEquals('', (string)$h);
         $this->assertEquals(0, count($h));
 
         // Allows null array for a single null header
         $h = new Header('Foo', array(null));
-        $this->assertEquals('', (string) $h);
+        $this->assertEquals('', (string)$h);
 
         // Allows empty string
         $h = new Header('Foo', '');
-        $this->assertEquals('', (string) $h);
+        $this->assertEquals('', (string)$h);
         $this->assertEquals(1, count($h));
         $this->assertEquals(1, count($h->normalize()->toArray()));
     }

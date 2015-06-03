@@ -10,6 +10,13 @@ use Guzzle\Batch\Exception\BatchTransferException;
  */
 class BatchTest extends \Guzzle\Tests\GuzzleTestCase
 {
+    public function testAddsItemsToQueue()
+    {
+        $batch = new Batch($this->getMockTransfer(), $this->getMockDivisor());
+        $this->assertSame($batch, $batch->add('foo'));
+        $this->assertEquals(1, count($batch));
+    }
+
     private function getMockTransfer()
     {
         return $this->getMock('Guzzle\Batch\BatchTransferInterface');
@@ -18,13 +25,6 @@ class BatchTest extends \Guzzle\Tests\GuzzleTestCase
     private function getMockDivisor()
     {
         return $this->getMock('Guzzle\Batch\BatchDivisorInterface');
-    }
-
-    public function testAddsItemsToQueue()
-    {
-        $batch = new Batch($this->getMockTransfer(), $this->getMockDivisor());
-        $this->assertSame($batch, $batch->add('foo'));
-        $this->assertEquals(1, count($batch));
     }
 
     public function testFlushReturnsItems()

@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Service\Command;
 
-use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 use Guzzle\Service\Command\LocationVisitor\Request\JsonVisitor as JsonRequestVisitor;
 use Guzzle\Service\Command\LocationVisitor\Response\JsonVisitor as JsonResponseVisitor;
+use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 
 /**
  * @covers Guzzle\Service\Command\LocationVisitor\VisitorFlyweight

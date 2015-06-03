@@ -7,10 +7,10 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Symfony\\Component\\EventDispatcher\\' => array($vendorDir . '/symfony/event-dispatcher'),
+    'ParsedownExtra' => array($vendorDir . '/erusev/parsedown-extra'),
+    'Parsedown' => array($vendorDir . '/erusev/parsedown'),
     'MaxMind' => array($vendorDir . '/maxmind-db/reader/src'),
     'JsonSerializable' => array($vendorDir . '/geoip2/geoip2/compat'),
-    'IDS\\Tests' => array($vendorDir . '/phpids/phpids/tests'),
-    'IDS' => array($vendorDir . '/phpids/phpids/lib'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
     'Guzzle\\Tests' => array($vendorDir . '/guzzle/guzzle/tests'),
     'Guzzle' => array($vendorDir . '/guzzle/guzzle/src'),

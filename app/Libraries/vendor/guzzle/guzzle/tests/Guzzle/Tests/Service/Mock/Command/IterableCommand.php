@@ -9,7 +9,7 @@ class IterableCommand extends MockCommand
     protected function createOperation()
     {
         return new Operation(array(
-            'name'       => 'iterable_command',
+            'name' => 'iterable_command',
             'parameters' => array(
                 'page_size' => array('type' => 'integer'),
                 'next_token' => array('type' => 'string')

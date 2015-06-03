@@ -15,7 +15,7 @@ class HeaderFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $h = $f->createHeader('Foo', 'Bar');
         $this->assertInstanceOf('Guzzle\Http\Message\Header', $h);
         $this->assertEquals('Foo', $h->getName());
-        $this->assertEquals('Bar', (string) $h);
+        $this->assertEquals('Bar', (string)$h);
     }
 
     public function testCreatesSpecificHeaders()
@@ -24,6 +24,6 @@ class HeaderFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $h = $f->createHeader('Link', '<http>; rel="test"');
         $this->assertInstanceOf('Guzzle\Http\Message\Header\Link', $h);
         $this->assertEquals('Link', $h->getName());
-        $this->assertEquals('<http>; rel="test"', (string) $h);
+        $this->assertEquals('<http>; rel="test"', (string)$h);
     }
 }

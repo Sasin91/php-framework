@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Service\Command;
 
-use Guzzle\Plugin\Mock\MockPlugin;
 use Guzzle\Http\EntityBody;
 use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Mock\MockPlugin;
 use Guzzle\Service\Client;
 use Guzzle\Service\Command\AbstractCommand;
 use Guzzle\Service\Description\Operation;
@@ -109,7 +109,7 @@ class CommandTest extends AbstractCommandTest
         $this->assertInstanceOf('Guzzle\\Http\\Message\\Request', $command->getRequest());
         // Make sure that the result was automatically set to a SimpleXMLElement
         $this->assertInstanceOf('SimpleXMLElement', $command->getResult());
-        $this->assertEquals('123', (string) $command->getResult()->data);
+        $this->assertEquals('123', (string)$command->getResult()->data);
     }
 
     public function testConvertsJsonResponsesToArray()
@@ -118,7 +118,7 @@ class CommandTest extends AbstractCommandTest
         $this->setMockResponse($client, array(
             new \Guzzle\Http\Message\Response(200, array(
                 'Content-Type' => 'application/json'
-                ), '{ "key": "Hi!" }'
+            ), '{ "key": "Hi!" }'
             )
         ));
         $command = new MockCommand();
@@ -146,7 +146,7 @@ class CommandTest extends AbstractCommandTest
         $this->setMockResponse($client, array(
             new \Guzzle\Http\Message\Response(200, array(
                 'Content-Type' => 'application/json'
-                ), $json
+            ), $json
             )
         ));
         $command = new MockCommand();
@@ -195,7 +195,7 @@ class CommandTest extends AbstractCommandTest
         $this->assertEquals('123', $command->getRequestHeaders()->get('test'));
 
         $command->setClient($this->getClient())->prepare();
-        $this->assertEquals('123', (string) $command->getRequest()->getHeader('test'));
+        $this->assertEquals('123', (string)$command->getRequest()->getHeader('test'));
     }
 
     public function testCommandsAllowsCustomRequestHeadersAsArray()
@@ -208,15 +208,15 @@ class CommandTest extends AbstractCommandTest
     private function getOperation()
     {
         return new Operation(array(
-            'name'       => 'foobar',
+            'name' => 'foobar',
             'httpMethod' => 'POST',
-            'class'      => 'Guzzle\\Tests\\Service\\Mock\\Command\\MockCommand',
+            'class' => 'Guzzle\\Tests\\Service\\Mock\\Command\\MockCommand',
             'parameters' => array(
                 'test' => array(
                     'default' => '123',
-                    'type'    => 'string'
+                    'type' => 'string'
                 )
-        )));
+            )));
     }
 
     public function testCommandsUsesOperation()
@@ -247,7 +247,7 @@ class CommandTest extends AbstractCommandTest
         $that = $this;
         $called = 0;
 
-        $testFunction = function($command) use (&$called, $that) {
+        $testFunction = function ($command) use (&$called, $that) {
             $called++;
             $that->assertInstanceOf('Guzzle\Service\Command\CommandInterface', $command);
         };
@@ -410,7 +410,7 @@ class CommandTest extends AbstractCommandTest
         $client = new Client();
         $client->setDescription($description);
         $command = $client->getCommand('foo', array(
-            'abc'             => false,
+            'abc' => false,
             'command.headers' => array('foo' => 'bar')
         ));
         $command->prepare();

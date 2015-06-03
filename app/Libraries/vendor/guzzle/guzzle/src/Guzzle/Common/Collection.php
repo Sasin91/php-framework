@@ -24,7 +24,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
     /**
      * Create a new collection from an array, validate the keys, and add default values where missing
      *
-     * @param array $config   Configuration values to apply.
+     * @param array $config Configuration values to apply.
      * @param array $defaults Default parameters
      * @param array $required Required parameter names
      *
@@ -50,11 +50,6 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
     public function getIterator()
     {
         return new \ArrayIterator($this->data);
-    }
-
-    public function toArray()
-    {
-        return $this->data;
     }
 
     /**
@@ -96,36 +91,14 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
     /**
      * Set a key value pair
      *
-     * @param string $key   Key to set
-     * @param mixed  $value Value to set
+     * @param string $key Key to set
+     * @param mixed $value Value to set
      *
      * @return Collection Returns a reference to the object
      */
     public function set($key, $value)
     {
         $this->data[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Add a value to a key.  If a key of the same name has already been added, the key value will be converted into an
-     * array and the new value will be pushed to the end of the array.
-     *
-     * @param string $key   Key to add
-     * @param mixed  $value Value to add to the key
-     *
-     * @return Collection Returns a reference to the object.
-     */
-    public function add($key, $value)
-    {
-        if (!array_key_exists($key, $this->data)) {
-            $this->data[$key] = $value;
-        } elseif (is_array($this->data[$key])) {
-            $this->data[$key][] = $value;
-        } else {
-            $this->data[$key] = array($this->data[$key], $value);
-        }
 
         return $this;
     }
@@ -227,6 +200,28 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
     }
 
     /**
+     * Add a value to a key.  If a key of the same name has already been added, the key value will be converted into an
+     * array and the new value will be pushed to the end of the array.
+     *
+     * @param string $key Key to add
+     * @param mixed $value Value to add to the key
+     *
+     * @return Collection Returns a reference to the object.
+     */
+    public function add($key, $value)
+    {
+        if (!array_key_exists($key, $this->data)) {
+            $this->data[$key] = $value;
+        } elseif (is_array($this->data[$key])) {
+            $this->data[$key][] = $value;
+        } else {
+            $this->data[$key] = array($this->data[$key], $value);
+        }
+
+        return $this;
+    }
+
+    /**
      * Over write key value pairs in this collection with all of the data from an array or collection.
      *
      * @param array|\Traversable $data Values to override over this config
@@ -248,14 +243,19 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
         return $this;
     }
 
+    public function toArray()
+    {
+        return $this->data;
+    }
+
     /**
      * Returns a Collection containing all the elements of the collection after applying the callback function to each
      * one. The Closure should accept three parameters: (string) $key, (string) $value, (array) $context and return a
      * modified value
      *
      * @param \Closure $closure Closure to apply
-     * @param array    $context Context to pass to the closure
-     * @param bool     $static  Set to TRUE to use the same class as the return rather than returning a Collection
+     * @param array $context Context to pass to the closure
+     * @param bool $static Set to TRUE to use the same class as the return rather than returning a Collection
      *
      * @return Collection
      */
@@ -275,7 +275,7 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
      * parameters: (string) $key, (string) $value and return Boolean TRUE or FALSE for each value.
      *
      * @param \Closure $closure Closure evaluation function
-     * @param bool     $static  Set to TRUE to use the same class as the return rather than returning a Collection
+     * @param bool $static Set to TRUE to use the same class as the return rather than returning a Collection
      *
      * @return Collection
      */
@@ -314,8 +314,8 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
     /**
      * Set a value into a nested array key. Keys will be created as needed to set the value.
      *
-     * @param string $path  Path to set
-     * @param mixed  $value Value to set at the key
+     * @param string $path Path to set
+     * @param mixed $value Value to set at the key
      *
      * @return self
      * @throws RuntimeException when trying to setPath using a nested path that travels through a scalar value
@@ -345,9 +345,9 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
      * Allows for wildcard searches which recursively combine matches up to the level at which the wildcard occurs. This
      * can be useful for accepting any key of a sub-array and combining matching keys from each diverging path.
      *
-     * @param string $path      Path to traverse and retrieve a value from
+     * @param string $path Path to traverse and retrieve a value from
      * @param string $separator Character used to add depth to the search
-     * @param mixed  $data      Optional data to descend into (used when wildcards are encountered)
+     * @param mixed $data Optional data to descend into (used when wildcards are encountered)
      *
      * @return mixed|null
      */
@@ -370,9 +370,9 @@ class Collection implements \ArrayAccess, \IteratorAggregate, \Countable, ToArra
                 $result = array();
                 foreach ($data as $value) {
                     if (!$path) {
-                        $result = array_merge_recursive($result, (array) $value);
+                        $result = array_merge_recursive($result, (array)$value);
                     } elseif (null !== ($test = $this->getPath($path, $separator, $value))) {
-                        $result = array_merge_recursive($result, (array) $test);
+                        $result = array_merge_recursive($result, (array)$test);
                     }
                 }
                 return $result;

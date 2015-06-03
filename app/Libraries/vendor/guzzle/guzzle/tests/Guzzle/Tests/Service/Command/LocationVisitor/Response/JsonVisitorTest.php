@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Service\Command\LocationVisitor\Response;
 
-use Guzzle\Service\Description\Parameter;
 use Guzzle\Http\Message\Response;
 use Guzzle\Service\Command\LocationVisitor\Response\JsonVisitor as Visitor;
+use Guzzle\Service\Description\Parameter;
 
 /**
  * @covers Guzzle\Service\Command\LocationVisitor\Response\JsonVisitor
@@ -33,7 +33,7 @@ class JsonVisitorTest extends AbstractResponseVisitorTest
             'type' => 'array',
             'items' => array(
                 'filters' => 'strtoupper',
-                'type'    => 'string'
+                'type' => 'string'
             )
         ));
         $this->value = array('foo' => array('a', 'b', 'c'));
@@ -45,9 +45,9 @@ class JsonVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'   => 'foo',
+            'name' => 'foo',
             'sentAs' => 'Baz',
-            'type'   => 'string',
+            'type' => 'string',
         ));
         $this->value = array('Baz' => 'test');
         $visitor->visit($this->command, $this->response, $param, $this->value);
@@ -58,12 +58,12 @@ class JsonVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'          => 'foo',
-            'type'          => 'object',
-            'properties'    => array(
+            'name' => 'foo',
+            'type' => 'object',
+            'properties' => array(
                 'bar' => array(
-                    'name'      => 'bar',
-                    'sentAs'    => 'baz',
+                    'name' => 'bar',
+                    'sentAs' => 'baz',
                 ),
             ),
         ));
@@ -96,10 +96,10 @@ class JsonVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'                 => 'foo',
-            'type'                 => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'additionalProperties' => false,
-            'properties'           => array(
+            'properties' => array(
                 'bar' => array(
                     'type' => 'string',
                     'name' => 'bar',
@@ -119,12 +119,12 @@ class JsonVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'                 => 'foo',
-            'type'                 => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'additionalProperties' => false,
-            'properties'           => array(
+            'properties' => array(
                 'bar' => array(
-                    'name'   => 'bar',
+                    'name' => 'bar',
                     'sentAs' => 'baz',
                 ),
             ),
@@ -138,8 +138,8 @@ class JsonVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'                 => 'foo',
-            'type'                 => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'additionalProperties' => array(
                 'type' => 'object',
                 'properties' => array(

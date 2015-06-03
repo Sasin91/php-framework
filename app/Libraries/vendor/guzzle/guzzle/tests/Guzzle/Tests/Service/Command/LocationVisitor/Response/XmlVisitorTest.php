@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Service\Command\LocationVisitor\Response;
 
-use Guzzle\Service\Description\Parameter;
 use Guzzle\Http\Message\Response;
 use Guzzle\Service\Command\LocationVisitor\Response\XmlVisitor as Visitor;
+use Guzzle\Service\Description\Parameter;
 
 /**
  * @covers Guzzle\Service\Command\LocationVisitor\Response\XmlVisitor
@@ -60,8 +60,8 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
         $visitor = new Visitor();
         $param = new Parameter(array(
             'location' => 'xml',
-            'name'     => 'foo',
-            'sentAs'   => 'Bar'
+            'name' => 'foo',
+            'sentAs' => 'Bar'
         ));
         $value = array('Bar' => 'test');
         $visitor->visit($this->command, $this->response, $param, $value);
@@ -74,10 +74,10 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
         $visitor = new Visitor();
         $param = new Parameter(array(
             'location' => 'xml',
-            'name'     => 'foo',
-            'sentAs'   => 'Foo',
-            'type'     => 'array',
-            'items'    => array(
+            'name' => 'foo',
+            'sentAs' => 'Foo',
+            'type' => 'array',
+            'items' => array(
                 'type' => 'object',
                 'properties' => array(
                     'Bar' => array('type' => 'string'),
@@ -92,7 +92,7 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
         $visitor->visit($this->command, $this->response, $param, $value);
         $this->assertEquals(array(
             'foo' => array(
-                array (
+                array(
                     'Bar' => '1',
                     'Baz' => '2'
                 )
@@ -105,9 +105,9 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
         $visitor = new Visitor();
         $param = new Parameter(array(
             'location' => 'xml',
-            'name'     => 'foo',
-            'type'     => 'array',
-            'items'    => array('type' => 'string')
+            'name' => 'foo',
+            'type' => 'array',
+            'items' => array('type' => 'string')
         ));
 
         $value = array('foo' => array('bar', 'baz'));
@@ -123,9 +123,9 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
     {
         $param = new Parameter(array(
             'location' => 'xml',
-            'name'     => 'Items',
-            'type'     => 'array',
-            'items'    => array(
+            'name' => 'Items',
+            'type' => 'array',
+            'items' => array(
                 'type' => 'object',
                 'name' => 'Item',
                 'properties' => array(
@@ -169,21 +169,21 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'     => 'TerminatingInstances',
-            'type'     => 'array',
+            'name' => 'TerminatingInstances',
+            'type' => 'array',
             'location' => 'xml',
-            'sentAs'   => 'instancesSet',
-            'items'    => array(
+            'sentAs' => 'instancesSet',
+            'items' => array(
                 'name' => 'item',
                 'type' => 'object',
                 'sentAs' => 'item',
                 'properties' => array(
                     'InstanceId' => array(
-                        'type'   => 'string',
+                        'type' => 'string',
                         'sentAs' => 'instanceId',
                     ),
                     'CurrentState' => array(
-                        'type'   => 'object',
+                        'type' => 'object',
                         'sentAs' => 'currentState',
                         'properties' => array(
                             'Code' => array(
@@ -197,7 +197,7 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
                         ),
                     ),
                     'PreviousState' => array(
-                        'type'   => 'object',
+                        'type' => 'object',
                         'sentAs' => 'previousState',
                         'properties' => array(
                             'Code' => array(
@@ -215,8 +215,8 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
         ));
 
         $value = array(
-            'instancesSet' => array (
-                'item' => array (
+            'instancesSet' => array(
+                'item' => array(
                     'instanceId' => 'i-3ea74257',
                     'currentState' => array(
                         'code' => '32',
@@ -253,51 +253,51 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'     => 'RunningQueues',
-            'type'     => 'array',
+            'name' => 'RunningQueues',
+            'type' => 'array',
             'location' => 'xml',
-            'items'    => array(
+            'items' => array(
                 'type' => 'object',
                 'sentAs' => 'item',
                 'properties' => array(
                     'QueueId' => array(
-                        'type'   => 'string',
+                        'type' => 'string',
                         'sentAs' => 'queue_id',
-                        'data'   => array(
+                        'data' => array(
                             'xmlAttribute' => true,
                         ),
                     ),
                     'CurrentState' => array(
-                        'type'       => 'object',
+                        'type' => 'object',
                         'properties' => array(
                             'Code' => array(
-                                'type'   => 'numeric',
+                                'type' => 'numeric',
                                 'sentAs' => 'code',
-                                'data'   => array(
+                                'data' => array(
                                     'xmlAttribute' => true,
                                 ),
                             ),
                             'Name' => array(
                                 'sentAs' => 'name',
-                                'data'   => array(
+                                'data' => array(
                                     'xmlAttribute' => true,
                                 ),
                             ),
                         ),
                     ),
                     'PreviousState' => array(
-                        'type'       => 'object',
+                        'type' => 'object',
                         'properties' => array(
                             'Code' => array(
-                                'type'   => 'numeric',
+                                'type' => 'numeric',
                                 'sentAs' => 'code',
-                                'data'   => array(
+                                'data' => array(
                                     'xmlAttribute' => true,
                                 ),
                             ),
                             'Name' => array(
                                 'sentAs' => 'name',
-                                'data'   => array(
+                                'data' => array(
                                     'xmlAttribute' => true,
                                 ),
                             ),
@@ -332,18 +332,18 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'     => 'Foo',
-            'type'     => 'array',
+            'name' => 'Foo',
+            'type' => 'array',
             'location' => 'xml',
             'items' => array(
                 'type' => 'object',
                 'properties' => array(
                     'Baz' => array('type' => 'array'),
                     'Bar' => array(
-                        'type'   => 'object',
+                        'type' => 'object',
                         'properties' => array(
                             'Baz' => array('type' => 'array'),
-                         )
+                        )
                     )
                 )
             )
@@ -375,10 +375,10 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'                 => 'foo',
-            'type'                 => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'additionalProperties' => false,
-            'properties'           => array(
+            'properties' => array(
                 'bar' => array(
                     'type' => 'string',
                     'name' => 'bar',
@@ -398,12 +398,12 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'                 => 'foo',
-            'type'                 => 'object',
+            'name' => 'foo',
+            'type' => 'object',
             'additionalProperties' => false,
-            'properties'           => array(
+            'properties' => array(
                 'bar' => array(
-                    'name'   => 'bar',
+                    'name' => 'bar',
                     'sentAs' => 'baz',
                 ),
             ),
@@ -417,9 +417,9 @@ class XmlVisitorTest extends AbstractResponseVisitorTest
     {
         $visitor = new Visitor();
         $param = new Parameter(array(
-            'name'                 => 'foo',
-            'type'                 => 'object',
-            'properties'           => array(
+            'name' => 'foo',
+            'type' => 'object',
+            'properties' => array(
                 'bar' => array('type' => 'string')
             ),
         ));

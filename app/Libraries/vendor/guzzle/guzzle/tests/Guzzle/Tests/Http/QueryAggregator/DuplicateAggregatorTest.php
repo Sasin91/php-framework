@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Http;
 
-use Guzzle\Http\QueryString;
 use Guzzle\Http\QueryAggregator\DuplicateAggregator as Ag;
+use Guzzle\Http\QueryString;
 
 class DuplicateAggregatorTest extends \Guzzle\Tests\GuzzleTestCase
 {

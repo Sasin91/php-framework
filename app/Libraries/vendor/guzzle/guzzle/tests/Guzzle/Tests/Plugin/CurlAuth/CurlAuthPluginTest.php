@@ -3,8 +3,8 @@
 namespace Guzzle\Tests\Plugin\CurlAuth;
 
 use Guzzle\Common\Version;
-use Guzzle\Plugin\CurlAuth\CurlAuthPlugin;
 use Guzzle\Http\Client;
+use Guzzle\Plugin\CurlAuth\CurlAuthPlugin;
 
 /**
  * @covers Guzzle\Plugin\CurlAuth\CurlAuthPlugin

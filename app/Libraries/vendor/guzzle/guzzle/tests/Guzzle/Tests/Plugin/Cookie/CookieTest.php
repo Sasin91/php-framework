@@ -19,7 +19,7 @@ class CookieTest extends \Guzzle\Tests\GuzzleTestCase
     public function testConvertsDateTimeMaxAgeToUnixTimestamp()
     {
         $cookie = new Cookie(array(
-           'expires' => 'November 20, 1984'
+            'expires' => 'November 20, 1984'
         ));
         $this->assertTrue(is_numeric($cookie->getExpires()));
     }
@@ -37,20 +37,20 @@ class CookieTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $t = time();
         $data = array(
-            'name'        => 'foo',
-            'value'       => 'baz',
-            'path'        => '/bar',
-            'domain'      => 'baz.com',
-            'expires'     => $t,
-            'max_age'     => 100,
-            'comment'     => 'Hi',
+            'name' => 'foo',
+            'value' => 'baz',
+            'path' => '/bar',
+            'domain' => 'baz.com',
+            'expires' => $t,
+            'max_age' => 100,
+            'comment' => 'Hi',
             'comment_url' => 'foo.com',
-            'port'        => array(1, 2),
-            'version'     => 2,
-            'secure'      => true,
-            'discard'     => true,
-            'http_only'   => true,
-            'data'        => array(
+            'port' => array(1, 2),
+            'version' => 2,
+            'secure' => true,
+            'discard' => true,
+            'http_only' => true,
+            'data' => array(
                 'foo' => 'baz',
                 'bar' => 'bam'
             )
@@ -202,8 +202,8 @@ class CookieTest extends \Guzzle\Tests\GuzzleTestCase
     public function testValidatesCookies($name, $value, $domain, $result)
     {
         $cookie = new Cookie(array(
-            'name'   => $name,
-            'value'  => $value,
+            'name' => $name,
+            'value' => $value,
             'domain' => $domain
         ));
         $this->assertSame($result, $cookie->validate());

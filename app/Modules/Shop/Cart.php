@@ -1,19 +1,19 @@
 <?php
-namespace Core\Application\Cart;
+namespace Modules\Shop;
 
 
-use Core\app;
-use Toolbox\ArrayTools;
+use System\Authentication\Auth;
 use System\Authentication\Session;
 use System\Exception\CartException;
-use System\Models\Auth;
+use Toolbox\ArrayTools;
 
 /**
  * Please do note the use of non-default calls that are items in my framework.
  * Class Cart
- * @package Core\Application\Cart
+ * @package Modules\Shop
  */
-class Cart implements \Countable {
+class Cart implements \Countable
+{
 
     /**
      * store the items.
@@ -37,7 +37,8 @@ class Cart implements \Countable {
      * Indicates if cart is empty.
      * @return bool
      */
-    public function isEmpty() {
+    public function isEmpty()
+    {
         return (empty($this->items));
     }
 
@@ -46,7 +47,9 @@ class Cart implements \Countable {
         return count($this->items);
     }
 
-    public function index(){}
+    public function index()
+    {
+    }
 
     /**
      * Add item(s) to cart.
@@ -56,10 +59,10 @@ class Cart implements \Countable {
      */
     public function add(Store $store, array $items = array())
     {
-        if(!$store instanceof Store) { throw new CartException('Invalid class given for Model.'); } // Fix for security issue where imposing clone class was injected.
+        if (!$store instanceof Store) {
+            throw new CartException('Invalid class given for Model.');
+        } // Fix for security issue where imposing clone class was injected.
         $items = ArrayTools::sanitize($items); // Sanitize the array.
-        array_shift($items[1]);
-        array_shift($items[1]);
         $auth = Auth::what('user'); // Get the Auth object for user.
         /**
          * using session for cart instead of a dedicated Reflected class comes with a *slight* overhead.
@@ -68,19 +71,17 @@ class Cart implements \Countable {
          * shorthand for verifying that user has session and extracting mail if so.
          */
         $userMail = $auth->has('authenticated')->session() ? $auth->get('email')->session() : null;
-        if(is_null($userMail))
-        {
-            return app::redirect('users/authenticate');
+        if (is_null($userMail)) {
+            return \app::redirect('users/authenticate');
         }
 
         $cart = Session::get('user')['cart']; // get the cart or return empty.
-        foreach ($items[1] as $key => $value) { // loop the array of items.
+        foreach ($items as $key => $value) { // loop the array of items.
             $item = $store->getItem($value);
-
-            if (ArrayTools::existInObjectArray($item->label, $cart[$value])) { // Verify the existence of every item, if true, add +1 else create new.
-                $this->update($store, $item, $cart[$value]->qty+1);
+            if (ArrayTools::existInObjectArray($item->label, $cart[$value])) { // Verify the existence of every item, if true, add +1 else create new
+                $this->update($store, $item, $cart[$value]->qty + 1);
             } else {
-                if(!empty($item)) {
+                if (!empty($item)) {
                     $item->qty = 1;
                     Session::set('user', array('cart' => array($item->label => $item))); // create the cart in Session, using direct session class call to reduce a little overhead.
                     $this->ids[] = $item->id; // Add the id to Ids[], for Iteration.
@@ -103,9 +104,8 @@ class Cart implements \Countable {
         // Delete or update accordingly
         if ($qty === 0) {
             $this->remove($model, $item);
-        } elseif ( ($qty > 0) && ($qty != $item->qty)) {
-            if(Session::get('user')['cart'][$item->label]->id === $id)
-            {
+        } elseif (($qty > 0) && ($qty != $item->qty)) {
+            if (Session::get('user')['cart'][$item->label]->id === $id) {
                 $item->qty = $qty;
                 Session::set('user', array('cart' => array($item->label => $item)));
             }
@@ -120,17 +120,15 @@ class Cart implements \Countable {
     public function remove(Store $model, $item)
     {
 
-        $item = array_pop($item[1]);
+        $item = array_pop($item);
         $cart = Session::get('user')['cart'];
         // Remove it:
-        if(is_object($item))
-        {
+        if (is_object($item)) {
             $presence = $cart->$item->label;
         } else {
             $presence = $cart[$item];
         }
-        if(!empty($presence))
-        {
+        if (!empty($presence)) {
             Session::remove('user', array('cart' => array($item)));
 
             // Remove the stored id, too:
@@ -153,26 +151,27 @@ class Cart implements \Countable {
     private $auth;
     private $success = array();
     private $arguments = array();
+
     public function checkout(Store $store, $token, $arguments)
     {
         $this->auth = Auth::what('user');
-        if(!empty($token[0]) && !empty($this->auth->get('token')->session())) { // Not completely optimal..
+        if (!empty($token[0]) && !empty($this->auth->get('token')->session())) { // Not completely optimal..
 
-            $this->arguments = $arguments['post'];
+            $this->arguments = $arguments;
             $this->model = $store->model;
 
             $inCart = $this->items();
             if (!empty($inCart)) {
                 array_walk_recursive($inCart, function ($item, $key) {
                     $checkout['user_id'] = $this->auth->get('id')->session();
-                    $checkout['username'] = $this->auth->get('label')->session();
+                    $checkout['username'] = $this->auth->get('username')->session();
                     $checkout['address'] = $this->arguments['address'];
                     $checkout['recipient'] = $this->arguments['recipient'];
                     $checkout['item'] = $item->label;
                     $checkout['comments'] = $this->arguments['comments'];
                     $checkout['qty'] = (string)$item->qty;
                     $checkout['purchased'] = date('y-m-d');
-                    $this->success[] = $this->model->insert('user_id, username, recipient, address, item, comments, qty, purchased', (array)$checkout, 'purchased');
+                    $this->success[] = $this->model->insert('user_id, username, recipient, address, item, comments, qty, purchased', (array)$checkout, 'shop_purchased');
                 });
                 if (!empty($this->success)) {
                     Session::set('feedback_positive', 'Køb udført. Du vil modtage deres varer indenfor 1-2 ugers tid.', true);
@@ -182,7 +181,8 @@ class Cart implements \Countable {
                     return false;
                 }
             } else {
-                Session::set('feedback_negative', 'Ugyldig token.');
+                Session::set('feedback_negative', 'Din kurv er tom.');
+                \app::redirect('shop');
                 return false;
             }
         }
@@ -204,6 +204,6 @@ class Cart implements \Countable {
      */
     public function items()
     {
-       return Session::get('user')['cart'];
+        return Session::get('user')['cart'];
     }
 }

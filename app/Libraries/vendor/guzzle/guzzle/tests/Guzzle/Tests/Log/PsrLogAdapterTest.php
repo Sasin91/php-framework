@@ -3,8 +3,8 @@
 namespace Guzzle\Tests\Log;
 
 use Guzzle\Log\PsrLogAdapter;
-use Monolog\Logger;
 use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 
 /**
  * @covers Guzzle\Log\PsrLogAdapter

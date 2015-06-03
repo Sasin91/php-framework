@@ -14,7 +14,7 @@ class NotifyingBatch extends AbstractBatchDecorator
 
     /**
      * @param BatchInterface $decoratedBatch Batch object to decorate
-     * @param mixed          $callable       Callable to call
+     * @param mixed $callable Callable to call
      *
      * @throws InvalidArgumentException
      */

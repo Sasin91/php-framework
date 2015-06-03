@@ -2,10 +2,10 @@
 
 namespace Guzzle\Tests\Plugin\Cookie\CookieJar;
 
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Cookie\Cookie;
 use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\Request;
 
 /**
  * @covers Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar
@@ -25,9 +25,9 @@ class ArrayCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
     protected function getTestCookies()
     {
         return array(
-            new Cookie(array('name' => 'foo',  'value' => 'bar', 'domain' => 'foo.com', 'path' => '/',    'discard' => true)),
+            new Cookie(array('name' => 'foo', 'value' => 'bar', 'domain' => 'foo.com', 'path' => '/', 'discard' => true)),
             new Cookie(array('name' => 'test', 'value' => '123', 'domain' => 'baz.com', 'path' => '/foo', 'expires' => 2)),
-            new Cookie(array('name' => 'you',  'value' => '123', 'domain' => 'bar.com', 'path' => '/boo', 'expires' => time() + 1000))
+            new Cookie(array('name' => 'you', 'value' => '123', 'domain' => 'bar.com', 'path' => '/boo', 'expires' => time() + 1000))
         );
     }
 
@@ -139,7 +139,7 @@ class ArrayCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
             'name' => true
         ))));
         $this->assertFalse($this->jar->add(new Cookie(array(
-            'name'   => 'foo',
+            'name' => 'foo',
             'domain' => 'foo.com'
         ))));
     }
@@ -147,19 +147,19 @@ class ArrayCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
     public function testDoesAddValidCookies()
     {
         $this->assertTrue($this->jar->add(new Cookie(array(
-            'name'   => 'foo',
+            'name' => 'foo',
             'domain' => 'foo.com',
-            'value'  => 0
+            'value' => 0
         ))));
         $this->assertTrue($this->jar->add(new Cookie(array(
-            'name'   => 'foo',
+            'name' => 'foo',
             'domain' => 'foo.com',
-            'value'  => 0.0
+            'value' => 0.0
         ))));
         $this->assertTrue($this->jar->add(new Cookie(array(
-            'name'   => 'foo',
+            'name' => 'foo',
             'domain' => 'foo.com',
-            'value'  => '0'
+            'value' => '0'
         ))));
     }
 
@@ -167,14 +167,14 @@ class ArrayCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $t = time() + 1000;
         $data = array(
-            'name'    => 'foo',
-            'value'   => 'bar',
-            'domain'  => '.example.com',
-            'path'    => '/',
+            'name' => 'foo',
+            'value' => 'bar',
+            'domain' => '.example.com',
+            'path' => '/',
             'max_age' => '86400',
-            'port'    => array(80, 8080),
+            'port' => array(80, 8080),
             'version' => '1',
-            'secure'  => true,
+            'secure' => true,
             'discard' => true,
             'expires' => $t
         );
@@ -205,14 +205,14 @@ class ArrayCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $t = time() + 1000;
         $data = array(
-            'name'    => 'foo',
-            'value'   => 'bar',
-            'domain'  => '.example.com',
-            'path'    => '/',
+            'name' => 'foo',
+            'value' => 'bar',
+            'domain' => '.example.com',
+            'path' => '/',
             'max_age' => '86400',
-            'port'    => array(80, 8080),
+            'port' => array(80, 8080),
             'version' => '1',
-            'secure'  => true,
+            'secure' => true,
             'discard' => true,
             'expires' => $t
         );
@@ -280,45 +280,45 @@ class ArrayCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $bag = array(
             new Cookie(array(
-                'name'    => 'foo',
-                'value'   => 'bar',
-                'domain'  => 'example.com',
-                'path'    => '/',
+                'name' => 'foo',
+                'value' => 'bar',
+                'domain' => 'example.com',
+                'path' => '/',
                 'max_age' => '86400',
-                'port'    => array(443, 8080),
+                'port' => array(443, 8080),
                 'version' => '1',
-                'secure'  => true
+                'secure' => true
             )),
             new Cookie(array(
-                'name'    => 'baz',
-                'value'   => 'foobar',
-                'domain'  => 'example.com',
-                'path'    => '/',
+                'name' => 'baz',
+                'value' => 'foobar',
+                'domain' => 'example.com',
+                'path' => '/',
                 'max_age' => '86400',
-                'port'    => array(80, 8080),
+                'port' => array(80, 8080),
                 'version' => '1',
-                'secure'  => true
+                'secure' => true
             )),
             new Cookie(array(
-                'name'    => 'test',
-                'value'   => '123',
-                'domain'  => 'www.foobar.com',
-                'path'    => '/path/',
+                'name' => 'test',
+                'value' => '123',
+                'domain' => 'www.foobar.com',
+                'path' => '/path/',
                 'discard' => true
             )),
             new Cookie(array(
-                'name'    => 'muppet',
-                'value'   => 'cookie_monster',
-                'domain'  => '.y.example.com',
-                'path'    => '/acme/',
+                'name' => 'muppet',
+                'value' => 'cookie_monster',
+                'domain' => '.y.example.com',
+                'path' => '/acme/',
                 'comment' => 'Comment goes here...',
                 'expires' => time() + 86400
             )),
             new Cookie(array(
-                'name'    => 'googoo',
-                'value'   => 'gaga',
-                'domain'  => '.example.com',
-                'path'    => '/test/acme/',
+                'name' => 'googoo',
+                'value' => 'gaga',
+                'domain' => '.example.com',
+                'path' => '/test/acme/',
                 'max_age' => 1500,
                 'version' => 2
             ))
@@ -345,8 +345,8 @@ class ArrayCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
         $a = new ArrayCookieJar();
         $a->setStrictMode(true);
         $a->add(new Cookie(array(
-            'name'   => 'abc:@123',
-            'value'  => 'foo',
+            'name' => 'abc:@123',
+            'value' => 'foo',
             'domain' => 'bar'
         )));
     }

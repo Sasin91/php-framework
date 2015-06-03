@@ -1,48 +1,198 @@
 <?php
 namespace System\MVC;
 
-use Toolbox\ArrayTools;
-use System\Containers\ActiveRecordContainer;
 use System\Exception\DatabaseException;
 use System\Interfaces\ActiveRecord;
-use System\Reflector;
+use System\Traits\hasInstances;
+use Toolbox\ArrayTools;
 
-if ( ! defined('ROOT_PATH') ) exit('No direct script access allowed');
+if (!defined('ROOT_PATH')) exit('No direct script access allowed');
 
 
 class Model extends Core implements ActiveRecord
 {
-    private $items;
+    /**
+     * Database object
+     * @var
+     */
     protected $db;
-    protected $database = 'Auth';
-    protected $container;
-    protected $statements = array();
-    protected $relations = array();
-    protected $permittedAttr = array();
-    protected $queryParts = array();
-    private $bind = array();
-    public $manyMethods = array('belongsToMany', 'hasMany');
 
+    /**
+     * Database name
+     * @var string
+     */
+    protected $database = '';
+
+    /**
+     * Database table
+     * @var string
+     */
+    protected $table = 'users';
+
+    /**
+     * If true, response (output) will be in Json format.
+     * @var bool
+     */
+    protected $respondWithJson = false;
+
+    /**
+     * Return query as:
+     * @var string
+     */
+    protected $fetch_type = 'object';
+
+    /**
+     * Query statements
+     * @var array
+     */
+    protected $statements = array();
+
+    /**
+     * Defines which Columns are accessible in database.
+     * @var array
+     */
+    protected $permittedAttr = array();
+
+    /**
+     * Parts of the query in process.
+     * @var array
+     */
+    protected $queryParts = array();
+
+    /**
+     * Instance of class System\MVC\Core
+     * @object
+     */
+    protected $core;
+
+    // ----------------------
+    # Active Record relations
+
+    /**
+     * Belongs To
+     * @var
+     */
+    protected $belongsTo;
+
+    /**
+     * Belongs To Many
+     * @var
+     */
+    protected $belongsToMany;
+
+    /**
+     * Has One
+     * @var
+     */
+    protected $hasOne;
+
+    /**
+     * Has Many
+     * @var
+     */
+    protected $hasMany;
+
+    /**
+     * Active Record Methods
+     * @var array
+     */
+    public $relationshipMethods = array(
+        'belongsToMany', 'hasMany',
+        'belongsToOne', 'hasOne'
+    );
+
+     # End Active Record
+    // -------------------
+
+    /**
+     * Bind variables.
+     * @var array
+     */
+    private $bind = array();
+
+    use hasInstances, \System\Traits\ActiveRecord;
+
+    /**
+     * @param array $attributes
+     * @throws DatabaseException
+     */
     public function __construct(array $attributes = array())
     {
-        parent::__construct();
-        if(!isset($this->database))
-        {
-            throw new DatabaseException('please define a database in your model, like so: protected $database = "Bubblegum";.');
+        if (empty($this->database)) {
+            $this->database = array_keys(Core::getConfig()['Database']['Factory']['Databases'])[0];
         }
-        ActiveRecordContainer::create('ActiveRecord');
-        $this->getContainer();
         $this->setDatabase($this->database);
-        if(!empty($attributes))
-        {
+        $this->setTable($this->table);
+        $this->parseRelations();
+        $this->getCore();
+        $this->_saveInstance($this);
+        if (!empty($attributes)) {
             $this->permittedAttr = $attributes;
         }
     }
 
-    private function getContainer()
+    /**
+     * Yes, it is intended to return $table on both.
+     * @param string $table
+     * @return string
+     */
+    public function setTable($table = '')
     {
-        $this->container = ActiveRecordContainer::getInstances()[0];
-        return true;
+        if (empty($table) OR $this->table === $table) {
+            return $table;
+        }
+        return $this->table = strtolower($table);
+    }
+
+    public function parseRelations()
+    {
+        foreach ($this->relationshipMethods as $method) {
+            if(isset($this->$method))
+            {
+                switch($method)
+                {
+                    case 'hasOne':
+                       $this->relations = $this->hasOne($this->$method);
+                    break;
+
+                    case 'hasMany':
+                        $this->relations = $this->hasMany($this->$method);
+                    break;
+
+                    case 'belongsToOne':
+                        $this->belongsToOne($this->$method);
+                    break;
+
+                    case 'belongsToMany':
+                        $this->belongsToMany($this->$method);
+                    break;
+
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets Core instance
+     */
+    private function getCore()
+    {
+        $this->core = Core::$instance;
+    }
+
+    public function newTransaction()
+    {
+        return $this->db->newTransaction();
+    }
+
+    public function endTransaction()
+    {
+        return $this->db->commit();
+    }
+
+    public function rollback()
+    {
+        return $this->db->rollback();
     }
 
     /**
@@ -57,6 +207,36 @@ class Model extends Core implements ActiveRecord
         return $instance->db->singleQuery($sql, $bind);
     }
 
+    /**
+     * @param $id
+     * @param string $column
+     * @return mixed
+     */
+    public static function find($id, $column = 'id', $table = '')
+    {
+        $model = self::_getInstance();
+        if(!empty($table))
+        {
+            $model->table = $table;
+        }
+        return $model->select('*', $model->table)->where($column, '=', $id)->execute();
+    }
+
+    /**
+     * Returns request or throws DatabaseException
+     * @param $id
+     * @param string $column
+     * @return mixed
+     * @throws DatabaseException
+     */
+    public static function findOrFail($id, $column = 'id')
+    {
+        $model = self::_getInstance();
+        $request = $model->find($id, $column);
+        if(empty($request))
+            throw new DatabaseException('Failed to find '.$id.' in'.$model->table.' on column '.$column);
+        return $request;
+    }
 
     /**
      * populates a select query.
@@ -64,9 +244,9 @@ class Model extends Core implements ActiveRecord
      * @param $table
      * @return static
      */
-    public function select($columns, $table)
+    public function select($columns, $table = '')
     {
-        $this->populate(array('action' => 'SELECT', 'columns' => $columns, 'statement' => 'FROM', 'table' => $table));
+        @$this->populate(array('action' => 'SELECT', 'columns' => $columns, 'statement' => 'FROM', 'table' => $this->setTable($table)));
         return $this;
     }
 
@@ -76,9 +256,20 @@ class Model extends Core implements ActiveRecord
      * @param $table
      * @return static
      */
-    public function update($column, $table)
+    public function update($requests, $table = '')
     {
-        $this->populate(array('action' => 'UPDATE', 'columns' => static::fillable($column), 'table' => $table));
+        if(is_array($requests))
+        {
+            $str = '';
+            foreach ($requests as $k => $v) {
+                $str .= $k.'='.'"'.$v.'"'.', ';
+            }
+            $request = chop($str, ', ');
+
+        } else {
+            $request = $requests;
+        }
+        @$this->populate(array('action' => 'UPDATE', 'table' => $this->setTable($table), 'values' => 'SET ' .$request. ''));
         return $this;
     }
 
@@ -89,13 +280,12 @@ class Model extends Core implements ActiveRecord
      * @param $table
      * @return mixed
      */
-    public function create($columns, $values , $table)
+    public function create($columns, $values, $table = '')
     {
-        if(is_array($values))
-        {
+        if (is_array($values)) {
             $values = $this->enquote($values);
         }
-        $this->populate(array('action' => 'CREATE', 'columns' => '('.static::fillable($columns).')','values' => 'VALUES ('.$values.')', 'table' => $table));
+        @$this->populate(array('action' => 'CREATE', 'columns' => '(' . static::fillable($columns) . ')', 'values' => 'VALUES (' . $values . ')', 'table' => $this->setTable($table)));
         return $this->execute();
     }
 
@@ -106,13 +296,12 @@ class Model extends Core implements ActiveRecord
      * @param $table
      * @return mixed
      */
-    public function insert($columns, $values , $table)
+    public function insert($columns, $values, $table = '')
     {
-        if(is_array($values))
-        {
+        if (is_array($values)) {
             $values = $this->enquote($values);
         }
-        $this->populate(array('action' => 'INSERT INTO ', 'table' => $table, 'columns' => '('.static::fillable($columns).')','values' => 'VALUES ('.$values.')'));
+        @$this->populate(array('action' => 'INSERT INTO ', 'table' => $this->setTable($table), 'columns' => '(' . static::fillable($columns) . ')', 'values' => 'VALUES (' . $values . ')'));
         return $this->execute();
     }
 
@@ -121,9 +310,9 @@ class Model extends Core implements ActiveRecord
      * @param $table
      * @return static
      */
-    public function delete($table)
+    public function delete($table = '')
     {
-        $this->populate(array('action' => 'DELETE', 'statement' => 'FROM ', 'table' => $table));
+        @$this->populate(array('action' => 'DELETE', 'statement' => 'FROM ', 'table' => $this->setTable($table)));
         return $this;
     }
 
@@ -132,10 +321,15 @@ class Model extends Core implements ActiveRecord
      * @param $table
      * @return mixed
      */
-    public function describe($table)
+    public function describe($table = '')
     {
-        $this->populate(array('action' => 'DESCRIBE ', 'table' => $table));
-        return $this->execute('Column');
+        if(empty($table))
+        {
+            $table = $this->table;
+        }
+        @$this->populate(array('action' => 'DESCRIBE ', 'table' => $this->setTable($table)));
+        $this->fetch_type = 'Column';
+        return $this->execute();
     }
 
     /**
@@ -144,7 +338,25 @@ class Model extends Core implements ActiveRecord
      */
     public function first()
     {
-        $this->populate(array('request' => 'LIMIT', 'num' => 1));
+        @$this->populate(array('request' => 'LIMIT', 'num' => 1));
+        return $this;
+    }
+
+    /**
+     * Populates where clauses for the query
+     * @param $column
+     * @param $operator
+     * @param $value
+     * @param $join
+     */
+    public function where($column, $operator, $value, $joiner = '')
+    {
+        $clause = 'WHERE ';
+        $col = preg_replace('/:/', '', $column);
+        $val = '"' . $value . '"';
+        $statement = compact('clause', 'col', 'operator', 'val', 'joiner');
+        $this->bind[] = array_filter(array($column => $value));
+        @$this->populate($statement, 'where');
         return $this;
     }
 
@@ -153,20 +365,19 @@ class Model extends Core implements ActiveRecord
      * @param array $clauses
      * @return $this
      */
-    public function where(array $clauses = array())
+    public function whereArray(array $clauses = array())
     {
         $operator = in_array('operator', $clauses) ? $clauses['operator'] : '=';
         $joiner = in_array('joiner', $clauses) ? $clauses['joiner'] : null;
         unset($clauses['joiner']);
         unset($clauses['operator']);
-        foreach($clauses as $column => $value)
-        {
+        foreach ($clauses as $column => $value) {
             $clause = 'WHERE ';
             $col = preg_replace('/:/', '', $column);
-            $val = '"'.$value.'"';
-            $statement =  compact('clause','col','operator', 'val', 'joiner');
+            $val = '"' . $value . '"';
+            $statement = compact('clause', 'col', 'operator', 'val', 'joiner');
             $this->bind[] = array_filter(array($column => $value));
-            $this->populate($statement, 'where');
+            @$this->populate($statement, 'where');
         }
         return $this;
     }
@@ -178,19 +389,42 @@ class Model extends Core implements ActiveRecord
      */
     private function enquote(array $array = array())
     {
-        return '"'.implode('", "', $array).'"';
+        return '"' . implode('", "', $array) . '"';
 
     }
 
+    /**
+     * Sets JSON response variable
+     * @return $this
+     */
+    public function asJson()
+    {
+        $this->respondWithJson = true;
+        return $this;
+    }
+
+    /**
+     * Sets fetch_type
+     * @param string $type
+     * @return $this
+     */
+    public function respondWith($type = 'object')
+    {
+        $this->fetch_type = $type;
+        return $this;
+    }
 
     /**
      * Finishes the method chain and executes the query against the database.
-     * @param string $fetch_mode
      * @return mixed
      */
-    public function execute($fetch_mode = 'object')
+    public function execute()
     {
-        return $this->BuildQuery($fetch_mode);
+        if(is_null($this->db))
+        {
+            $this->setDatabase($this->database);
+        }
+        return $this->BuildQuery($this->fetch_type);
     }
 
     /**
@@ -200,29 +434,35 @@ class Model extends Core implements ActiveRecord
     private function BuildQuery($fetch_mode)
     {
         $toClean = array('UPDATE ', 'INSERT INTO ', 'CREATE ', 'DESCRIBE ');
-        if(!empty($this->queryParts))
-        {
+        if (!empty($this->queryParts)) {
             $success = array();
-            for($i = 0; $i < count($this->queryParts); $i++) {
+            for ($i = 0; $i < count($this->queryParts); $i++) {
                 if (!empty($this->queryParts['where'])) {
-                    $query = array_merge($this->queryParts[$i], $this->queryParts['where']);
+                    if(!empty($this->queryParts[$i]))
+                    {
+                        $query = array_merge($this->queryParts[$i], $this->queryParts['where']);
+                    }
                 } else {
                     $query = $this->queryParts[$i];
                 }
-                if (in_array($query['action'], $toClean)) {
-                    unset($query['statement']);
-                    unset($query['clause']);
-                    unset($query['col']);
-                    unset($query['operator']);
-                    unset($query['val']);
+                /**
+                 * If needed, remove unused keys
+                 */
+                if(isset($query['action'])) {
+                    if (in_array($query['action'], $toClean)) {
+                        unset($query['statement']);
+                        unset($query['clause']);
+                        unset($query['col']);
+                        unset($query['operator']);
+                        unset($query['val']);
+                    }
                 }
-                $query = (trim(ArrayTools::array2string(array_unique($query), ' ')));
+                $query = is_array($query) ? trim(ArrayTools::array2string(array_unique($query), ' ')) : trim($query);
                 if (!empty($query)) {
                     $success[] = $this->db->singleQuery($query, $this->bind, $fetch_mode);
                 }
             }
-
-            return $success[0];
+            return $this->respondWithJson ? json_encode($success[0]) : $success[0];
         }
         return false;
     }
@@ -234,7 +474,7 @@ class Model extends Core implements ActiveRecord
      */
     private function populate(array $data = array(), $key = '')
     {
-        if(!empty($key))
+        if (!empty($key))
             return $this->queryParts[$key] = $data;
         return $this->queryParts[] = $data;
     }
@@ -246,10 +486,8 @@ class Model extends Core implements ActiveRecord
      */
     protected function fillable($attributes)
     {
-        if(!is_array($attributes))
-        {
-            if(strpos($attributes, ', '))
-            {
+        if (!is_array($attributes)) {
+            if (strpos($attributes, ', ')) {
                 $array = array_unique(!empty($this->permittedAttr) ? ArrayTools::arrayMatch(explode(', ', $attributes), $this->permittedAttr) : false);
             } else {
                 $array = in_array($attributes, $this->permittedAttr);
@@ -257,126 +495,25 @@ class Model extends Core implements ActiveRecord
         } else {
             $array = array_unique(!empty($this->permittedAttr) ? ArrayTools::arrayMatch($attributes, $this->permittedAttr) : false);
         }
-        if(!empty($array))
+        if (!empty($array))
             return rtrim(ArrayTools::array2string($array, ', '), ', ');
         return null;
     }
 
     public function setDatabase($database)
     {
-        $this->db = $this->app->newDatabase($database);
+        $database = strtolower($database);
+
+        if(is_null($this->core))
+        {
+            $this->getCore();
+        }
+        $this->db = $this->core->app->newDatabase($database);
         return !is_null($this->db) ? $this->db : $this->setDatabase($database);
-    }
-
-    public function hasRelationship($parent, $object)
-    {
-        if(!is_object($this->container))
-        {
-            $this->createContainer();
-        }
-        $exists = $this->container->exists($object) ? true : false;
-        if($exists)
-            if(in_array($parent, $this->relations))
-                foreach ($this->relations as $k => $v) {
-                    $this->items[] = $v;
-                }
-        return $this->items;
-    }
-
-    private $classes;
-    public function hasOne($class)
-    {
-        $this->noContainer();
-        $parent = array_pop(explode('\\', $this->calling_class()));
-        $collection = array();
-        if(empty($class))
-            return $this->container->get($parent);
-
-        $object = $this->container->get($parent);
-            if(array_pop(explode('\\', $object)) == $class)
-            {
-                $collection[] = Reflector::reflect($object);
-            }
-        return $collection;
-    }
-
-    public function belongsToOne($object)
-    {
-        $this->noContainer();
-        $class = $this->calling_class();
-        $this->container->set($object, array(array_pop(explode('\\', $class)) => $class));
-    }
-
-    public function belongsToMany(array $objects)
-    {
-        $parent = $this->calling_class();
-        foreach ($objects as $object) {
-            if(!$this->hasRelationship($parent, $object))
-                $this->classes[] = $object;
-        }
-    }
-
-    public function hasMany(array $classes = array())
-    {
-        $this->NoContainer();
-        $parent = array_pop(explode('\\', $this->calling_class()));
-        $collection = array();
-        if(empty($classes))
-        {
-            return $this->container->get($parent);
-        }
-
-        foreach ($this->container->get($parent) as $object) {
-            foreach($classes as $class) {
-                $label = array_pop(explode('\\', $object));
-                if ($label == $class) {
-                    $collection[$label] = Reflector::reflect($object);
-                }
-            }
-        }
-        return $collection;
-    }
-
-    public function find($id, $columns = array('*'))
-    {
-        if (is_array($id) && empty($id)) return $this->newCollection($id);
-
-        return $this->find($id, $columns);
-    }
-
-    public function newCollection($name ,array $models = array())
-    {
-        $collection = new ActiveRecordContainer();
-        $collection->set($name, $models);
-        return $collection;
     }
 
     public function hasTable($object)
     {
         return $this->db->object($object);
     }
-
-    private function calling_class() {
-
-        //get the trace
-        $trace = debug_backtrace();
-
-        // Get the class that is asking for who awoke it
-        $class = $trace[1]['class'];
-
-        // +1 to i cos we have to account for calling this function
-        for ( $i=1; $i<count( $trace ); $i++ ) {
-            if ( isset( $trace[$i] ) ) // is it set?
-                if ( $class != $trace[$i]['class'] ) // is it a different class
-                    return $trace[$i]['class'];
-        }
-        return null;
-    }
-
-    private function NoContainer()
-    {
-        return is_null($this->container) ? $this->getContainer() : false;
-    }
-
-
 }

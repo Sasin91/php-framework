@@ -28,21 +28,21 @@ class FileCookieJarTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $jar = new FileCookieJar($this->file);
         $jar->add(new Cookie(array(
-            'name'    => 'foo',
-            'value'   => 'bar',
-            'domain'  => 'foo.com',
+            'name' => 'foo',
+            'value' => 'bar',
+            'domain' => 'foo.com',
             'expires' => time() + 1000
         )));
         $jar->add(new Cookie(array(
-            'name'    => 'baz',
-            'value'   => 'bar',
-            'domain'  => 'foo.com',
+            'name' => 'baz',
+            'value' => 'bar',
+            'domain' => 'foo.com',
             'expires' => time() + 1000
         )));
         $jar->add(new Cookie(array(
-            'name'    => 'boo',
-            'value'   => 'bar',
-            'domain'  => 'foo.com',
+            'name' => 'boo',
+            'value' => 'bar',
+            'domain' => 'foo.com',
         )));
 
         $this->assertEquals(3, count($jar));

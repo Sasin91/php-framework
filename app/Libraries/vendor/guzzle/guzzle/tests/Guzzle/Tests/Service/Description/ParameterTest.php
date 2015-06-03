@@ -11,16 +11,16 @@ use Guzzle\Service\Description\ServiceDescription;
 class ParameterTest extends \Guzzle\Tests\GuzzleTestCase
 {
     protected $data = array(
-        'name'            => 'foo',
-        'type'            => 'bar',
-        'required'        => true,
-        'default'         => '123',
-        'description'     => '456',
-        'minLength'       => 2,
-        'maxLength'       => 5,
-        'location'        => 'body',
-        'static'          => 'static!',
-        'filters'         => array('trim', 'json_encode')
+        'name' => 'foo',
+        'type' => 'bar',
+        'required' => true,
+        'default' => '123',
+        'description' => '456',
+        'minLength' => 2,
+        'maxLength' => 5,
+        'location' => 'body',
+        'static' => 'static!',
+        'filters' => array('trim', 'json_encode')
     );
 
     public function testCreatesParamFromArray()
@@ -168,14 +168,14 @@ class ParameterTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $command = $this->getServiceBuilder()->get('mock')->getCommand('mock_command')->getOperation();
         $param = new Parameter(array(
-            'parent'     => $command,
-            'name'       => 'foo',
-            'type'       => 'object',
-            'location'   => 'query',
+            'parent' => $command,
+            'name' => 'foo',
+            'type' => 'object',
+            'location' => 'query',
             'properties' => array(
                 'foo' => array(
-                    'type'      => 'object',
-                    'required'  => true,
+                    'type' => 'object',
+                    'required' => true,
                     'properties' => array(
                         'baz' => array(
                             'name' => 'baz',
@@ -184,7 +184,7 @@ class ParameterTest extends \Guzzle\Tests\GuzzleTestCase
                     )
                 ),
                 'bar' => array(
-                    'name'    => 'bar',
+                    'name' => 'bar',
                     'default' => '123'
                 )
             )
@@ -258,7 +258,7 @@ class ParameterTest extends \Guzzle\Tests\GuzzleTestCase
     public function testAddsItems()
     {
         $p = new Parameter(array(
-            'type'  => 'array',
+            'type' => 'array',
             'items' => array('type' => 'string')
         ));
         $this->assertInstanceOf('Guzzle\Service\Description\Parameter', $p->getItems());
@@ -312,11 +312,11 @@ class ParameterTest extends \Guzzle\Tests\GuzzleTestCase
     public function testSerializesItems()
     {
         $p = new Parameter(array(
-            'type'  => 'object',
+            'type' => 'object',
             'additionalProperties' => array('type' => 'string')
         ));
         $this->assertEquals(array(
-            'type'  => 'object',
+            'type' => 'object',
             'additionalProperties' => array('type' => 'string')
         ), $p->toArray());
     }
@@ -347,10 +347,10 @@ class ParameterTest extends \Guzzle\Tests\GuzzleTestCase
         // Description attribute will be updated, and format added
         $p = new Parameter(array('extends' => 'Anakin', 'format' => 'date'), $description);
         $this->assertEquals(array(
-            'type'  => 'array',
+            'type' => 'array',
             'format' => 'date',
             'items' => array(
-                'type'    => 'string',
+                'type' => 'string',
                 'default' => 'Mesa address tha senate!',
                 'description' => 'b'
             )

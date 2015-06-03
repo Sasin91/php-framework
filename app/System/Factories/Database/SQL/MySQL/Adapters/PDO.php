@@ -4,26 +4,10 @@ namespace System\Factories\Database\SQL\MySQL\Adapters;
 
 use System\Exception\DatabaseException;
 
-if ( ! defined('ROOT_PATH')) exit('No direct script access allowed');
+if (!defined('ROOT_PATH')) exit('No direct script access allowed');
 
 class PDO
 {
-    /**
-     * The sql query statement
-     *
-     * @access private
-     * @var string
-     */
-    private $sql;
-
-    /**
-     * Binds a value to a parameter
-     *
-     * @access private
-     * @var array
-     */
-    private $bind;
-
     /**
      * The db database object
      *
@@ -31,72 +15,61 @@ class PDO
      * @var object
      */
     protected $db;
-
     protected $_instances = array();
+    /**
+     * The sql query statement
+     *
+     * @access private
+     * @var string
+     */
+    private $sql;
+    /**
+     * Binds a value to a parameter
+     *
+     * @access private
+     * @var array
+     */
+    private $bind;
+    /**
+     * Create the queries for the transaction.
+     * @var array
+     */
+    private $queryObjects = array();
 
     public function __construct(array $config = array(), $database)
     {
-        if(in_array($database, $this->_instances))
-        {
+        if (in_array($database, $this->_instances)) {
             return $this->_instances[$database];
         }
-        $dbhost = $config[$database]['host'];
-        $dbSocket = $config[$database]['socket'];
-        $dbname = $config[$database]['name'];
-        $dbdsn = $config[$database]['dsn'];
-        try {
-            if(!isset($dbhost))
-            {
-                $this->db = new \PDO("$dbdsn:unix_socket=$dbSocket;dbname=$dbname", $config[$database]['user'], $config[$database]['pass']);
-            } else {
-                $this->db = new \PDO("$dbdsn:host=$dbhost;dbname=$dbname", $config[$database]['user'], $config[$database]['pass']);
-            }
 
+        if(isset($config[$database])) {
+
+            if (isset($config[$database]['socket'])) {
+                $socket = $config[$database]['socket'];
+            }
+            $user = $config[$database]['user'];
+            $pass = $config[$database]['pass'];
+            $host = $config[$database]['host'];
+            $name = $config[$database]['name'];
+            $dsn = $config[$database]['dsn'];
+        } else {
+            // Assume it's a single database array
+            extract($config);
+        }
+
+        try {
+            if (!isset($host)) {
+                $this->db = new \PDO("$dsn:unix_socket=$socket", $user, $pass);
+            } else {
+                $this->db = new \PDO("$dsn:host=$host", $user, $pass);
+            }
 
             $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             $this->db->query('SET NAMES utf8');
             $this->db->query('SET CHARACTER SET utf8');
+            $this->db->query("CREATE DATABASE IF NOT EXISTS $name");
+            $this->db->query("use $name");
             $this->_instances[$database] = $this->db;
-        } catch(\PDOException $e) {
-            throw new DatabaseException($e->getMessage());
-        }
-    }
-
-    private function cleanup($bind)
-    {
-        if (!is_array($bind)) {
-            if (!empty($bind))
-                $bind = array($bind);
-            else
-                $bind = array();
-        }
-        return $bind;
-    }
-
-    /**
-     * The default query handler.
-     *
-     * @access public
-     * @param $sql (required) The SQL statement to execute.
-     * @param string $bind (optional) values & parameters key/value array
-     * @param string $bindMethod (optional) define which method is used to bind values
-     * @param bool $asArray (optional) return an array or an object, defaults to object.
-     * @return mixed
-     * @throws DatabaseException
-     */
-    public function init(array $statement = array())
-    {
-        $this->sql = trim($statement['sql']);
-        $this->bind = $this->cleanup($statement['bind']);
-        $this->error = '';
-        try {
-            $stmt = $this->db->prepare($this->sql);
-            if ($stmt->execute($this->bind) !== false) {
-                if (preg_match("/^(" . implode("|", array("select", "describe", "pragma")) . ") /i", $this->sql)) {
-                    return $stmt->fetchAll(\PDO::FETCH_OBJ);
-                } elseif (preg_match("/^(" . implode("|", array("delete", "insert", "update")) . ") /i", $this->sql))
-                    return $stmt->rowCount();
-            }
         } catch (\PDOException $e) {
             throw new DatabaseException($e->getMessage());
         }
@@ -108,12 +81,12 @@ class PDO
      * @access public
      * @return bool Always returns true.
      */
-    public function close() {
-        if ( $this->db )
+    public function close()
+    {
+        if ($this->db)
             $this->db = null;
         return true;
     }
-
 
     /**
      * Returns Cubrid scheme of table
@@ -130,6 +103,21 @@ class PDO
         return $stmt->fetch();
     }
 
+    public function databaseExist($database)
+    {
+        $this->db->query('use INFORMATION_SCHEMA');
+        return !empty($this->init(array('sql' => 'SELECT SCHEMA_NAME FROM SCHEMATA WHERE SCHEMA_NAME = :database', 'bind' => array(':database' => strtolower($database))))[0]) ? true : false;
+    }
+
+    /**
+     * @param $table
+     * @return bool
+     */
+    public function tableExist($table)
+    {
+        return gettype($this->db->exec("SELECT count(*) FROM $table")) == 'integer';
+    }
+
     /**
      * create a new transaction
      * @return bool
@@ -139,19 +127,12 @@ class PDO
         return $this->db->beginTransaction();
     }
 
-
-    /**
-     * Create the queries for the transaction.
-     * @var array
-     */
-    private $queryObjects = array();
-    public function query($sql, array $values = array(), $fetch_mode)
+    public function query($sql, array $values = array())
     {
         $stmt = $this->db->prepare($sql);
 
-        $queryObjects = array();
         $parenthesesRegexp = '#\((([^()]+|(?R))*)\)#';
-        if (preg_match_all($parenthesesRegexp, $sql ,$objects)) {
+        if (preg_match_all($parenthesesRegexp, $sql, $objects)) {
             $this->queryObjects[] = $objects[1];
         }
 
@@ -166,9 +147,8 @@ class PDO
     private function buildQuery($value)
     {
         $query = array();
-        foreach($this->queryObjects as $object)
-        {
-            if($value->$object){
+        foreach ($this->queryObjects as $object) {
+            if ($value->$object) {
                 $query[] = $value->$object;
             }
         }
@@ -203,7 +183,7 @@ class PDO
      * @return mixed
      */
 
-    public function singleQuery($sql, $bind = array(), $fetch_mode, $asObject = true, $prepare = true)
+    public function singleQuery($sql, $bind = array(), $fetch_mode = 'Object', $asObject = true, $prepare = true)
     {
         $this->error = '';
         if (!is_object($this->db)) {
@@ -218,17 +198,25 @@ class PDO
             }
             if ($prepare !== false) {
                 $stmt = $this->db->prepare($sql);
-                $stmt->execute();
-                if(!empty(strstr($sql, 'INSERT')))
-                {
+                $success = $stmt->execute();
+                $str = strstr($sql, 'INSERT');
+                if (!empty($str)) {
                     return $stmt;
                 }
-                if($fetch_mode == 'Column'){
+                if ($fetch_mode == 'Column')
+                {
                     return $stmt->fetchAll(\PDO::FETCH_COLUMN);
-                } elseif($fetch_mode == 'Assoc')
+                }
+                if ($fetch_mode == 'Array')
                 {
                     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                } else {
+                }
+                if($fetch_mode == 'Boolean' OR $fetch_mode == 'bool')
+                {
+                    return $success;
+                }
+                else
+                {
                     return $stmt->fetchAll(\PDO::FETCH_OBJ);
                 }
             } else {
@@ -237,5 +225,45 @@ class PDO
         } catch (\PDOException $e) {
             throw new DatabaseException($e->getMessage());
         }
+    }
+
+    /**
+     * The default query handler.
+     *
+     * @access public
+     * @param $sql (required) The SQL statement to execute.
+     * @param string $bind (optional) values & parameters key/value array
+     * @param string $bindMethod (optional) define which method is used to bind values
+     * @param bool $asArray (optional) return an array or an object, defaults to object.
+     * @return mixed
+     * @throws DatabaseException
+     */
+    public function init(array $statement = array())
+    {
+        $this->sql = trim($statement['sql']);
+        $this->bind = $this->cleanup($statement['bind']);
+        $this->error = '';
+        try {
+            $stmt = $this->db->prepare($this->sql);
+            if (@$stmt->execute($this->bind) !== false) {
+                if (preg_match("/^(" . implode("|", array("select", "describe", "pragma")) . ") /i", $this->sql)) {
+                    return $stmt->fetchAll(\PDO::FETCH_OBJ);
+                } elseif (preg_match("/^(" . implode("|", array("delete", "insert", "update")) . ") /i", $this->sql))
+                    return $stmt->rowCount();
+            }
+        } catch (\PDOException $e) {
+            throw new DatabaseException($e->getMessage());
+        }
+    }
+
+    private function cleanup($bind)
+    {
+        if (!is_array($bind)) {
+            if (!empty($bind))
+                $bind = array($bind);
+            else
+                $bind = array();
+        }
+        return $bind;
     }
 }

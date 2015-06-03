@@ -29,26 +29,6 @@ class EventTest extends \PHPUnit_Framework_TestCase
      */
     protected $dispatcher;
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     */
-    protected function setUp()
-    {
-        $this->event = new Event();
-        $this->dispatcher = new EventDispatcher();
-    }
-
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     */
-    protected function tearDown()
-    {
-        $this->event = null;
-        $this->dispatcher = null;
-    }
-
     public function testIsPropagationStopped()
     {
         $this->assertFalse($this->event->isPropagationStopped());
@@ -96,5 +76,25 @@ class EventTest extends \PHPUnit_Framework_TestCase
         $this->iniSet('error_reporting', -1 & ~E_USER_DEPRECATED);
         $this->event->setName('foo');
         $this->assertEquals('foo', $this->event->getName());
+    }
+
+    /**
+     * Sets up the fixture, for example, opens a network connection.
+     * This method is called before a test is executed.
+     */
+    protected function setUp()
+    {
+        $this->event = new Event();
+        $this->dispatcher = new EventDispatcher();
+    }
+
+    /**
+     * Tears down the fixture, for example, closes a network connection.
+     * This method is called after a test is executed.
+     */
+    protected function tearDown()
+    {
+        $this->event = null;
+        $this->dispatcher = null;
     }
 }

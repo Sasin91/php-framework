@@ -1,23 +1,26 @@
 <div id="container" style="border-radius: 4px;">
-    <?php echo $this->renderFeedbackMessages();?>
+    <?php echo $this->renderFeedbackMessages(); ?>
     <?php
     $profile = $this->content->get('profile');
     ?>
     <div id="main">
         <div class="row-fluid">
             <div class="col-md-2">
-                <img class="img img-rounded img-responsive" src="/Assets/img/users/<?php echo $profile->image;?>" width="200px" height="200px">
+                <img class="img img-rounded img-responsive" src="/img/users/<?php echo $profile->image; ?>"
+                     width="200px" height="200px">
             </div>
 
             <div class="col-md-4">
-                <h1>Greetings,  <?php echo $profile->label;?></h1>
+                <h1>Greetings,  <?php echo $profile->label; ?></h1>
                 <blockquote>
-                    <p>Rank: <?php echo $profile->name;?>, Position: <?php echo $profile->position; ?></p> <small><cite title="Source Title"><?php echo $profile->location;?>  <i class="glyphicon glyphicon-map-marker"></i></cite></small>
+                    <p>Rank: <?php echo $profile->name; ?>, Position: <?php echo $profile->position; ?></p>
+                    <small><cite title="Source Title"><?php echo $profile->location; ?>  <i
+                                class="glyphicon glyphicon-map-marker"></i></cite></small>
                 </blockquote>
-                <p> <i class="glyphicon glyphicon-envelope"></i> <?php echo $profile->email;?>
+                <p><i class="glyphicon glyphicon-envelope"></i> <?php echo $profile->email; ?>
                     <br
-                        /> <i class="glyphicon glyphicon-globe"></i> <?php echo $profile->url;?>
-                    <br /> <i class="glyphicon glyphicon-gift"></i> <?php echo $profile->joindate;?></p>
+                        /> <i class="glyphicon glyphicon-globe"></i> <?php echo $profile->url; ?>
+                    <br/> <i class="glyphicon glyphicon-gift"></i> <?php echo $profile->joindate; ?></p>
             </div>
 
             <div class="col-md-6">
@@ -36,22 +39,25 @@
                             <div class="col-md-6">
                                 <?php
                                 foreach ($file['Left'] as $k => $v) {
-                                    echo '<a href="'.$url.DS.$v.'" class="btn btn-primary btn-lg" role="button"><span class="glyphicon glyphicon-wrench"></span> <br/>'. $k .'</a>';
-                                }?>
+                                    echo '<a href="' . $url . DS . $v . '" class="btn btn-primary btn-lg" role="button"><span class="glyphicon glyphicon-wrench"></span> <br/>' . $k . '</a>';
+                                } ?>
                             </div>
                             <div class="col-md-6">
                                 <?php foreach ($file['Right'] as $k => $v) {
-                                    echo '<a href="'.$url.DS.$v.'" class="btn btn-primary btn-lg" role="button"><span class="glyphicon glyphicon-wrench"></span> <br/>'. $k .'</a>';
-                                }?>
+                                    echo '<a href="' . $url . DS . $v . '" class="btn btn-primary btn-lg" role="button"><span class="glyphicon glyphicon-wrench"></span> <br/>' . $k . '</a>';
+                                } ?>
                             </div>
                         </div>
-                        <a href="" class="btn btn-success btn-lg btn-block" role="button"><span class="glyphicon glyphicon-globe"></span> Return <?php echo $this->app->config()->fetch()->default_url; ?></a>
+                        <a href="" class="btn btn-success btn-lg btn-block" role="button"><span
+                                class="glyphicon glyphicon-globe"></span>
+                            Return <?php echo $this->app->config()->fetch()->default_url; ?></a>
                     </div>
                 </div>
             </div>
             <hr>
             <br>
             <br>
-        </div><!-- /row -->
+        </div>
+        <!-- /row -->
     </div>
 </div>

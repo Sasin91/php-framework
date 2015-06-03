@@ -109,8 +109,8 @@ class ServiceBuilderLoaderTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $foo = array(
             'extends' => 'bar',
-            'class'   => 'stdClass',
-            'params'  => array('a' => 'test', 'b' => '456')
+            'class' => 'stdClass',
+            'params' => array('a' => 'test', 'b' => '456')
         );
 
         return array(

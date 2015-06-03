@@ -13,7 +13,7 @@ class MapIterator extends \IteratorIterator
     protected $callback;
 
     /**
-     * @param \Traversable   $iterator Traversable iterator
+     * @param \Traversable $iterator Traversable iterator
      * @param array|\Closure $callback Callback used for iterating
      *
      * @throws InvalidArgumentException if the callback if not callable

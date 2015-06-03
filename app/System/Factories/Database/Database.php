@@ -11,11 +11,13 @@ namespace System\Factories\Database;
 
 use System\Factories\Database\SQL\MySQL\Adapters\PDO;
 
-class Database {
+class Database
+{
 
     protected $database;
-    private $db;
     protected $options = array();
+    private $db;
+
     public function __construct($options = array())
     {
         $this->options = $options;
@@ -25,14 +27,15 @@ class Database {
     public function make(array $arguments = array())
     {
         $this->db = $arguments[0]['database'];
-        return $this->$arguments[0]['config']['Factory']['class']($arguments[0]['config']);
+        return $this->$arguments[0]['config']['class']($arguments[0]['config']);
     }
 
 
     public function PDO(array $config = array())
     {
-        return new PDO($config, $this->db);
+        return new PDO($config['Databases'], $this->db);
     }
+
     public function destroy()
     {
         $this->database = NULL;

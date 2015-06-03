@@ -17,7 +17,7 @@ class CachingConfigLoader implements ConfigLoaderInterface
 
     /**
      * @param ConfigLoaderInterface $loader Loader used to load the config when there is a cache miss
-     * @param CacheAdapterInterface $cache  Object used to cache the loaded result
+     * @param CacheAdapterInterface $cache Object used to cache the loaded result
      */
     public function __construct(ConfigLoaderInterface $loader, CacheAdapterInterface $cache)
     {

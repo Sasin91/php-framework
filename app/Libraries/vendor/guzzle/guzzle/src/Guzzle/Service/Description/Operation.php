@@ -93,7 +93,7 @@ class Operation implements OperationInterface
      * - additionalParameters: (null|array) Parameter schema to use when an option is passed to the operation that is
      *                                      not in the schema
      *
-     * @param array                       $config      Array of configuration data
+     * @param array $config Array of configuration data
      * @param ServiceDescriptionInterface $description Service description used to resolve models if $ref tags are found
      */
     public function __construct(array $config = array(), ServiceDescriptionInterface $description = null)
@@ -106,7 +106,7 @@ class Operation implements OperationInterface
         }
 
         $this->class = $this->class ?: self::DEFAULT_COMMAND_CLASS;
-        $this->deprecated = (bool) $this->deprecated;
+        $this->deprecated = (bool)$this->deprecated;
         $this->errorResponses = $this->errorResponses ?: array();
         $this->data = $this->data ?: array();
 
@@ -140,6 +140,36 @@ class Operation implements OperationInterface
                 $this->setadditionalParameters(new Parameter($this->additionalParameters, $this->description));
             }
         }
+    }
+
+    /**
+     * Infer the response type from the responseClass value
+     */
+    protected function inferResponseType()
+    {
+        static $primitives = array('array' => 1, 'boolean' => 1, 'string' => 1, 'integer' => 1, '' => 1);
+        if (isset($primitives[$this->responseClass])) {
+            $this->responseType = self::TYPE_PRIMITIVE;
+        } elseif ($this->description && $this->description->hasModel($this->responseClass)) {
+            $this->responseType = self::TYPE_MODEL;
+        } else {
+            $this->responseType = self::TYPE_CLASS;
+        }
+    }
+
+    /**
+     * Add a parameter to the command
+     *
+     * @param Parameter $param Parameter to add
+     *
+     * @return self
+     */
+    public function addParam(Parameter $param)
+    {
+        $this->parameters[$param->getName()] = $param;
+        $param->setParent($this);
+
+        return $this;
     }
 
     public function toArray()
@@ -196,21 +226,6 @@ class Operation implements OperationInterface
     public function getParam($param)
     {
         return isset($this->parameters[$param]) ? $this->parameters[$param] : null;
-    }
-
-    /**
-     * Add a parameter to the command
-     *
-     * @param Parameter $param Parameter to add
-     *
-     * @return self
-     */
-    public function addParam(Parameter $param)
-    {
-        $this->parameters[$param->getName()] = $param;
-        $param->setParent($this);
-
-        return $this;
     }
 
     /**
@@ -311,7 +326,7 @@ class Operation implements OperationInterface
     /**
      * Set a longer text field to explain the behavior of the operation.
      *
-     * @param string $notes Notes on the operation
+     * @param string $notes Notes.md on the operation
      *
      * @return self
      */
@@ -455,22 +470,6 @@ class Operation implements OperationInterface
     }
 
     /**
-     * Add an error to the command
-     *
-     * @param string $code   HTTP response code
-     * @param string $reason HTTP response reason phrase or information about the error
-     * @param string $class  Exception class associated with the error
-     *
-     * @return self
-     */
-    public function addErrorResponse($code, $reason, $class)
-    {
-        $this->errorResponses[] = array('code' => $code, 'reason' => $reason, 'class' => $class);
-
-        return $this;
-    }
-
-    /**
      * Set all of the error responses of the operation
      *
      * @param array $errorResponses Hash of error name to a hash containing a code, reason, class
@@ -484,6 +483,22 @@ class Operation implements OperationInterface
         return $this;
     }
 
+    /**
+     * Add an error to the command
+     *
+     * @param string $code HTTP response code
+     * @param string $reason HTTP response reason phrase or information about the error
+     * @param string $class Exception class associated with the error
+     *
+     * @return self
+     */
+    public function addErrorResponse($code, $reason, $class)
+    {
+        $this->errorResponses[] = array('code' => $code, 'reason' => $reason, 'class' => $class);
+
+        return $this;
+    }
+
     public function getData($name)
     {
         return isset($this->data[$name]) ? $this->data[$name] : null;
@@ -492,8 +507,8 @@ class Operation implements OperationInterface
     /**
      * Set a particular data point on the operation
      *
-     * @param string $name  Name of the data value
-     * @param mixed  $value Value to set
+     * @param string $name Name of the data value
+     * @param mixed $value Value to set
      *
      * @return self
      */
@@ -528,20 +543,5 @@ class Operation implements OperationInterface
         }
 
         return $this;
-    }
-
-    /**
-     * Infer the response type from the responseClass value
-     */
-    protected function inferResponseType()
-    {
-        static $primitives = array('array' => 1, 'boolean' => 1, 'string' => 1, 'integer' => 1, '' => 1);
-        if (isset($primitives[$this->responseClass])) {
-            $this->responseType = self::TYPE_PRIMITIVE;
-        } elseif ($this->description && $this->description->hasModel($this->responseClass)) {
-            $this->responseType = self::TYPE_MODEL;
-        } else {
-            $this->responseType = self::TYPE_CLASS;
-        }
     }
 }

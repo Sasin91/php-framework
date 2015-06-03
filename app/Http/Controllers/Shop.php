@@ -9,21 +9,17 @@
 namespace Http\Controllers;
 
 
+use \app;
+use Modules\Shop\Store;
+use System\Authentication\Auth;
+use System\Input\Input;
+use System\LazyLoader;
+use System\MVC\View;
 use Http\Models\User;
-use Core\app;
-use Core\Http\Cart\Store;
-use Core\Http\Toolbox\ArrayTools;
 use System\Reflector;
 
-class Shop extends BaseController {
-
-
-    /**
-     * defines which methods are permitted calls.
-     * @var array
-     */
-    protected $methods = array('family', 'upcycles');
-
+class Shop extends BaseController
+{
     /**
      * defines which calls are legit action(s) in method.
      * @var array
@@ -33,97 +29,47 @@ class Shop extends BaseController {
     protected $cart;
     protected $store;
     protected $products = array();
-    private $token;
+    protected $token;
 
-    public function __construct()
+    public function __construct(View $view)
     {
-        parent::__construct();
-        $this->cart = Reflector::reflect('Core\Http\Cart\Cart'); // Reflect the Cart class, this is a LOT lighter & faster than creating a new instance, this even beats LazyLoading.
+        $this->view = $view;
+        $this->cart = Reflector::reflect('Modules\Shop\Cart'); // Reflect the Cart class, this is a LOT lighter & faster than creating a new instance, this even beats LazyLoading.
         $this->store = new Store(array( // set the columns which are allowed to be filled in.
             'label', 'short_description', 'description', 'price', // products & categories.
             'path', 'position', // product_pictures
             'service',
-            'user_id','username', 'recipient', 'address', 'item', 'comments', 'qty', 'purchased' // purchased
+            'user_id', 'username', 'recipient', 'address', 'item', 'comments', 'qty', 'purchased' // purchased
         ));
         $this->token = User::getToken();
     }
 
-    public function home($method, array $argument = array())
+    public function home($method, $argument)
     {
-        return $this->view->render('Shop/index', array(
-            'title' => 'Product Categories',
-            'Categories' => $this->store->categories())
+        $this->view->render('Shop/index', array(
+                'title' => 'Product Categories',
+                'Categories' => $this->store->allCategories())
         );
     }
 
-    /**
-     * Our home.
-     * Look Http\Controllers\Users for a different approach to set up a class.
-     * @param array $arguments
-     * @param $method
-     * @return bool
-     */
-    public function __call($method, array $arguments = array())
+    public function dance($action, Input $input)
     {
-        $method = ArrayTools::getFirstIn(ArrayTools::arrayMatch($this->methods, $arguments[1]));
-        $action = isset($arguments[1][1]) ? ArrayTools::getFirstIn(ArrayTools::arrayMatch($this->actions, $arguments[1])) : 'index';
-        if($action == 'checkout')
-            {
-               return $this->checkout($method, $arguments[0], $arguments[1]);
-            }
-                $this->$method($action, $arguments);
+        $data = $input->arguments;
+        $controller = Reflector::reflect('Http\Controllers\Shop\dance');
+        $controller->cart = $this->cart;
+        $controller->store = $this->store;
+        $controller->token = $this->token;
+        return isset($data[1]) ? $controller->$data[1]($data) : $controller->home();
     }
 
-    private function family($action, array $arguments = array())
+    protected function render($name, $action, $title, array $additional = array())
     {
-        $this->cart->$action($this->store, $arguments);
-        return $this->render(__FUNCTION__, 'index', 'family', array(
-            'cart' => $this->cart->items(),
-            'store' => $this->store->items(),
-            'token' => $this->token
-        ));
-    }
-
-    private function upcycles($action, array $arguments = array())
-    {
-        $this->cart->$action($this->store, $arguments);
-        return $this->render(__FUNCTION__, 'index', 'upcycles', array(
-            'cart' => $this->cart->items(),
-            'store' => $this->store->items(),
-            'token' => $this->token
-        ));
-    }
-
-
-    private function checkout($action, $request_method, array $arguments = array())
-    {
-        if($request_method == 'POST' && !empty($arguments['post']['token']))
+        $arguments = !empty($additional) ? compact('title') + $additional : compact('title');
+        if(is_null($this->view))
         {
-            if(!User::Authenticate())
-            {
-                return app::redirect('users/authenticate');
-            }
-            if($this->cart->checkout($this->store, $this->token, $arguments))
-            {
-                #$this->store->subtract('qty')->from($this->cart->items());
-                $this->render($action, 'final', 'Purchase Finished.', array('purchase' => $this->cart->items()));
-                $this->cart->clearCart();
-                return true;
-            } else {
-                return $this->render($action, 'final', 'There was an issue with your purchase.', array('purchase' => $this->cart->items()));
-            }
-        } else {
-            return $this->render($action, 'checkout', 'Checkout', array(
-                'cart' => $this->cart->items(),
-                'token' => $this->token
-            ));
+            $this->view = LazyLoader::get('View');
         }
-    }
-
-    private function render($name, $action, $title, array $additional = array())
-    {
-        $arguments = !empty($additional) ? compact('title')+$additional : compact('title');
-        return $this->view->render('Shop/'.$name.'/'.$action, $arguments);
+        $this->view->render('Shop/' . $name . '/' . $action, $arguments);
     }
 
 }

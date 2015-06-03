@@ -3,8 +3,8 @@
 namespace Guzzle\Log;
 
 use Guzzle\Http\Curl\CurlHandle;
-use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
+use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Message\Response;
 
 /**
@@ -72,10 +72,10 @@ class MessageFormatter
     /**
      * Returns a formatted message
      *
-     * @param RequestInterface $request    Request that was sent
-     * @param Response         $response   Response that was received
-     * @param CurlHandle       $handle     Curl handle associated with the message
-     * @param array            $customData Associative array of custom template data
+     * @param RequestInterface $request Request that was sent
+     * @param Response $response Response that was received
+     * @param CurlHandle $handle Curl handle associated with the message
+     * @param array $customData Associative array of custom template data
      *
      * @return string
      */
@@ -84,7 +84,8 @@ class MessageFormatter
         Response $response = null,
         CurlHandle $handle = null,
         array $customData = array()
-    ) {
+    )
+    {
         $cache = $customData;
 
         return preg_replace_callback(
@@ -98,14 +99,14 @@ class MessageFormatter
                 $result = '';
                 switch ($matches[1]) {
                     case 'request':
-                        $result = (string) $request;
+                        $result = (string)$request;
                         break;
                     case 'response':
-                        $result = (string) $response;
+                        $result = (string)$response;
                         break;
                     case 'req_body':
                         $result = $request instanceof EntityEnclosingRequestInterface
-                            ? (string) $request->getBody() : '';
+                            ? (string)$request->getBody() : '';
                         break;
                     case 'res_body':
                         $result = $response ? $response->getBody(true) : '';
@@ -117,7 +118,7 @@ class MessageFormatter
                         $result = $request->getMethod();
                         break;
                     case 'url':
-                        $result = (string) $request->getUrl();
+                        $result = (string)$request->getUrl();
                         break;
                     case 'resource':
                         $result = $request->getResource();
@@ -160,7 +161,7 @@ class MessageFormatter
                         $result = $handle ? $handle->getErrorNo() : '';
                         break;
                     case 'curl_stderr':
-                        $result =  $handle ? $handle->getStderr() : '';
+                        $result = $handle ? $handle->getStderr() : '';
                         break;
                     default:
                         if (strpos($matches[1], 'req_header_') === 0) {

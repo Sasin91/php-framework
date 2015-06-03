@@ -3,8 +3,8 @@
 namespace Guzzle\Tests\Http\Curl;
 
 use Guzzle\Http\Client;
-use Guzzle\Http\Message\Request;
 use Guzzle\Http\Curl\CurlMultiProxy;
+use Guzzle\Http\Message\Request;
 
 /**
  * @group server

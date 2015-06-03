@@ -11,45 +11,80 @@ namespace System;
 
 use System\Containers\ObjectContainer;
 
-class LazyLoader {
+class LazyLoader
+{
 
-    protected static $container = array();
+    /**
+     * In future, this method is going to define whether or not this class has been instantiated.
+     * @var bool
+     */
+    public static $booted = false;
+    protected static $instance;
+    public $container;
 
+    /**
+     * Init or Boot method, for a Laravel reference.
+     */
     public static function _init()
     {
-        $container = new ObjectContainer();
-        static::$container = $container->create('LazyLoader');
+        /**
+         * Register current instance
+         */
+        self::$instance = new static;
+        $instance = self::$instance;
+
+        /**
+         * Create a new collection for LazyLoader.
+         */
+        $instance->container = new ObjectContainer();
+
+        /**
+         * Define LazyLoader is instantiated.
+         */
+        static::$booted = true;
     }
 
-    public static function available()
+    /**
+     * Register an object for easy access of that given object in it's given state.
+     * @param $name
+     * @param $object
+     * @return bool
+     */
+    public static function add($name, $object)
     {
-        return static::$container;
+        if ($name !== '*' && $object !== '*') {
+            if (is_object($object)) {
+                static::$instance->container->set($name, $object);
+            }
+        }
+        $call = static::get($name); // Workaround for arbitrary expression, which is only php 5.5+
+        return !empty($call) ? true : false;
     }
 
+    /**
+     * Returns object or boolean
+     * @param $name
+     * @return object|bool
+     */
     public static function get($name)
     {
-        return !empty(static::$container[$name]) ? static::$container[$name] : false;
+            return static::inContainer($name);
     }
 
-    public static function set($name, $object)
+    private static function inContainer($name)
     {
-        if($name !== '*' && $object !== '*')
-        {
-            static::$container[$name] = $object;
-        }
-        return !empty(static::$container[$name]) ? true : false;
+        return static::$instance->container->get($name);
     }
 
+
+    /**
+     * Register what's LazyLoaded with the AutoLoader.
+     */
     public static function register()
     {
-        $instance = new static;
-        foreach ($instance->available() as $class) {
+        $instance = static::$instance;
+        foreach ($instance->container->available() as $class) {
             \Autoloader::register($class);
         }
-    }
-
-    public static function __callStatic($name, $arguments)
-    {
-        return static::$container->$name($arguments);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Inflection;
 
-use Guzzle\Inflection\MemoizingInflector;
 use Guzzle\Inflection\Inflector;
+use Guzzle\Inflection\MemoizingInflector;
 
 /**
  * @covers Guzzle\Inflection\MemoizingInflector

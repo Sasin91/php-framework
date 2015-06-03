@@ -4,15 +4,15 @@ namespace Guzzle\Tests\Service\Command;
 
 use Guzzle\Http\Message\Response;
 use Guzzle\Service\Client;
-use Guzzle\Service\Command\OperationResponseParser;
+use Guzzle\Service\Command\LocationVisitor\Response\BodyVisitor;
+use Guzzle\Service\Command\LocationVisitor\Response\JsonVisitor;
+use Guzzle\Service\Command\LocationVisitor\Response\ReasonPhraseVisitor;
+use Guzzle\Service\Command\LocationVisitor\Response\StatusCodeVisitor;
+use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 use Guzzle\Service\Command\OperationCommand;
+use Guzzle\Service\Command\OperationResponseParser;
 use Guzzle\Service\Description\Operation;
 use Guzzle\Service\Description\ServiceDescription;
-use Guzzle\Service\Command\LocationVisitor\Response\StatusCodeVisitor;
-use Guzzle\Service\Command\LocationVisitor\Response\ReasonPhraseVisitor;
-use Guzzle\Service\Command\LocationVisitor\Response\JsonVisitor;
-use Guzzle\Service\Command\LocationVisitor\Response\BodyVisitor;
-use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 
 /**
  * @covers Guzzle\Service\Command\OperationResponseParser
@@ -64,9 +64,9 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
         ), '{"baz":"bar","enigma":"123"}'), true);
         $result = $op->execute();
         $this->assertEquals(array(
-            'baz'    => 'bar',
+            'baz' => 'bar',
             'enigma' => '123',
-            'code'   => 200,
+            'code' => 200,
             'phrase' => 'OK'
         ), $result->toArray());
     }
@@ -94,7 +94,7 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
         $result = $op->execute();
         $this->assertInstanceOf('Guzzle\Service\Resource\Model', $result);
         $this->assertEquals(array(
-            'baz'    => 'bar',
+            'baz' => 'bar',
             'enigma' => '123'
         ), $result->toArray());
     }
@@ -120,7 +120,7 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
             'operations' => array('test' => array('responseClass' => 'Foo')),
             'models' => array(
                 'Foo' => array(
-                    'type'       => 'object',
+                    'type' => 'object',
                     'properties' => array('baz' => array('location' => 'body'))
                 )
             )
@@ -134,7 +134,7 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
         ), $brokenXml), true);
         $result = $op->execute();
         $this->assertEquals(array('baz'), $result->getKeys());
-        $this->assertEquals($brokenXml, (string) $result['baz']);
+        $this->assertEquals($brokenXml, (string)$result['baz']);
     }
 
     public function testVisitsAdditionalProperties()
@@ -184,26 +184,26 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
         $parser = OperationResponseParser::getInstance();
         $description = ServiceDescription::factory(array(
             'operations' => array('test' => array('responseClass' => 'Foo')),
-            'models'     => array(
+            'models' => array(
                 'Foo' => array(
-                    'type'       => 'object',
+                    'type' => 'object',
                     'additionalProperties' => false,
                     'properties' => array(
-                        'name'   => array(
+                        'name' => array(
                             'location' => 'json',
-                            'type'     => 'string',
+                            'type' => 'string',
                         ),
                         'nested' => array(
-                            'location'             => 'json',
-                            'type'                 => 'object',
+                            'location' => 'json',
+                            'type' => 'object',
                             'additionalProperties' => false,
-                            'properties'           => array(
+                            'properties' => array(
                                 'width' => array(
                                     'type' => 'integer'
                                 )
                             ),
                         ),
-                        'code'   => array('location' => 'statusCode')
+                        'code' => array('location' => 'statusCode')
                     ),
 
                 )
@@ -280,10 +280,10 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
             'operations' => array('test' => array('responseClass' => 'Foo')),
             'models' => array(
                 'Foo' => array(
-                    'type'       => 'object',
+                    'type' => 'object',
                     'properties' => array(
-                        'baz'    => array('type' => 'string', 'location' => 'json'),
-                        'code'   => array('location' => 'statusCode'),
+                        'baz' => array('type' => 'string', 'location' => 'json'),
+                        'code' => array('location' => 'statusCode'),
                         'phrase' => array('location' => 'reasonPhrase'),
                     )
                 )
@@ -299,7 +299,7 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
         )));
         $foo = new \stdClass();
         $client->getEventDispatcher()->addListener('command.parse_response', function ($e) use ($foo) {
-             $e['result'] = $foo;
+            $e['result'] = $foo;
         });
         $command = $client->getCommand('test');
         $command->prepare()->setResponse(new Response(200), true);
@@ -316,7 +316,7 @@ class OperationResponseParserTest extends \Guzzle\Tests\GuzzleTestCase
         $parser = OperationResponseParser::getInstance();
         $description = ServiceDescription::factory(array(
             'operations' => array('test' => array('responseClass' => 'Foo')),
-            'models'     => array(
+            'models' => array(
                 'Baz' => array('type' => 'string'),
                 'Foo' => array(
                     'type' => 'object',

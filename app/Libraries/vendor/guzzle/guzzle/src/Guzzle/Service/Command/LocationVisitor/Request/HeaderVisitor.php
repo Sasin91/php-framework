@@ -26,8 +26,8 @@ class HeaderVisitor extends AbstractRequestVisitor
      * Add a prefixed array of headers to the request
      *
      * @param RequestInterface $request Request to update
-     * @param Parameter        $param   Parameter object
-     * @param array            $value   Header array to add
+     * @param Parameter $param Parameter object
+     * @param array $value Header array to add
      *
      * @throws InvalidArgumentException
      */

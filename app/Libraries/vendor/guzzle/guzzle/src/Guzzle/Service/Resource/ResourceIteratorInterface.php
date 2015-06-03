@@ -52,8 +52,8 @@ interface ResourceIteratorInterface extends ToArrayInterface, HasDispatcherInter
     /**
      * Set a data option on the iterator
      *
-     * @param string $key   Key of the option to set
-     * @param mixed  $value Value to set for the option
+     * @param string $key Key of the option to set
+     * @param mixed $value Value to set for the option
      *
      * @return ResourceIteratorInterface
      */

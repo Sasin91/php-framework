@@ -3,10 +3,10 @@
 namespace Guzzle\Cache;
 
 use Doctrine\Common\Cache\Cache;
-use Guzzle\Common\Version;
 use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Common\Exception\RuntimeException;
 use Guzzle\Common\FromConfigInterface;
+use Guzzle\Common\Version;
 use Zend\Cache\Storage\StorageInterface;
 
 /**
@@ -94,7 +94,7 @@ class CacheAdapterFactory implements FromConfigInterface
      * Create a class using an array of constructor arguments
      *
      * @param string $className Class name
-     * @param array  $args      Arguments for the class constructor
+     * @param array $args Arguments for the class constructor
      *
      * @return mixed
      * @throws RuntimeException

@@ -19,25 +19,25 @@ class OperationTest extends \Guzzle\Tests\GuzzleTestCase
     public function testOperationIsDataObject()
     {
         $c = new Operation(array(
-            'name'               => 'test',
-            'summary'            => 'doc',
-            'notes'              => 'notes',
-            'documentationUrl'   => 'http://www.example.com',
-            'httpMethod'         => 'POST',
-            'uri'                => '/api/v1',
-            'responseClass'      => 'array',
-            'responseNotes'      => 'returns the json_decoded response',
-            'deprecated'         => true,
-            'parameters'         => array(
+            'name' => 'test',
+            'summary' => 'doc',
+            'notes' => 'notes',
+            'documentationUrl' => 'http://www.example.com',
+            'httpMethod' => 'POST',
+            'uri' => '/api/v1',
+            'responseClass' => 'array',
+            'responseNotes' => 'returns the json_decoded response',
+            'deprecated' => true,
+            'parameters' => array(
                 'key' => array(
-                    'required'  => true,
-                    'type'      => 'string',
+                    'required' => true,
+                    'type' => 'string',
                     'maxLength' => 10
                 ),
                 'key_2' => array(
                     'required' => true,
-                    'type'     => 'integer',
-                    'default'  => 10
+                    'type' => 'integer',
+                    'default' => 10
                 )
             )
         ));
@@ -53,27 +53,27 @@ class OperationTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('Guzzle\\Service\\Command\\OperationCommand', $c->getClass());
         $this->assertEquals(array(
             'key' => new Parameter(array(
-                'name'      => 'key',
-                'required'  => true,
-                'type'      => 'string',
+                'name' => 'key',
+                'required' => true,
+                'type' => 'string',
                 'maxLength' => 10,
-                'parent'    => $c
+                'parent' => $c
             )),
             'key_2' => new Parameter(array(
-                'name'     => 'key_2',
+                'name' => 'key_2',
                 'required' => true,
-                'type'     => 'integer',
-                'default'  => 10,
-                'parent'   => $c
+                'type' => 'integer',
+                'default' => 10,
+                'parent' => $c
             ))
         ), $c->getParams());
 
         $this->assertEquals(new Parameter(array(
-            'name'     => 'key_2',
+            'name' => 'key_2',
             'required' => true,
-            'type'     => 'integer',
-            'default'  => 10,
-            'parent'   => $c
+            'type' => 'integer',
+            'default' => 10,
+            'parent' => $c
         )), $c->getParam('key_2'));
 
         $this->assertNull($c->getParam('afefwef'));
@@ -97,13 +97,13 @@ class OperationTest extends \Guzzle\Tests\GuzzleTestCase
     public function testConvertsToArray()
     {
         $data = array(
-            'name'             => 'test',
-            'class'            => 'Guzzle\\Service\\Command\ClosureCommand',
-            'summary'          => 'test',
+            'name' => 'test',
+            'class' => 'Guzzle\\Service\\Command\ClosureCommand',
+            'summary' => 'test',
             'documentationUrl' => 'http://www.example.com',
-            'httpMethod'       => 'PUT',
-            'uri'              => '/',
-            'parameters'       => array('p' => array('name' => 'foo'))
+            'httpMethod' => 'PUT',
+            'uri' => '/',
+            'parameters' => array('p' => array('name' => 'foo'))
         );
         $c = new Operation($data);
         $toArray = $c->toArray();
@@ -215,11 +215,11 @@ class OperationTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals(123, $o->getData('bar'));
         $this->assertNull($o->getData('wfefwe'));
         $this->assertEquals(array(
-            'parameters'    => array(),
-            'class'         => 'Guzzle\Service\Command\OperationCommand',
-            'data'          => array('foo' => 'baz', 'bar' => 123, 'test' => false),
+            'parameters' => array(),
+            'class' => 'Guzzle\Service\Command\OperationCommand',
+            'data' => array('foo' => 'baz', 'bar' => 123, 'test' => false),
             'responseClass' => 'array',
-            'responseType'  => 'primitive'
+            'responseType' => 'primitive'
         ), $o->toArray());
     }
 
@@ -286,18 +286,18 @@ class OperationTest extends \Guzzle\Tests\GuzzleTestCase
     protected function getOperation()
     {
         return new Operation(array(
-            'name'       => 'OperationTest',
-            'class'      => get_class($this),
+            'name' => 'OperationTest',
+            'class' => get_class($this),
             'parameters' => array(
-                'test'          => array('type' => 'object'),
-                'bool_1'        => array('default' => true, 'type' => 'boolean'),
-                'bool_2'        => array('default' => false),
-                'float'         => array('type' => 'numeric'),
-                'int'           => array('type' => 'integer'),
-                'date'          => array('type' => 'string'),
-                'timestamp'     => array('type' => 'string'),
-                'string'        => array('type' => 'string'),
-                'username'      => array('type' => 'string', 'required' => true, 'filters' => 'strtolower'),
+                'test' => array('type' => 'object'),
+                'bool_1' => array('default' => true, 'type' => 'boolean'),
+                'bool_2' => array('default' => false),
+                'float' => array('type' => 'numeric'),
+                'int' => array('type' => 'integer'),
+                'date' => array('type' => 'string'),
+                'timestamp' => array('type' => 'string'),
+                'string' => array('type' => 'string'),
+                'username' => array('type' => 'string', 'required' => true, 'filters' => 'strtolower'),
                 'test_function' => array('type' => 'string', 'filters' => __CLASS__ . '::strtoupper')
             ),
             'errorResponses' => array(

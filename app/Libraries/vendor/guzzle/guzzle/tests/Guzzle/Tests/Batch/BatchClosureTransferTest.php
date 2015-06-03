@@ -15,17 +15,6 @@ class BatchClosureTransferTest extends \Guzzle\Tests\GuzzleTestCase
     /** @var array|null An array for keeping track of items passed into the transfer closure */
     protected $itemsTransferred;
 
-    protected function setUp()
-    {
-        $this->itemsTransferred = null;
-        $itemsTransferred =& $this->itemsTransferred;
-
-        $this->transferStrategy = new BatchClosureTransfer(function (array $batch) use (&$itemsTransferred) {
-            $itemsTransferred = $batch;
-            return;
-        });
-    }
-
     public function testTransfersBatch()
     {
         $batchedItems = array('foo', 'bar', 'baz');
@@ -48,5 +37,16 @@ class BatchClosureTransferTest extends \Guzzle\Tests\GuzzleTestCase
     public function testEnsuresCallableIsCallable()
     {
         $foo = new BatchClosureTransfer('uh oh!');
+    }
+
+    protected function setUp()
+    {
+        $this->itemsTransferred = null;
+        $itemsTransferred =& $this->itemsTransferred;
+
+        $this->transferStrategy = new BatchClosureTransfer(function (array $batch) use (&$itemsTransferred) {
+            $itemsTransferred = $batch;
+            return;
+        });
     }
 }

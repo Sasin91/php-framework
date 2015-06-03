@@ -2,10 +2,10 @@
 
 namespace Guzzle\Tests\Service\Description;
 
-use Guzzle\Service\Description\ServiceDescription;
+use Guzzle\Service\Client;
 use Guzzle\Service\Description\Operation;
 use Guzzle\Service\Description\Parameter;
-use Guzzle\Service\Client;
+use Guzzle\Service\Description\ServiceDescription;
 
 /**
  * @covers Guzzle\Service\Description\ServiceDescription
@@ -18,13 +18,13 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $this->serviceData = array(
             'test_command' => new Operation(array(
-                'name'        => 'test_command',
+                'name' => 'test_command',
                 'description' => 'documentationForCommand',
-                'httpMethod'  => 'DELETE',
-                'class'       => 'Guzzle\\Tests\\Service\\Mock\\Command\\MockCommand',
-                'parameters'  => array(
-                    'bucket'  => array('required' => true),
-                    'key'     => array('required' => true)
+                'httpMethod' => 'DELETE',
+                'class' => 'Guzzle\\Tests\\Service\\Mock\\Command\\MockCommand',
+                'parameters' => array(
+                    'bucket' => array('required' => true),
+                    'key' => array('required' => true)
                 )
             ))
         );
@@ -76,9 +76,9 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
                 'test' => new Operation(array(
                     'httpMethod' => 'PUT',
                     'parameters' => array(
-                        'data'   => array(
+                        'data' => array(
                             'required' => true,
-                            'filters'  => 'json_encode',
+                            'filters' => 'json_encode',
                             'location' => 'body'
                         )
                     )
@@ -94,7 +94,7 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
         ));
 
         $request = $command->prepare();
-        $this->assertEquals('{"foo":"bar"}', (string) $request->getBody());
+        $this->assertEquals('{"foo":"bar"}', (string)$request->getBody());
     }
 
     public function testContainsModels()
@@ -102,7 +102,7 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
         $d = new ServiceDescription(array(
             'operations' => array('foo' => array()),
             'models' => array(
-                'Tag'    => array('type' => 'object'),
+                'Tag' => array('type' => 'object'),
                 'Person' => array('type' => 'object')
             )
         ));
@@ -126,10 +126,10 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
     public function testHasAttributes()
     {
         $d = new ServiceDescription(array(
-            'operations'  => array(),
-            'name'        => 'Name',
+            'operations' => array(),
+            'name' => 'Name',
             'description' => 'Description',
-            'apiVersion'  => '1.24'
+            'apiVersion' => '1.24'
         ));
 
         $this->assertEquals('Name', $d->getName());
@@ -150,12 +150,12 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
     public function testPersistsCustomAttributes()
     {
         $data = array(
-            'operations'  => array('foo' => array('class' => 'foo', 'parameters' => array())),
-            'name'        => 'Name',
+            'operations' => array('foo' => array('class' => 'foo', 'parameters' => array())),
+            'name' => 'Name',
             'description' => 'Test',
-            'apiVersion'  => '1.24',
-            'auth'        => 'foo',
-            'keyParam'    => 'bar'
+            'apiVersion' => '1.24',
+            'auth' => 'foo',
+            'keyParam' => 'bar'
         );
         $d = new ServiceDescription($data);
         $d->setData('hello', 'baz');
@@ -171,8 +171,8 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
     public function testHasToArray()
     {
         $data = array(
-            'operations'  => array(),
-            'name'        => 'Name',
+            'operations' => array(),
+            'name' => 'Name',
             'description' => 'Test'
         );
         $d = new ServiceDescription($data);
@@ -224,7 +224,7 @@ class ServiceDescriptionTest extends \Guzzle\Tests\GuzzleTestCase
         $desc = array(
             'models' => array(
                 'date' => array('type' => 'string'),
-                'user'=> array(
+                'user' => array(
                     'type' => 'object',
                     'properties' => array(
                         'dob' => array('$ref' => 'date')

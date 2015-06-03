@@ -11,7 +11,8 @@ namespace Core\Models\Layout;
 
 use System\MVC\Model;
 
-class CarouselModel extends Model {
+class CarouselModel extends Model
+{
 
     protected $database = 'Layout';
 

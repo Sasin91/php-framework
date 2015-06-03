@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Http;
 
-use Guzzle\Http\QueryString;
 use Guzzle\Http\QueryAggregator\PhpAggregator as Ag;
+use Guzzle\Http\QueryString;
 
 class PhpAggregatorTest extends \Guzzle\Tests\GuzzleTestCase
 {

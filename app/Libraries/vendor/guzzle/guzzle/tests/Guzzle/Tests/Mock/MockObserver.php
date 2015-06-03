@@ -35,6 +35,16 @@ class MockObserver implements \Countable, EventSubscriberInterface
         return count($this->events);
     }
 
+    public function getData($event, $key, $occurrence = 0)
+    {
+        $grouped = $this->getGrouped();
+        if (isset($grouped[$event])) {
+            return $grouped[$event][$occurrence][$key];
+        }
+
+        return null;
+    }
+
     public function getGrouped()
     {
         $events = array();
@@ -46,16 +56,6 @@ class MockObserver implements \Countable, EventSubscriberInterface
         }
 
         return $events;
-    }
-
-    public function getData($event, $key, $occurrence = 0)
-    {
-        $grouped = $this->getGrouped();
-        if (isset($grouped[$event])) {
-            return $grouped[$event][$occurrence][$key];
-        }
-
-        return null;
     }
 
     public function update(Event $event)

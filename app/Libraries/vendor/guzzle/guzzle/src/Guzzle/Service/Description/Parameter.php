@@ -87,7 +87,7 @@ class Parameter
      * - $ref:          (string) String referencing a service description model. The parameter is replaced by the
      *                  schema contained in the model.
      *
-     * @param array                       $data        Array of data as seen in service descriptions
+     * @param array $data Array of data as seen in service descriptions
      * @param ServiceDescriptionInterface $description Service description used to resolve models if $ref tags are found
      *
      * @throws InvalidArgumentException
@@ -114,11 +114,11 @@ class Parameter
         }
 
         $this->serviceDescription = $description;
-        $this->required = (bool) $this->required;
-        $this->data = (array) $this->data;
+        $this->required = (bool)$this->required;
+        $this->data = (array)$this->data;
 
         if ($this->filters) {
-            $this->setFilters((array) $this->filters);
+            $this->setFilters((array)$this->filters);
         }
 
         if ($this->type == 'object' && $this->additionalProperties === null) {
@@ -173,6 +173,129 @@ class Parameter
         }
 
         return $result;
+    }
+
+    /**
+     * Get the type(s) of the parameter
+     *
+     * @return string|array
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set the type(s) of the parameter
+     *
+     * @param string|array $type Type of parameter or array of simple types used in a union
+     *
+     * @return self
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get the item data of the parameter
+     *
+     * @return Parameter|null
+     */
+    public function getItems()
+    {
+        if (is_array($this->items)) {
+            $this->items = new static($this->items, $this->serviceDescription);
+            $this->items->setParent($this);
+        }
+
+        return $this->items;
+    }
+
+    /**
+     * Set the items data of the parameter
+     *
+     * @param Parameter|null $items Items to set
+     *
+     * @return self
+     */
+    public function setItems(Parameter $items = null)
+    {
+        if ($this->items = $items) {
+            $this->items->setParent($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the additionalProperties value of the parameter
+     *
+     * @return bool|Parameter|null
+     */
+    public function getAdditionalProperties()
+    {
+        if (is_array($this->additionalProperties)) {
+            $this->additionalProperties = new static($this->additionalProperties, $this->serviceDescription);
+            $this->additionalProperties->setParent($this);
+        }
+
+        return $this->additionalProperties;
+    }
+
+    /**
+     * Set the additionalProperties value of the parameter
+     *
+     * @param bool|Parameter|null $additional Boolean to allow any, an Parameter to specify a schema, or false to disallow
+     *
+     * @return self
+     */
+    public function setAdditionalProperties($additional)
+    {
+        $this->additionalProperties = $additional;
+
+        return $this;
+    }
+
+    /**
+     * Get the properties of the parameter
+     *
+     * @return array
+     */
+    public function getProperties()
+    {
+        if (!$this->propertiesCache) {
+            $this->propertiesCache = array();
+            foreach (array_keys($this->properties) as $name) {
+                $this->propertiesCache[$name] = $this->getProperty($name);
+            }
+        }
+
+        return $this->propertiesCache;
+    }
+
+    /**
+     * Get a specific property from the parameter
+     *
+     * @param string $name Name of the property to retrieve
+     *
+     * @return null|Parameter
+     */
+    public function getProperty($name)
+    {
+        if (!isset($this->properties[$name])) {
+            return null;
+        }
+
+        if (!($this->properties[$name] instanceof self)) {
+            $this->properties[$name]['name'] = $name;
+            $this->properties[$name] = new static($this->properties[$name], $this->serviceDescription);
+            $this->properties[$name]->setParent($this);
+        }
+
+        return $this->properties[$name];
     }
 
     /**
@@ -233,16 +356,6 @@ class Parameter
     }
 
     /**
-     * Get the name of the parameter
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * Get the key of the parameter, where sentAs will supersede name if it is set
      *
      * @return string
@@ -250,44 +363,6 @@ class Parameter
     public function getWireName()
     {
         return $this->sentAs ?: $this->name;
-    }
-
-    /**
-     * Set the name of the parameter
-     *
-     * @param string $name Name to set
-     *
-     * @return self
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get the type(s) of the parameter
-     *
-     * @return string|array
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Set the type(s) of the parameter
-     *
-     * @param string|array $type Type of parameter or array of simple types used in a union
-     *
-     * @return self
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -309,7 +384,7 @@ class Parameter
      */
     public function setRequired($isRequired)
     {
-        $this->required = (bool) $isRequired;
+        $this->required = (bool)$isRequired;
 
         return $this;
     }
@@ -582,7 +657,7 @@ class Parameter
      * Set the extra data properties of the parameter or set a specific extra property
      *
      * @param string|array|null $nameOrData The name of a specific extra to set or an array of extras to set
-     * @param mixed|null        $data       When setting a specific extra property, specify the data to set for it
+     * @param mixed|null $data When setting a specific extra property, specify the data to set for it
      *
      * @return self
      */
@@ -616,7 +691,7 @@ class Parameter
      */
     public function setStatic($static)
     {
-        $this->static = (bool) $static;
+        $this->static = (bool)$static;
 
         return $this;
     }
@@ -698,45 +773,6 @@ class Parameter
     }
 
     /**
-     * Get the properties of the parameter
-     *
-     * @return array
-     */
-    public function getProperties()
-    {
-        if (!$this->propertiesCache) {
-            $this->propertiesCache = array();
-            foreach (array_keys($this->properties) as $name) {
-                $this->propertiesCache[$name] = $this->getProperty($name);
-            }
-        }
-
-        return $this->propertiesCache;
-    }
-
-    /**
-     * Get a specific property from the parameter
-     *
-     * @param string $name Name of the property to retrieve
-     *
-     * @return null|Parameter
-     */
-    public function getProperty($name)
-    {
-        if (!isset($this->properties[$name])) {
-            return null;
-        }
-
-        if (!($this->properties[$name] instanceof self)) {
-            $this->properties[$name]['name'] = $name;
-            $this->properties[$name] = new static($this->properties[$name], $this->serviceDescription);
-            $this->properties[$name]->setParent($this);
-        }
-
-        return $this->properties[$name];
-    }
-
-    /**
      * Remove a property from the parameter
      *
      * @param string $name Name of the property to remove
@@ -768,63 +804,27 @@ class Parameter
     }
 
     /**
-     * Get the additionalProperties value of the parameter
+     * Get the name of the parameter
      *
-     * @return bool|Parameter|null
+     * @return string
      */
-    public function getAdditionalProperties()
+    public function getName()
     {
-        if (is_array($this->additionalProperties)) {
-            $this->additionalProperties = new static($this->additionalProperties, $this->serviceDescription);
-            $this->additionalProperties->setParent($this);
-        }
-
-        return $this->additionalProperties;
+        return $this->name;
     }
 
     /**
-     * Set the additionalProperties value of the parameter
+     * Set the name of the parameter
      *
-     * @param bool|Parameter|null $additional Boolean to allow any, an Parameter to specify a schema, or false to disallow
+     * @param string $name Name to set
      *
      * @return self
      */
-    public function setAdditionalProperties($additional)
+    public function setName($name)
     {
-        $this->additionalProperties = $additional;
+        $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * Set the items data of the parameter
-     *
-     * @param Parameter|null $items Items to set
-     *
-     * @return self
-     */
-    public function setItems(Parameter $items = null)
-    {
-        if ($this->items = $items) {
-            $this->items->setParent($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get the item data of the parameter
-     *
-     * @return Parameter|null
-     */
-    public function getItems()
-    {
-        if (is_array($this->items)) {
-            $this->items = new static($this->items, $this->serviceDescription);
-            $this->items->setParent($this);
-        }
-
-        return $this->items;
     }
 
     /**

@@ -11,7 +11,8 @@ namespace Modules;
 
 use System\Exception\BadMethodCallException;
 
-abstract class ArrayObject extends \ArrayObject {
+abstract class ArrayObject extends \ArrayObject
+{
 
     public function __construct()
     {
@@ -27,9 +28,8 @@ abstract class ArrayObject extends \ArrayObject {
      */
     public function __call($func, $argv)
     {
-        if (!is_callable($func) || substr($func, 0, 6) !== 'array_')
-        {
-            throw new BadMethodCallException(__CLASS__.'->'.$func);
+        if (!is_callable($func) || substr($func, 0, 6) !== 'array_') {
+            throw new BadMethodCallException(__CLASS__ . '->' . $func);
         }
         return call_user_func_array($func, array_merge(array($this->getArrayCopy()), $argv));
     }

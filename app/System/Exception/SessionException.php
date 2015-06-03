@@ -9,11 +9,12 @@
 namespace System\Exception;
 
 
-class SessionException extends Exception {
+class SessionException extends Exception
+{
 
     function __construct($message, $code = 404, Exception $previous = null)
     {
-        $msg = $message.' was not found in session.';
+        $msg = $message . ' was not found in session.';
         parent::__construct($msg, $code, $previous);
     }
 }

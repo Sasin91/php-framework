@@ -18,7 +18,7 @@ class CurlMultiProxy extends AbstractHasDispatcher implements CurlMultiInterface
     protected $selectTimeout;
 
     /**
-     * @param int   $maxHandles The maximum number of idle CurlMulti handles to allow to remain open
+     * @param int $maxHandles The maximum number of idle CurlMulti handles to allow to remain open
      * @param float $selectTimeout timeout for curl_multi_select
      */
     public function __construct($maxHandles = 3, $selectTimeout = 1.0)
@@ -37,16 +37,6 @@ class CurlMultiProxy extends AbstractHasDispatcher implements CurlMultiInterface
         $this->queued[] = $request;
 
         return $this;
-    }
-
-    public function all()
-    {
-        $requests = $this->queued;
-        foreach ($this->handles as $handle) {
-            $requests = array_merge($requests, $handle->all());
-        }
-
-        return $requests;
     }
 
     public function remove(RequestInterface $request)
@@ -105,11 +95,6 @@ class CurlMultiProxy extends AbstractHasDispatcher implements CurlMultiInterface
         }
     }
 
-    public function count()
-    {
-        return count($this->all());
-    }
-
     /**
      * Get an existing available CurlMulti handle or create a new one
      *
@@ -146,5 +131,20 @@ class CurlMultiProxy extends AbstractHasDispatcher implements CurlMultiInterface
             }
             $this->handles = array_values($this->handles);
         }
+    }
+
+    public function count()
+    {
+        return count($this->all());
+    }
+
+    public function all()
+    {
+        $requests = $this->queued;
+        foreach ($this->handles as $handle) {
+            $requests = array_merge($requests, $handle->all());
+        }
+
+        return $requests;
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Guzzle\Http\Message;
 
-use Guzzle\Common\Version;
 use Guzzle\Common\Exception\InvalidArgumentException;
+use Guzzle\Common\Version;
 use Guzzle\Http\Mimetypes;
 
 /**
@@ -17,9 +17,9 @@ class PostFile implements PostFileInterface
     protected $postname;
 
     /**
-     * @param string $fieldName   Name of the field
-     * @param string $filename    Local path to the file
-     * @param string $postname    Remote post file name
+     * @param string $fieldName Name of the field
+     * @param string $filename Local path to the file
+     * @param string $postname Remote post file name
      * @param string $contentType Content-Type of the upload
      */
     public function __construct($fieldName, $filename, $contentType = null, $postname = null)

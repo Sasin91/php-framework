@@ -9,9 +9,6 @@ use Guzzle\Common\ToArrayInterface;
  */
 class Cookie implements ToArrayInterface
 {
-    /** @var array Cookie data */
-    protected $data;
-
     /**
      * @var string ASCII codes not valid for for use in a cookie name
      *
@@ -20,24 +17,8 @@ class Cookie implements ToArrayInterface
      * or any of the following separators
      */
     protected static $invalidCharString;
-
-    /**
-     * Gets an array of invalid cookie characters
-     *
-     * @return array
-     */
-    protected static function getInvalidCharacters()
-    {
-        if (!self::$invalidCharString) {
-            self::$invalidCharString = implode('', array_map('chr', array_merge(
-                range(0, 32),
-                array(34, 40, 41, 44, 47),
-                array(58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 123, 125, 127)
-            )));
-        }
-
-        return self::$invalidCharString;
-    }
+    /** @var array Cookie data */
+    protected $data;
 
     /**
      * @param array $data Array of cookie data provided by a Cookie parser
@@ -45,29 +26,76 @@ class Cookie implements ToArrayInterface
     public function __construct(array $data = array())
     {
         static $defaults = array(
-            'name'        => '',
-            'value'       => '',
-            'domain'      => '',
-            'path'        => '/',
-            'expires'     => null,
-            'max_age'     => 0,
-            'comment'     => null,
+            'name' => '',
+            'value' => '',
+            'domain' => '',
+            'path' => '/',
+            'expires' => null,
+            'max_age' => 0,
+            'comment' => null,
             'comment_url' => null,
-            'port'        => array(),
-            'version'     => null,
-            'secure'      => false,
-            'discard'     => false,
-            'http_only'   => false
+            'port' => array(),
+            'version' => null,
+            'secure' => false,
+            'discard' => false,
+            'http_only' => false
         );
 
         $this->data = array_merge($defaults, $data);
         // Extract the expires value and turn it into a UNIX timestamp if needed
         if (!$this->getExpires() && $this->getMaxAge()) {
             // Calculate the expires date
-            $this->setExpires(time() + (int) $this->getMaxAge());
+            $this->setExpires(time() + (int)$this->getMaxAge());
         } elseif ($this->getExpires() && !is_numeric($this->getExpires())) {
             $this->setExpires(strtotime($this->getExpires()));
         }
+    }
+
+    /**
+     * The UNIX timestamp when the cookie expires
+     *
+     * @return mixed
+     */
+    public function getExpires()
+    {
+        return $this->data['expires'];
+    }
+
+    /**
+     * Maximum lifetime of the cookie in seconds
+     *
+     * @return int|null
+     */
+    public function getMaxAge()
+    {
+        return $this->data['max_age'];
+    }
+
+    /**
+     * Set the unix timestamp for which the cookie will expire
+     *
+     * @param int $timestamp Unix timestamp
+     *
+     * @return Cookie
+     */
+    public function setExpires($timestamp)
+    {
+        return $this->setData('expires', $timestamp);
+    }
+
+    /**
+     * Set a value and return the cookie object
+     *
+     * @param string $key Key to set
+     * @param string $value Value to set
+     *
+     * @return Cookie
+     */
+    private function setData($key, $value)
+    {
+        $this->data[$key] = $value;
+
+        return $this;
     }
 
     /**
@@ -78,16 +106,6 @@ class Cookie implements ToArrayInterface
     public function toArray()
     {
         return $this->data;
-    }
-
-    /**
-     * Get the cookie name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->data['name'];
     }
 
     /**
@@ -103,16 +121,6 @@ class Cookie implements ToArrayInterface
     }
 
     /**
-     * Get the cookie value
-     *
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->data['value'];
-    }
-
-    /**
      * Set the cookie value
      *
      * @param string $value Cookie value
@@ -122,16 +130,6 @@ class Cookie implements ToArrayInterface
     public function setValue($value)
     {
         return $this->setData('value', $value);
-    }
-
-    /**
-     * Get the domain
-     *
-     * @return string|null
-     */
-    public function getDomain()
-    {
-        return $this->data['domain'];
     }
 
     /**
@@ -147,16 +145,6 @@ class Cookie implements ToArrayInterface
     }
 
     /**
-     * Get the path
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->data['path'];
-    }
-
-    /**
      * Set the path of the cookie
      *
      * @param string $path Path of the cookie
@@ -169,16 +157,6 @@ class Cookie implements ToArrayInterface
     }
 
     /**
-     * Maximum lifetime of the cookie in seconds
-     *
-     * @return int|null
-     */
-    public function getMaxAge()
-    {
-        return $this->data['max_age'];
-    }
-
-    /**
      * Set the max-age of the cookie
      *
      * @param int $maxAge Max age of the cookie in seconds
@@ -188,28 +166,6 @@ class Cookie implements ToArrayInterface
     public function setMaxAge($maxAge)
     {
         return $this->setData('max_age', $maxAge);
-    }
-
-    /**
-     * The UNIX timestamp when the cookie expires
-     *
-     * @return mixed
-     */
-    public function getExpires()
-    {
-        return $this->data['expires'];
-    }
-
-    /**
-     * Set the unix timestamp for which the cookie will expire
-     *
-     * @param int $timestamp Unix timestamp
-     *
-     * @return Cookie
-     */
-    public function setExpires($timestamp)
-    {
-        return $this->setData('expires', $timestamp);
     }
 
     /**
@@ -253,7 +209,7 @@ class Cookie implements ToArrayInterface
      */
     public function setSecure($secure)
     {
-        return $this->setData('secure', (bool) $secure);
+        return $this->setData('secure', (bool)$secure);
     }
 
     /**
@@ -323,16 +279,6 @@ class Cookie implements ToArrayInterface
     }
 
     /**
-     * Get an array of acceptable ports this cookie can be used with
-     *
-     * @return array
-     */
-    public function getPorts()
-    {
-        return $this->data['port'];
-    }
-
-    /**
      * Set a list of acceptable ports this cookie can be used with
      *
      * @param array $ports Array of acceptable ports
@@ -391,7 +337,7 @@ class Cookie implements ToArrayInterface
     /**
      * Set a cookie data attribute
      *
-     * @param string $name  Name of the attribute to set
+     * @param string $name Name of the attribute to set
      * @param string $value Value to set
      *
      * @return Cookie
@@ -441,6 +387,16 @@ class Cookie implements ToArrayInterface
     }
 
     /**
+     * Get the path
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->data['path'];
+    }
+
+    /**
      * Check if the cookie matches a domain value
      *
      * @param string $domain Domain to check against
@@ -462,7 +418,17 @@ class Cookie implements ToArrayInterface
             return false;
         }
 
-        return (bool) preg_match('/\.' . preg_quote($cookieDomain, '/') . '$/i', $domain);
+        return (bool)preg_match('/\.' . preg_quote($cookieDomain, '/') . '$/i', $domain);
+    }
+
+    /**
+     * Get the domain
+     *
+     * @return string|null
+     */
+    public function getDomain()
+    {
+        return $this->data['domain'];
     }
 
     /**
@@ -475,6 +441,16 @@ class Cookie implements ToArrayInterface
     public function matchesPort($port)
     {
         return count($this->getPorts()) == 0 || in_array($port, $this->getPorts());
+    }
+
+    /**
+     * Get an array of acceptable ports this cookie can be used with
+     *
+     * @return array
+     */
+    public function getPorts()
+    {
+        return $this->data['port'];
     }
 
     /**
@@ -522,17 +498,40 @@ class Cookie implements ToArrayInterface
     }
 
     /**
-     * Set a value and return the cookie object
+     * Get the cookie name
      *
-     * @param string $key   Key to set
-     * @param string $value Value to set
-     *
-     * @return Cookie
+     * @return string
      */
-    private function setData($key, $value)
+    public function getName()
     {
-        $this->data[$key] = $value;
+        return $this->data['name'];
+    }
 
-        return $this;
+    /**
+     * Gets an array of invalid cookie characters
+     *
+     * @return array
+     */
+    protected static function getInvalidCharacters()
+    {
+        if (!self::$invalidCharString) {
+            self::$invalidCharString = implode('', array_map('chr', array_merge(
+                range(0, 32),
+                array(34, 40, 41, 44, 47),
+                array(58, 59, 60, 61, 62, 63, 64, 91, 92, 93, 123, 125, 127)
+            )));
+        }
+
+        return self::$invalidCharString;
+    }
+
+    /**
+     * Get the cookie value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->data['value'];
     }
 }

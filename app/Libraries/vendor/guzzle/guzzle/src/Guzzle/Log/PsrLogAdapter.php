@@ -2,8 +2,8 @@
 
 namespace Guzzle\Log;
 
-use Psr\Log\LogLevel;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * PSR-3 log adapter
@@ -16,12 +16,12 @@ class PsrLogAdapter extends AbstractLogAdapter
      * syslog to PSR-3 mappings
      */
     private static $mapping = array(
-        LOG_DEBUG   => LogLevel::DEBUG,
-        LOG_INFO    => LogLevel::INFO,
+        LOG_DEBUG => LogLevel::DEBUG,
+        LOG_INFO => LogLevel::INFO,
         LOG_WARNING => LogLevel::WARNING,
-        LOG_ERR     => LogLevel::ERROR,
-        LOG_CRIT    => LogLevel::CRITICAL,
-        LOG_ALERT   => LogLevel::ALERT
+        LOG_ERR => LogLevel::ERROR,
+        LOG_CRIT => LogLevel::CRITICAL,
+        LOG_ALERT => LogLevel::ALERT
     );
 
     public function __construct(LoggerInterface $logObject)

@@ -2,11 +2,10 @@
 
 namespace Guzzle\Plugin\Oauth;
 
-use Guzzle\Common\Event;
 use Guzzle\Common\Collection;
-use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Common\Event;
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
-use Guzzle\Http\QueryString;
+use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Url;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -20,7 +19,7 @@ class OauthPlugin implements EventSubscriberInterface
      * Consumer request method constants. See http://oauth.net/core/1.0/#consumer_req_param
      */
     const REQUEST_METHOD_HEADER = 'header';
-    const REQUEST_METHOD_QUERY  = 'query';
+    const REQUEST_METHOD_QUERY = 'query';
 
     /** @var Collection Configuration settings */
     protected $config;
@@ -49,7 +48,7 @@ class OauthPlugin implements EventSubscriberInterface
             'consumer_key' => 'anonymous',
             'consumer_secret' => 'anonymous',
             'signature_method' => 'HMAC-SHA1',
-            'signature_callback' => function($stringToSign, $key) {
+            'signature_callback' => function ($stringToSign, $key) {
                 return hash_hmac('sha1', $stringToSign, $key, true);
             }
         ), array(
@@ -78,7 +77,7 @@ class OauthPlugin implements EventSubscriberInterface
         $request = $event['request'];
         $nonce = $this->generateNonce($request);
         $authorizationParams = $this->getOauthParams($timestamp, $nonce);
-        $authorizationParams['oauth_signature']  = $this->getSignature($request, $timestamp, $nonce);
+        $authorizationParams['oauth_signature'] = $this->getSignature($request, $timestamp, $nonce);
 
         switch ($this->config['request_method']) {
             case self::REQUEST_METHOD_HEADER:
@@ -124,9 +123,9 @@ class OauthPlugin implements EventSubscriberInterface
     /**
      * Calculate signature for request
      *
-     * @param RequestInterface $request   Request to generate a signature for
-     * @param integer          $timestamp Timestamp to use for nonce
-     * @param string           $nonce
+     * @param RequestInterface $request Request to generate a signature for
+     * @param integer $timestamp Timestamp to use for nonce
+     * @param string $nonce
      *
      * @return string
      */
@@ -141,9 +140,9 @@ class OauthPlugin implements EventSubscriberInterface
     /**
      * Calculate string to sign
      *
-     * @param RequestInterface $request   Request to generate a signature for
-     * @param int              $timestamp Timestamp to use for nonce
-     * @param string           $nonce
+     * @param RequestInterface $request Request to generate a signature for
+     * @param int $timestamp Timestamp to use for nonce
+     * @param string $nonce
      *
      * @return string
      */
@@ -161,8 +160,8 @@ class OauthPlugin implements EventSubscriberInterface
         $url = Url::factory($request->getUrl())->setQuery('')->setFragment(null);
 
         return strtoupper($request->getMethod()) . '&'
-             . rawurlencode($url) . '&'
-             . rawurlencode((string) $parameterString);
+        . rawurlencode($url) . '&'
+        . rawurlencode((string)$parameterString);
     }
 
     /**
@@ -175,19 +174,19 @@ class OauthPlugin implements EventSubscriberInterface
     protected function getOauthParams($timestamp, $nonce)
     {
         $params = new Collection(array(
-            'oauth_consumer_key'     => $this->config['consumer_key'],
-            'oauth_nonce'            => $nonce,
+            'oauth_consumer_key' => $this->config['consumer_key'],
+            'oauth_nonce' => $nonce,
             'oauth_signature_method' => $this->config['signature_method'],
-            'oauth_timestamp'        => $timestamp,
+            'oauth_timestamp' => $timestamp,
         ));
 
         // Optional parameters should not be set if they have not been set in the config as
         // the parameter may be considered invalid by the Oauth service.
         $optionalParams = array(
-            'callback'  => 'oauth_callback',
-            'token'     => 'oauth_token',
-            'verifier'  => 'oauth_verifier',
-            'version'   => 'oauth_version'
+            'callback' => 'oauth_callback',
+            'token' => 'oauth_token',
+            'verifier' => 'oauth_verifier',
+            'version' => 'oauth_version'
         );
 
         foreach ($optionalParams as $optionName => $oauthName) {
@@ -205,9 +204,9 @@ class OauthPlugin implements EventSubscriberInterface
      * * The request GET params
      * * The params passed in the POST body (with a content-type of application/x-www-form-urlencoded)
      *
-     * @param RequestInterface $request   Request to generate a signature for
-     * @param integer          $timestamp Timestamp to use for nonce
-     * @param string           $nonce
+     * @param RequestInterface $request Request to generate a signature for
+     * @param integer $timestamp Timestamp to use for nonce
+     * @param string $nonce
      *
      * @return array
      */
@@ -219,8 +218,7 @@ class OauthPlugin implements EventSubscriberInterface
         $params->merge($request->getQuery());
 
         // Add POST fields to signing string if required
-        if ($this->shouldPostFieldsBeSigned($request))
-        {
+        if ($this->shouldPostFieldsBeSigned($request)) {
             $params->merge($request->getPostFields());
         }
 
@@ -244,8 +242,8 @@ class OauthPlugin implements EventSubscriberInterface
     {
         if (!$this->config->get('disable_post_params') &&
             $request instanceof EntityEnclosingRequestInterface &&
-            false !== strpos($request->getHeader('Content-Type'), 'application/x-www-form-urlencoded'))
-        {
+            false !== strpos($request->getHeader('Content-Type'), 'application/x-www-form-urlencoded')
+        ) {
             return true;
         }
 
@@ -274,7 +272,7 @@ class OauthPlugin implements EventSubscriberInterface
      */
     public function getTimestamp(Event $event)
     {
-       return $event['timestamp'] ?: time();
+        return $event['timestamp'] ?: time();
     }
 
     /**

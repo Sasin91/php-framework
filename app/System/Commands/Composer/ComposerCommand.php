@@ -15,6 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ComposerCommand extends \Wizard
 {
     private $path = '';
+
     protected function configure()
     {
         $this
@@ -37,10 +38,9 @@ class ComposerCommand extends \Wizard
 
     public function __call($name, $argument)
     {
-        chdir(BASE_PATH.DS.'app'.DS.$this->path);
-        shell_exec('composer '.$name);
+        chdir(BASE_PATH . DS . 'app' . DS . $this->path);
+        shell_exec('composer ' . $name);
     }
-
 
 
 }

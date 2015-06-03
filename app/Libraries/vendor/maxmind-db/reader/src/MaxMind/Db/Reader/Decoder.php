@@ -2,9 +2,6 @@
 
 namespace MaxMind\Db\Reader;
 
-use MaxMind\Db\Reader\InvalidDatabaseException;
-use MaxMind\Db\Reader\Util;
-
 class Decoder
 {
 
@@ -32,12 +29,19 @@ class Decoder
         14 => 'boolean',
         15 => 'float',
     );
+    private $pointerValueOffset = array(
+        1 => 0,
+        2 => 2048,
+        3 => 526336,
+        4 => 0,
+    );
 
     public function __construct(
         $fileStream,
         $pointerBase = 0,
         $pointerTestHack = false
-    ) {
+    )
+    {
         $this->fileStream = $fileStream;
         $this->pointerBase = $pointerBase;
         $this->pointerTestHack = $pointerTestHack;
@@ -45,6 +49,12 @@ class Decoder
         $this->switchByteOrder = $this->isPlatformLittleEndian();
     }
 
+    private function isPlatformLittleEndian()
+    {
+        $testint = 0x00FF;
+        $packed = pack('S', $testint);
+        return $testint === current(unpack('v', $packed));
+    }
 
     public function decode($offset)
     {
@@ -98,6 +108,54 @@ class Decoder
         return $this->decodeByType($type, $offset, $size);
     }
 
+    private function decodePointer($ctrlByte, $offset)
+    {
+        $pointerSize = (($ctrlByte >> 3) & 0x3) + 1;
+
+        $buffer = Util::read($this->fileStream, $offset, $pointerSize);
+        $offset = $offset + $pointerSize;
+
+        $packed = $pointerSize == 4
+            ? $buffer
+            : (pack('C', $ctrlByte & 0x7)) . $buffer;
+
+        $unpacked = $this->decodeUint($packed);
+        $pointer = $unpacked + $this->pointerBase
+            + $this->pointerValueOffset[$pointerSize];
+
+        return array($pointer, $offset);
+    }
+
+    private function decodeUint($bytes)
+    {
+        list(, $int) = unpack('N', $this->zeroPadLeft($bytes, 4));
+        return $int;
+    }
+
+    private function zeroPadLeft($content, $desiredLength)
+    {
+        return str_pad($content, $desiredLength, "\x00", STR_PAD_LEFT);
+    }
+
+    private function sizeFromCtrlByte($ctrlByte, $offset)
+    {
+        $size = $ctrlByte & 0x1f;
+        $bytesToRead = $size < 29 ? 0 : $size - 28;
+        $bytes = Util::read($this->fileStream, $offset, $bytesToRead);
+        $decoded = $this->decodeUint($bytes);
+
+        if ($size == 29) {
+            $size = 29 + $decoded;
+        } elseif ($size == 30) {
+            $size = 285 + $decoded;
+        } elseif ($size > 30) {
+            $size = ($decoded & (0x0FFFFFFF >> (32 - (8 * $bytesToRead))))
+                + 65821;
+        }
+
+        return array($size, $offset + $bytesToRead);
+    }
+
     private function decodeByType($type, $offset, $size)
     {
         switch ($type) {
@@ -137,13 +195,18 @@ class Decoder
         }
     }
 
-    private function verifySize($expected, $actual)
+    private function decodeMap($size, $offset)
     {
-        if ($expected != $actual) {
-            throw new InvalidDatabaseException(
-                "The MaxMind DB file's data section contains bad data (unknown data type or corrupt data)"
-            );
+
+        $map = array();
+
+        for ($i = 0; $i < $size; $i++) {
+            list($key, $offset) = $this->decode($offset);
+            list($value, $offset) = $this->decode($offset);
+            $map[$key] = $value;
         }
+
+        return array($map, $offset);
     }
 
     private function decodeArray($size, $offset)
@@ -163,11 +226,32 @@ class Decoder
         return $size == 0 ? false : true;
     }
 
+    private function decodeString($bytes)
+    {
+        // XXX - NOOP. As far as I know, the end user has to explicitly set the
+        // encoding in PHP. Strings are just bytes.
+        return $bytes;
+    }
+
+    private function verifySize($expected, $actual)
+    {
+        if ($expected != $actual) {
+            throw new InvalidDatabaseException(
+                "The MaxMind DB file's data section contains bad data (unknown data type or corrupt data)"
+            );
+        }
+    }
+
     private function decodeDouble($bits)
     {
         // XXX - Assumes IEEE 754 double on platform
         list(, $double) = unpack('d', $this->maybeSwitchByteOrder($bits));
         return $double;
+    }
+
+    private function maybeSwitchByteOrder($bytes)
+    {
+        return $this->switchByteOrder ? strrev($bytes) : $bytes;
     }
 
     private function decodeFloat($bits)
@@ -181,51 +265,6 @@ class Decoder
     {
         $bytes = $this->zeroPadLeft($bytes, 4);
         list(, $int) = unpack('l', $this->maybeSwitchByteOrder($bytes));
-        return $int;
-    }
-
-    private function decodeMap($size, $offset)
-    {
-
-        $map = array();
-
-        for ($i = 0; $i < $size; $i++) {
-            list($key, $offset) = $this->decode($offset);
-            list($value, $offset) = $this->decode($offset);
-            $map[$key] = $value;
-        }
-
-        return array($map, $offset);
-    }
-
-    private $pointerValueOffset = array(
-        1 => 0,
-        2 => 2048,
-        3 => 526336,
-        4 => 0,
-    );
-
-    private function decodePointer($ctrlByte, $offset)
-    {
-        $pointerSize = (($ctrlByte >> 3) & 0x3) + 1;
-
-        $buffer = Util::read($this->fileStream, $offset, $pointerSize);
-        $offset = $offset + $pointerSize;
-
-        $packed = $pointerSize == 4
-            ? $buffer
-            : (pack('C', $ctrlByte & 0x7)) . $buffer;
-
-        $unpacked = $this->decodeUint($packed);
-        $pointer = $unpacked + $this->pointerBase
-            + $this->pointerValueOffset[$pointerSize];
-
-        return array($pointer, $offset);
-    }
-
-    private function decodeUint($bytes)
-    {
-        list(, $int) = unpack('N', $this->zeroPadLeft($bytes, 4));
         return $int;
     }
 
@@ -262,48 +301,5 @@ class Decoder
             }
         }
         return $integer;
-    }
-
-    private function decodeString($bytes)
-    {
-        // XXX - NOOP. As far as I know, the end user has to explicitly set the
-        // encoding in PHP. Strings are just bytes.
-        return $bytes;
-    }
-
-    private function sizeFromCtrlByte($ctrlByte, $offset)
-    {
-        $size = $ctrlByte & 0x1f;
-        $bytesToRead = $size < 29 ? 0 : $size - 28;
-        $bytes = Util::read($this->fileStream, $offset, $bytesToRead);
-        $decoded = $this->decodeUint($bytes);
-
-        if ($size == 29) {
-            $size = 29 + $decoded;
-        } elseif ($size == 30) {
-            $size = 285 + $decoded;
-        } elseif ($size > 30) {
-            $size = ($decoded & (0x0FFFFFFF >> (32 - (8 * $bytesToRead))))
-                + 65821;
-        }
-
-        return array($size, $offset + $bytesToRead);
-    }
-
-    private function zeroPadLeft($content, $desiredLength)
-    {
-        return str_pad($content, $desiredLength, "\x00", STR_PAD_LEFT);
-    }
-
-    private function maybeSwitchByteOrder($bytes)
-    {
-        return $this->switchByteOrder ? strrev($bytes) : $bytes;
-    }
-
-    private function isPlatformLittleEndian()
-    {
-        $testint = 0x00FF;
-        $packed = pack('S', $testint);
-        return $testint === current(unpack('v', $packed));
     }
 }

@@ -8,36 +8,37 @@
 
 namespace System\Exception;
 
-use System\Authentication\Session;
+use Config;
 use System\LazyLoader;
-use Config\Config;
-use System\MVC\View;
 
-class Exception extends \Exception {
+class Exception extends \Exception
+{
 
     private $view;
     private $env;
     private $previous;
 
-    // Redefine the exception so message isn't optional
-    public function __construct($message, $code = 0, Exception $previous = null) {
-        if (!is_null($previous))
-        {
+    public function __construct($message, $code = 500, Exception $previous = null)
+    {
+        if (!is_null($previous)) {
             $this->previous = $previous;
         }
-        $this->env = Config::get('System\Config')['Base'];
-        $this->view = new View();
+        $this->env = Config::get('Config')['Base'];
+        $this->view = LazyLoader::get('View');
         $this->show($code, $message);
     }
 
     // custom string representation of object
-    public function __toString() {
+    public function __toString()
+    {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 
-    public function show($code, $message) {
-            http_response_code(500);
-            $title = 'There was an error, thats all we know.';
-            View::render('error', compact('title', 'code', 'message'));
+    public function show($code, $message)
+    {
+        http_response_code($code);
+        $title = 'There was an error, thats all we know.';
+        $trace = self::getTraceAsString();
+        $this->view->render('error', compact('title', 'code', 'message', 'trace'));
     }
 }

@@ -7,12 +7,10 @@ namespace Guzzle\Http\Curl;
  */
 class CurlVersion
 {
-    /** @var array curl_version() information */
-    protected $version;
-
     /** @var CurlVersion */
     protected static $instance;
-
+    /** @var array curl_version() information */
+    protected $version;
     /** @var string Default user agent */
     protected $userAgent;
 
@@ -26,20 +24,6 @@ class CurlVersion
         }
 
         return self::$instance;
-    }
-
-    /**
-     * Get all of the curl_version() data
-     *
-     * @return array
-     */
-    public function getAll()
-    {
-        if (!$this->version) {
-            $this->version = curl_version();
-        }
-
-        return $this->version;
     }
 
     /**
@@ -62,5 +46,19 @@ class CurlVersion
         $version = $this->getAll();
 
         return isset($version[$type]) ? $version[$type] : false;
+    }
+
+    /**
+     * Get all of the curl_version() data
+     *
+     * @return array
+     */
+    public function getAll()
+    {
+        if (!$this->version) {
+            $this->version = curl_version();
+        }
+
+        return $this->version;
     }
 }

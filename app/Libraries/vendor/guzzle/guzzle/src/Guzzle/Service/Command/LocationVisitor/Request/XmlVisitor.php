@@ -94,10 +94,10 @@ class XmlVisitor extends AbstractRequestVisitor
         // Create the wrapping element with no namespaces if no namespaces were present
         if (!empty($ROOT_PATH['namespaces'])) {
             // Create the wrapping element with an array of one or more namespaces
-            foreach ((array) $ROOT_PATH['namespaces'] as $prefix => $uri) {
+            foreach ((array)$ROOT_PATH['namespaces'] as $prefix => $uri) {
                 $nsLabel = 'xmlns';
                 if (!is_numeric($prefix)) {
-                    $nsLabel .= ':'.$prefix;
+                    $nsLabel .= ':' . $prefix;
                 }
                 $xmlWriter->writeAttribute($nsLabel, $uri);
             }
@@ -109,8 +109,8 @@ class XmlVisitor extends AbstractRequestVisitor
      * Recursively build the XML body
      *
      * @param \XMLWriter $xmlWriter XML to modify
-     * @param Parameter  $param     API Parameter
-     * @param mixed      $value     Value to add
+     * @param Parameter $param API Parameter
+     * @param mixed $value Value to add
      */
     protected function addXml(\XMLWriter $xmlWriter, Parameter $param, $value)
     {
@@ -152,10 +152,10 @@ class XmlVisitor extends AbstractRequestVisitor
      * Write an attribute with namespace if used
      *
      * @param  \XMLWriter $xmlWriter XMLWriter instance
-     * @param  string     $prefix    Namespace prefix if any
-     * @param  string     $name      Attribute name
-     * @param  string     $namespace The uri of the namespace
-     * @param  string     $value     The attribute content
+     * @param  string $prefix Namespace prefix if any
+     * @param  string $name Attribute name
+     * @param  string $namespace The uri of the namespace
+     * @param  string $value The attribute content
      */
     protected function writeAttribute($xmlWriter, $prefix, $name, $namespace, $value)
     {
@@ -170,10 +170,10 @@ class XmlVisitor extends AbstractRequestVisitor
      * Write an element with namespace if used
      *
      * @param  \XMLWriter $xmlWriter XML writer resource
-     * @param  string     $prefix    Namespace prefix if any
-     * @param  string     $name      Element name
-     * @param  string     $namespace The uri of the namespace
-     * @param  string     $value     The element content
+     * @param  string $prefix Namespace prefix if any
+     * @param  string $name Element name
+     * @param  string $namespace The uri of the namespace
+     * @param  string $value The element content
      */
     protected function writeElement(\XMLWriter $xmlWriter, $prefix, $name, $namespace, $value)
     {

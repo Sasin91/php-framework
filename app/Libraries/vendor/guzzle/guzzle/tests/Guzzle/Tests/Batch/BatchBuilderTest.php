@@ -9,23 +9,6 @@ use Guzzle\Batch\BatchBuilder;
  */
 class BatchBuilderTest extends \Guzzle\Tests\GuzzleTestCase
 {
-    private function getMockTransfer()
-    {
-        return $this->getMock('Guzzle\Batch\BatchTransferInterface');
-    }
-
-    private function getMockDivisor()
-    {
-        return $this->getMock('Guzzle\Batch\BatchDivisorInterface');
-    }
-
-    private function getMockBatchBuilder()
-    {
-        return BatchBuilder::factory()
-            ->transferWith($this->getMockTransfer())
-            ->createBatchesWith($this->getMockDivisor());
-    }
-
     public function testFactoryCreatesInstance()
     {
         $builder = BatchBuilder::factory();
@@ -36,6 +19,23 @@ class BatchBuilderTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $batch = $this->getMockBatchBuilder()->autoFlushAt(10)->build();
         $this->assertInstanceOf('Guzzle\Batch\FlushingBatch', $batch);
+    }
+
+    private function getMockBatchBuilder()
+    {
+        return BatchBuilder::factory()
+            ->transferWith($this->getMockTransfer())
+            ->createBatchesWith($this->getMockDivisor());
+    }
+
+    private function getMockTransfer()
+    {
+        return $this->getMock('Guzzle\Batch\BatchTransferInterface');
+    }
+
+    private function getMockDivisor()
+    {
+        return $this->getMock('Guzzle\Batch\BatchDivisorInterface');
     }
 
     public function testAddsExceptionBuffering()
@@ -52,7 +52,8 @@ class BatchBuilderTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testAddsNotify()
     {
-        $batch = $this->getMockBatchBuilder()->notify(function() {})->build();
+        $batch = $this->getMockBatchBuilder()->notify(function () {
+        })->build();
         $this->assertInstanceOf('Guzzle\Batch\NotifyingBatch', $batch);
     }
 

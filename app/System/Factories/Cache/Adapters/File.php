@@ -18,10 +18,16 @@ class File implements CacheInterface
     private static $path;
     private static $ROOT_PATH;
     private $data = array();
+    /**
+     * @param $key
+     * @param $value
+     * @param string $minutes
+     */
+    private $dir;
 
     public function __construct(array $info = array())
     {
-        static::$ROOT_PATH = ROOT_PATH . DS . 'app' . DS . 'Storage' . DS . 'Cache' . DS;
+        static::$ROOT_PATH = BASE_PATH . DS . 'app' . DS . 'Storage' . DS . 'Cache' . DS;
         /**
          * $value = $info[0]['subDir'];
          * !empty($value) ? $target = $value : $target = null;
@@ -31,18 +37,10 @@ class File implements CacheInterface
         static::$path = static::$ROOT_PATH;
         if (!is_dir(static::$path)) {
             mkdir(static::$path, 0777);
-            chmod(static::$path, 0777, true);
+            chmod(static::$path, 0777);
         }
 
         return $this;
-    }
-
-    private function FindKeyInArray($key, array $array = array())
-    {
-        foreach ($array as $k => $v) {
-            if($k == $key)
-                return $v;
-        }
     }
 
     /**
@@ -57,8 +55,7 @@ class File implements CacheInterface
             if (time() >= $data['created'] + $data['lifetime'])
                 return $key . ' expired';
 
-        if(is_file(static::$path . $encrypted_key))
-        {
+        if (is_file(static::$path . $encrypted_key)) {
             $file = file_get_contents(static::$path . $encrypted_key);
             $isJson = json_decode($file);
             return $file === false ? false : $isJson ? $isJson : $file;
@@ -67,19 +64,24 @@ class File implements CacheInterface
 
     }
 
-    /**
-     * @param $key
-     * @param $value
-     * @param string $minutes
-     */
-    private $dir;
+    private function FindKeyInArray($key, array $array = array())
+    {
+        foreach ($array as $k => $v) {
+            if ($k == $key)
+                return $v;
+        }
+    }
 
     function set($key, $value, $minutes = '60')
     {
         if (is_null($key))
             return null;
 
-        if(is_array($value)) { $data = json_encode($value); } else { $data = $value; }
+        if (is_array($value)) {
+            $data = json_encode($value);
+        } else {
+            $data = $value;
+        }
         $this->dir = dir(static::$path);
         $encrypted_key = base64_encode(substr($key, 0, 11));
         if (!is_null(file_put_contents($this->dir->path . $encrypted_key, $data))):
@@ -112,7 +114,7 @@ class File implements CacheInterface
     {
         unset($this->data);
         $dir = static::$path;
-        $files = array_diff(scandir($dir), array('.','..'));
+        $files = array_diff(scandir($dir), array('.', '..'));
         foreach ($files as $file) {
             (is_dir("$dir/$file")) ? rmdir("$dir$file") : unlink("$dir$file");
         }

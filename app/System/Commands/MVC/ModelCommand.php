@@ -9,7 +9,8 @@
 namespace System\Commands\MVC;
 
 
-class ModelCommand {
+class ModelCommand
+{
 
 
     /**
@@ -30,12 +31,11 @@ class ModelCommand {
 
         $className = $options['name'];
 
-        if (isset($options['namespace']))
-        {
-            $namespace = 'namespace '. $path .'\\'. $options['namespace'] . ';'
+        if (isset($options['namespace'])) {
+            $namespace = 'namespace ' . $path . '\\' . $options['namespace'] . ';'
                 . PHP_EOL . PHP_EOL;
         } else {
-            $namespace = 'namespace '. $path . ';' . PHP_EOL . PHP_EOL;
+            $namespace = 'namespace ' . $path . ';' . PHP_EOL . PHP_EOL;
         }
 
         $extends = 'BaseModel';
@@ -45,7 +45,7 @@ class ModelCommand {
             }
         }
 
-        if(isset($options['table'])) {
+        if (isset($options['table'])) {
             $database = $options['table'];
         } else {
             $database = '';
@@ -73,6 +73,6 @@ class ModelCommand {
             $extends,
             $content
         );
-        file_put_contents(ROOT_PATH.DS.'Application/Models'.DS.$className.'Model'.'.php', $code);
+        file_put_contents(ROOT_PATH . DS . 'Application/Models' . DS . $className . 'Model' . '.php', $code);
     }
 }

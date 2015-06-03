@@ -3,11 +3,10 @@
 namespace Guzzle\Service\Command;
 
 use Guzzle\Http\Message\Response;
-use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 use Guzzle\Service\Command\LocationVisitor\Response\ResponseVisitorInterface;
-use Guzzle\Service\Description\Parameter;
+use Guzzle\Service\Command\LocationVisitor\VisitorFlyweight;
 use Guzzle\Service\Description\OperationInterface;
-use Guzzle\Service\Description\Operation;
+use Guzzle\Service\Description\Parameter;
 use Guzzle\Service\Exception\ResponseClassException;
 use Guzzle\Service\Resource\Model;
 
@@ -39,8 +38,8 @@ class OperationResponseParser extends DefaultResponseParser
     }
 
     /**
-     * @param VisitorFlyweight $factory        Factory to use when creating visitors
-     * @param bool             $schemaInModels Set to true to inject schemas into models
+     * @param VisitorFlyweight $factory Factory to use when creating visitors
+     * @param bool $schemaInModels Set to true to inject schemas into models
      */
     public function __construct(VisitorFlyweight $factory, $schemaInModels = false)
     {
@@ -51,8 +50,8 @@ class OperationResponseParser extends DefaultResponseParser
     /**
      * Add a location visitor to the command
      *
-     * @param string                   $location Location to associate with the visitor
-     * @param ResponseVisitorInterface $visitor  Visitor to attach
+     * @param string $location Location to associate with the visitor
+     * @param ResponseVisitorInterface $visitor Visitor to attach
      *
      * @return self
      */
@@ -115,9 +114,9 @@ class OperationResponseParser extends DefaultResponseParser
     /**
      * Perform transformations on the result array
      *
-     * @param Parameter        $model    Model that defines the structure
-     * @param CommandInterface $command  Command that performed the operation
-     * @param Response         $response Response received
+     * @param Parameter $model Model that defines the structure
+     * @param CommandInterface $command Command that performed the operation
+     * @param Response $response Response received
      *
      * @return array Returns the array of result data
      */
@@ -169,7 +168,8 @@ class OperationResponseParser extends DefaultResponseParser
         Parameter $additional,
         &$result,
         array &$foundVisitors
-    ) {
+    )
+    {
         // Only visit when a location is specified
         if ($location = $additional->getLocation()) {
             if (!isset($foundVisitors[$location])) {

@@ -20,8 +20,8 @@ class MemoizingInflector implements InflectorInterface
     protected $decoratedInflector;
 
     /**
-     * @param InflectorInterface $inflector    Inflector being decorated
-     * @param int                $maxCacheSize Maximum number of cached items to hold per cache
+     * @param InflectorInterface $inflector Inflector being decorated
+     * @param int $maxCacheSize Maximum number of cached items to hold per cache
      */
     public function __construct(InflectorInterface $inflector, $maxCacheSize = 500)
     {
@@ -40,6 +40,18 @@ class MemoizingInflector implements InflectorInterface
     }
 
     /**
+     * Prune one of the named caches by removing 20% of the cache if it is full
+     *
+     * @param string $cache Type of cache to prune
+     */
+    protected function pruneCache($cache)
+    {
+        if (count($this->cache[$cache]) == $this->maxCacheSize) {
+            $this->cache[$cache] = array_slice($this->cache[$cache], $this->maxCacheSize * 0.2);
+        }
+    }
+
+    /**
      * Converts strings from snake_case to upper CamelCase
      *
      * @param string $word Value to convert into upper CamelCase
@@ -54,17 +66,5 @@ class MemoizingInflector implements InflectorInterface
         }
 
         return $this->cache['camel'][$word];
-    }
-
-    /**
-     * Prune one of the named caches by removing 20% of the cache if it is full
-     *
-     * @param string $cache Type of cache to prune
-     */
-    protected function pruneCache($cache)
-    {
-        if (count($this->cache[$cache]) == $this->maxCacheSize) {
-            $this->cache[$cache] = array_slice($this->cache[$cache], $this->maxCacheSize * 0.2);
-        }
     }
 }

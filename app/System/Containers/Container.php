@@ -11,32 +11,31 @@ namespace System\Containers;
 
 use System\Interfaces\ContainerInterface;
 
-abstract class Container implements ContainerInterface {
+abstract class Container implements ContainerInterface
+{
 
     private $container = array();
-
-    private function exist($element)
-    {
-        if(isset($this->container[$element]))
-        {
-            return true;
-        }
-        return false;
-    }
+    private $object;
 
     function available()
     {
         return $this->container;
     }
 
-    private $object;
     function get($element)
     {
-        if($this->exist($element))
-        {
+        if ($this->exist($element)) {
             $request = $this->container[$element];
             $this->object = $request;
         }
+    }
+
+    private function exist($element)
+    {
+        if (isset($this->container[$element])) {
+            return true;
+        }
+        return false;
     }
 
     function raw()
@@ -51,8 +50,7 @@ abstract class Container implements ContainerInterface {
 
     function set($element)
     {
-        if(!$this->exist($element))
-        {
+        if (!$this->exist($element)) {
             $this->container[$element];
             return true;
         }
@@ -61,8 +59,7 @@ abstract class Container implements ContainerInterface {
 
     function remove($element)
     {
-        if($this->exist($element))
-        {
+        if ($this->exist($element)) {
             unset($this->container[$element]);
             return true;
         }

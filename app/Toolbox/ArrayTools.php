@@ -10,39 +10,71 @@ namespace Toolbox;
 class ArrayTools
 {
     /**
-     * @param   array   $array             An array
-     * @param   string  $field             The field to get values from
-     * @param   bool    $preserve_keys     Whether or not to preserve the
+     * Verifies and returns an array containing parts matching $request.
+     * @param array $array
+     * @param string $request
+     * @param string $delimiter
+     * @return array
+     */
+    private static $request;
+    private static $matches = array();
+    private static $delimiter = '';
+    /**
+     * Splits all arrays, return string(s).
+     * @var array
+     * return string
+     */
+    private static $imploded = array();
+    /**
+     * Splits all arrays by a delimiter.
+     * @var array
+     * @return array
+     */
+    private static $exploded = array();
+    /**
+     * Returns the first array in a multidimensional one.
+     * @param array $array
+     * @return mixed
+     */
+    private static $call;
+    private static $type;
+
+    // Methods for arrayMatch
+
+    /**
+     * @param   array $array An array
+     * @param   string $field The field to get values from
+     * @param   bool $preserve_keys Whether or not to preserve the
      *                                     array keys
-     * @param   bool    $remove_nomatches  If the field doesn't appear to
+     * @param   bool $remove_nomatches If the field doesn't appear to
      *                                     be set, remove it from the array
      * @return  array
      *
      * @link    http://codex.wordpress.org/static function_Reference/wp_list_pluck
      **/
-    public static function array_pluck( array $array, $field, $preserve_keys = TRUE, $remove_nomatches = TRUE )
+    public static function array_pluck(array $array, $field, $preserve_keys = TRUE, $remove_nomatches = TRUE)
     {
         $new_list = array();
 
-        foreach ( $array as $key => $value ) {
-            if ( is_object( $value ) ) {
-                if ( isset( $value->{$field} ) ) {
-                    if ( $preserve_keys ) {
+        foreach ($array as $key => $value) {
+            if (is_object($value)) {
+                if (isset($value->{$field})) {
+                    if ($preserve_keys) {
                         $new_list[$key] = $value->{$field};
                     } else {
                         $new_list[] = $value->{$field};
                     }
-                } else if ( ! $remove_nomatches ) {
+                } else if (!$remove_nomatches) {
                     $new_list[$key] = $value;
                 }
             } else {
-                if ( isset( $value[$field] ) ) {
-                    if ( $preserve_keys ) {
+                if (isset($value[$field])) {
+                    if ($preserve_keys) {
                         $new_list[$key] = $value[$field];
                     } else {
                         $new_list[] = $value[$field];
                     }
-                } else if ( ! $remove_nomatches ) {
+                } else if (!$remove_nomatches) {
                     $new_list[$key] = $value;
                 }
             }
@@ -73,35 +105,9 @@ class ArrayTools
             if (in_array($ext, $supported_image))
                 $matches[] = $file;
         }
-        return $asBoolean ? !empty($matches) ? true : false: $matches;
+        return $asBoolean ? !empty($matches) ? true : false : $matches;
     }
-
-    /**
-     * Verifies and returns an array containing parts matching $request.
-     * @param array $array
-     * @param string $request
-     * @param string $delimiter
-     * @return array
-     */
-    private static $request;
-    private static $matches = array();
-    private static $delimiter = '';
-    public static function arrayContains(array $array = array(), $request = '', $delimiter = '')
-    {
-        if(isset($delimiter))
-        {
-            static::$delimiter = $delimiter;
-            $array = array_unique(static::explodeMultidimensional($array));
-        }
-        static::$request = $request;
-        array_walk_recursive($array, function($v, $k){
-            if($k OR $v == static::$request)
-            {
-                static::$matches[$k] = $v;
-            }
-        });
-        return static::$matches;
-    }
+    // @end
 
     /**
      * Matches two arrays against each other.
@@ -116,7 +122,6 @@ class ArrayTools
         return $assoc ? static::array_match_assoc($array0, $array1, $flip) : static::array_match($array0, $array1, $flip);
     }
 
-    // Methods for arrayMatch
     private static function array_match_assoc(array $array0, array $array1, $flip)
     {
         return $flip ? array_intersect_assoc($array0, array_flip($array1)) : array_intersect_assoc($array0, $array1);
@@ -126,46 +131,18 @@ class ArrayTools
     {
         return $flip ? array_intersect($array0, array_flip($array1)) : array_intersect($array0, $array1);
     }
-    // @end
 
-    /**
-     * Splits all arrays, return string(s).
-     * @var array
-     * return string
-     */
-    private static $imploded = array();
     public static function implodeMultidimensional(array $array = array(), $delimiter = '')
     {
-        if(!empty($delimiter)) static::$delimiter = $delimiter;
-        array_walk_recursive($array, function($value, $key){
-            if(is_array($value))
-            {
+        if (!empty($delimiter)) static::$delimiter = $delimiter;
+        array_walk_recursive($array, function ($value, $key) {
+            if (is_array($value)) {
                 static::$imploded[] = implode(static::$delimiter, $value);
             } else {
                 static::$imploded[] = implode(static::$delimiter, array($key => $value));
             }
         });
         return static::$imploded;
-    }
-
-    /**
-     * Splits all arrays by a delimiter.
-     * @var array
-     * @return array
-     */
-    private static $exploded = array();
-    public static function explodeMultidimensional(array $array = array(), $delimiter = '')
-    {
-        if(!empty($delimiter)) static::$delimiter = $delimiter;
-        array_walk_recursive($array, function($value, $key){
-            if(!is_array($value))
-            {
-                static::$exploded[] = explode(static::$delimiter, $value);
-            } else {
-                static::$exploded[] = static::explodeMultidimensional($value);
-            }
-        });
-        return static::$exploded;
     }
 
     /**
@@ -180,7 +157,7 @@ class ArrayTools
         $arrayRewrite = array();
         // Array with the md5 hashes
         $arrayHashes = array();
-        foreach($array as $key => $item) {
+        foreach ($array as $key => $item) {
             // Serialize the current element and create a md5 hash
             $hash = md5(serialize($item));
             // If the md5 didn't come up yet, add the element to
@@ -206,15 +183,43 @@ class ArrayTools
      * @param string $delimiter
      * @return bool
      */
-    public static function inArray(array $haystack = array(), $needle, $delimiter = '') {
-        if(in_array($needle, $haystack)) {
+    public static function inArray(array $haystack = array(), $needle, $delimiter = '')
+    {
+        if (in_array($needle, $haystack)) {
             return true;
         }
-        if(static::arrayContains($haystack, $needle, $delimiter))
-        {
+        if (static::arrayContains($haystack, $needle, $delimiter)) {
             return true;
         }
         return false;
+    }
+
+    public static function arrayContains(array $array = array(), $request = '', $delimiter = '')
+    {
+        if (isset($delimiter)) {
+            static::$delimiter = $delimiter;
+            $array = array_unique(static::explodeMultidimensional($array));
+        }
+        static::$request = $request;
+        array_walk_recursive($array, function ($v, $k) {
+            if ($k OR $v == static::$request) {
+                static::$matches[$k] = $v;
+            }
+        });
+        return static::$matches;
+    }
+
+    public static function explodeMultidimensional(array $array = array(), $delimiter = '')
+    {
+        if (!empty($delimiter)) static::$delimiter = $delimiter;
+        array_walk_recursive($array, function ($value, $key) {
+            if (!is_array($value)) {
+                static::$exploded[] = explode(static::$delimiter, $value);
+            } else {
+                static::$exploded[] = static::explodeMultidimensional($value);
+            }
+        });
+        return static::$exploded;
     }
 
     /**
@@ -222,44 +227,46 @@ class ArrayTools
      * @param $array
      * @return string
      */
-    public static function array2string($array, $delimiter){
-        $str="";
-        foreach($array as $k=>$v){
-            if(is_array($v)){
+    public static function array2string($array, $delimiter)
+    {
+        $str = "";
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
                 $str = implode($delimiter, $v);
-            }
-            else{
-                $str .= $v.$delimiter;
+            } else {
+                $str .= $v . $delimiter;
             }
         }
         return $str;
     }
 
     /**
-     * Returns the first array in a multidimensional one.
-     * @param array $array
-     * @return mixed
+     * @param $type |  Value or Key
+     * @return static
      */
-    private static $call;
-    private static $type;
     public static function getFirst($type)
     {
-       static::$type = $type;
-       static::$call = __FUNCTION__;
+        static::$type = $type;
+        static::$call = __FUNCTION__;
+        return new static;
     }
 
+    /**
+     * @param $type |  Value or Key
+     * @return static
+     */
     public static function getLast($type)
     {
         static::$type = $type;
         static::$call = __FUNCTION__;
+        return new static;
     }
 
     public function In(array $array = array())
     {
-        switch(static::$call)
-        {
+        switch (static::$call) {
             case 'getFirst':
-                if(static::$type == 'value') {
+                if (static::$type == 'value') {
                     if (phpversion() >= '5.6.0') {
                         return array_values($array)[0];
                     }
@@ -270,17 +277,18 @@ class ArrayTools
                     }
                     return array_shift(array_keys($array));
                 }
-                    break;
+                break;
 
             case 'getLast':
-                if(static::$type == 'value') {
+                if (static::$type == 'value') {
                     return array_pop(array_values($array));
                 } else {
                     return array_pop(array_keys($array));
                 }
-            break;
+                break;
         }
     }
+
     /**
      * array_values, for objects.
      * @param $object
@@ -291,7 +299,7 @@ class ArrayTools
     {
         $request = '';
         $array = array();
-        foreach($object as $key => $value) {
+        foreach ($object as $key => $value) {
             $array[] .= $value->$target;
             $request = implode("\n", $array);
         }
@@ -308,7 +316,7 @@ class ArrayTools
     {
         $request = '';
         $array = array();
-        foreach($object as $key => $value) {
+        foreach ($object as $key => $value) {
             $array[] .= $key->$target;
             $request = implode("\n", $array);
         }
@@ -326,17 +334,17 @@ class ArrayTools
             return false;
         } else {
             return true;
+        }
     }
-}
 
     /**
-     * An improved version lf array_merge.
+     * An improved version of array_merge.
      * @param array $array
      * @return array|mixed
      */
     public static function merge_array(array $array = array())
     {
-        return (version_compare(phpversion(), '5.6.0', '<')) ? array_merge(...$array) : call_user_func_array('array_merge', $array);
+        return call_user_func_array('array_merge', $array);
     }
 
     /**
@@ -350,7 +358,7 @@ class ArrayTools
         $mapNum = array_map("count", $arrays);
         $getNum = array_sum($mapNum);
         for ($i = 0; $i < $getNum; $i++) {
-            $merged[] = array_merge_recursive($arrays[$i],$arrays[$i]);
+            $merged[] = array_merge_recursive($arrays[$i], $arrays[$i]);
         }
         return $merged;
     }
@@ -363,14 +371,10 @@ class ArrayTools
     public static function mergeMultidimensional($ArraysOrObjects)
     {
         $imploded = '';
-        foreach($ArraysOrObjects as $array)
-        {
-            if(is_array($array))
-            {
+        foreach ($ArraysOrObjects as $array) {
+            if (is_array($array)) {
                 $imploded .= implode("\n", $array);
-            }
-            else
-            {
+            } else {
                 $imploded = implode("\n", get_object_vars($array));
             }
         }
@@ -386,7 +390,7 @@ class ArrayTools
     {
         $count = 0;
         foreach ($arr as $type) {
-            $count+= count($type, COUNT_RECURSIVE);
+            $count += count($type, COUNT_RECURSIVE);
         }
         return $count;
     }
@@ -401,17 +405,14 @@ class ArrayTools
     static function getMaxKeysInMultiArray(array $arr = array(), $parents)
     {
         $num = '';
-        for($i = min($arr, COUNT_RECURSIVE); $i <= $parents; $i ++)
-        {
-            foreach($arr as $q)
-            {
-                if(!empty($q[$i]))
-                {
+        for ($i = min($arr, COUNT_RECURSIVE); $i <= $parents; $i++) {
+            foreach ($arr as $q) {
+                if (!empty($q[$i])) {
                     $num = $i;
                 }
             }
         }
-        return $num+1;
+        return $num + 1;
     }
 
     /**
@@ -426,7 +427,7 @@ class ArrayTools
         $result = key(
             array_filter(
                 $callable(),
-                function($entry) use($key, $needle) {
+                function ($entry) use ($key, $needle) {
                     return $entry[$key] == $needle;
                 }
             )
@@ -457,9 +458,10 @@ class ArrayTools
      * @param $ar
      * @return array
      */
-    public static function getMultiArrayKeys(array $ar = array()) {
+    public static function getMultiArrayKeys(array $ar = array())
+    {
         $keys[] = array();
-        foreach($ar as $k => $v) {
+        foreach ($ar as $k => $v) {
             $keys[] = $k;
             if (is_array($ar[$k]))
                 $keys = array_merge($keys, static::getMultiArrayKeys($ar[$k]));
@@ -473,7 +475,8 @@ class ArrayTools
      * @param int $num
      * @return array
      */
-    public static function getRandom(array $array, $num = 1) {
+    public static function getRandom(array $array, $num = 1)
+    {
         shuffle($array);
 
         $r = array();
@@ -482,7 +485,6 @@ class ArrayTools
         }
         return $num == 1 ? $r[0] : $r;
     }
-
 
     /**
      * in_array for object arrays.
@@ -494,7 +496,6 @@ class ArrayTools
     {
         return count(array_map('unserialize', array_intersect(array_map('serialize', (array)$obj), array_map('serialize', (array)$haystack)))) > 0;
     }
-
 
     /**
      * Sanitize an array.
@@ -514,9 +515,8 @@ class ArrayTools
     public static function Capitalize(array $fields = array())
     {
         $Capitalized = array();
-        foreach($fields as $key => $value)
-        {
-            $Capitalized[$key] = ucwords(implode("\n",$value));
+        foreach ($fields as $key => $value) {
+            $Capitalized[$key] = ucwords(implode("\n", $value));
         }
         return array_merge_recursive($fields, $Capitalized);
     }
@@ -529,9 +529,8 @@ class ArrayTools
     public static function CapitalizeFirst(array $fields = array())
     {
         $Capitalized = array();
-        foreach($fields as $key => $value)
-        {
-            $Capitalized[$key] = ucfirst(implode("\n",$value));
+        foreach ($fields as $key => $value) {
+            $Capitalized[$key] = ucfirst(implode("\n", $value));
         }
         return array_merge_recursive($fields, $Capitalized);
     }

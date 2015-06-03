@@ -9,14 +9,14 @@
 namespace System\Exception;
 
 
-
 use Core\Application\Debug\Debug;
 
-class FactoryException extends Exception {
+class FactoryException extends Exception
+{
 
     function __construct($message, $code = 4, Exception $previous = null)
     {
-        parent::__construct($message.'<br>'.$this->generateCallTrace(), $code, $previous);
+        parent::__construct($message . '<br>' . $this->generateCallTrace(), $code, $previous);
     }
 
     function generateCallTrace()
@@ -29,9 +29,8 @@ class FactoryException extends Exception {
         $length = count($trace);
         $result = array();
 
-        for ($i = 0; $i < $length; $i++)
-        {
-            $result[] = ($i + 1)  . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
+        for ($i = 0; $i < $length; $i++) {
+            $result[] = ($i + 1) . ')' . substr($trace[$i], strpos($trace[$i], ' ')); // replace '#someNum' with '$i)', set the right ordering
         }
 
         return "\t" . implode("\n\t", $result);

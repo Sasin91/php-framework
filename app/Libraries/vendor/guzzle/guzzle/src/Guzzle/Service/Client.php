@@ -3,21 +3,21 @@
 namespace Guzzle\Service;
 
 use Guzzle\Common\Collection;
-use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Common\Exception\BadMethodCallException;
+use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Common\Version;
-use Guzzle\Inflection\InflectorInterface;
-use Guzzle\Inflection\Inflector;
 use Guzzle\Http\Client as HttpClient;
 use Guzzle\Http\Exception\MultiTransferException;
-use Guzzle\Service\Exception\CommandTransferException;
 use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Inflection\Inflector;
+use Guzzle\Inflection\InflectorInterface;
 use Guzzle\Service\Command\CommandInterface;
 use Guzzle\Service\Command\Factory\CompositeFactory;
 use Guzzle\Service\Command\Factory\FactoryInterface as CommandFactoryInterface;
+use Guzzle\Service\Description\ServiceDescriptionInterface;
+use Guzzle\Service\Exception\CommandTransferException;
 use Guzzle\Service\Resource\ResourceIteratorClassFactory;
 use Guzzle\Service\Resource\ResourceIteratorFactoryInterface;
-use Guzzle\Service\Description\ServiceDescriptionInterface;
 
 /**
  * Client object for executing commands on a web service.
@@ -66,7 +66,7 @@ class Client extends HttpClient implements ClientInterface
      * Magic method used to retrieve a command
      *
      * @param string $method Name of the command object to instantiate
-     * @param array  $args   Arguments to pass to the command
+     * @param array $args Arguments to pass to the command
      *
      * @return mixed Returns the result of the command
      * @throws BadMethodCallException when a command is not found

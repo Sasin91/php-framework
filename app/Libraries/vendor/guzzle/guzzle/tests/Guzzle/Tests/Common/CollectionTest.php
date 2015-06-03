@@ -155,8 +155,8 @@ class CollectionTest extends \Guzzle\Tests\GuzzleTestCase
         $this->coll->add('key', 'v3');
         $this->assertNull($this->coll->get('test'));
         $this->assertEquals(array(
-            'foo'     => 'bar',
-            'tEsT'    => 'value',
+            'foo' => 'bar',
+            'tEsT' => 'value',
             'tesTing' => 'v2'
         ), $this->coll->getAll(array(
             'foo', 'tesTing', 'tEsT'
@@ -209,7 +209,7 @@ class CollectionTest extends \Guzzle\Tests\GuzzleTestCase
             'same_number' => 'ten'
         ));
 
-        $filtered = $this->coll->filter(function($key, $value) {
+        $filtered = $this->coll->filter(function ($key, $value) {
             return $value == 'ten';
         });
 
@@ -229,7 +229,7 @@ class CollectionTest extends \Guzzle\Tests\GuzzleTestCase
             'number_3' => 3
         ));
 
-        $mapped = $this->coll->map(function($key, $value) {
+        $mapped = $this->coll->map(function ($key, $value) {
             return $value * $value;
         });
 
@@ -267,11 +267,15 @@ class CollectionTest extends \Guzzle\Tests\GuzzleTestCase
             'c' => 'd'
         ));
 
-        $this->assertInstanceOf('Guzzle\\Http\\QueryString', $qs->map(function($a, $b) {}));
-        $this->assertInstanceOf('Guzzle\\Common\\Collection', $qs->map(function($a, $b) {}, array(), false));
+        $this->assertInstanceOf('Guzzle\\Http\\QueryString', $qs->map(function ($a, $b) {
+        }));
+        $this->assertInstanceOf('Guzzle\\Common\\Collection', $qs->map(function ($a, $b) {
+        }, array(), false));
 
-        $this->assertInstanceOf('Guzzle\\Http\\QueryString', $qs->filter(function($a, $b) {}));
-        $this->assertInstanceOf('Guzzle\\Common\\Collection', $qs->filter(function($a, $b) {}, false));
+        $this->assertInstanceOf('Guzzle\\Http\\QueryString', $qs->filter(function ($a, $b) {
+        }));
+        $this->assertInstanceOf('Guzzle\\Common\\Collection', $qs->filter(function ($a, $b) {
+        }, false));
     }
 
     public function testCanReplaceAllData()

@@ -2,8 +2,6 @@
 
 namespace Guzzle\Http;
 
-use Guzzle\Stream\StreamInterface;
-
 /**
  * EntityBody decorator used to return only a subset of an entity body
  */
@@ -16,67 +14,14 @@ class ReadLimitEntityBody extends AbstractEntityBodyDecorator
     protected $offset;
 
     /**
-     * @param EntityBodyInterface $body   Body to wrap
-     * @param int                 $limit  Total number of bytes to allow to be read from the stream
-     * @param int                 $offset Position to seek to before reading (only works on seekable streams)
+     * @param EntityBodyInterface $body Body to wrap
+     * @param int $limit Total number of bytes to allow to be read from the stream
+     * @param int $offset Position to seek to before reading (only works on seekable streams)
      */
     public function __construct(EntityBodyInterface $body, $limit, $offset = 0)
     {
         parent::__construct($body);
         $this->setLimit($limit)->setOffset($offset);
-    }
-
-    /**
-     * Returns only a subset of the decorated entity body when cast as a string
-     * {@inheritdoc}
-     */
-    public function __toString()
-    {
-        if (!$this->body->isReadable() ||
-            (!$this->body->isSeekable() && $this->body->isConsumed())
-        ) {
-            return '';
-        }
-
-        $originalPos = $this->body->ftell();
-        $this->body->seek($this->offset);
-        $data = '';
-        while (!$this->feof()) {
-            $data .= $this->read(1048576);
-        }
-        $this->body->seek($originalPos);
-
-        return (string) $data ?: '';
-    }
-
-    public function isConsumed()
-    {
-        return $this->body->isConsumed() ||
-            ($this->body->ftell() >= $this->offset + $this->limit);
-    }
-
-    /**
-     * Returns the Content-Length of the limited subset of data
-     * {@inheritdoc}
-     */
-    public function getContentLength()
-    {
-        $length = $this->body->getContentLength();
-
-        return $length === false
-            ? $this->limit
-            : min($this->limit, min($length, $this->offset + $this->limit) - $this->offset);
-    }
-
-    /**
-     * Allow for a bounded seek on the read limited entity body
-     * {@inheritdoc}
-     */
-    public function seek($offset, $whence = SEEK_SET)
-    {
-        return $whence === SEEK_SET
-            ? $this->body->seek(max($this->offset, min($this->offset + $this->limit, $offset)))
-            : false;
     }
 
     /**
@@ -108,6 +53,29 @@ class ReadLimitEntityBody extends AbstractEntityBodyDecorator
         return $this;
     }
 
+    /**
+     * Returns only a subset of the decorated entity body when cast as a string
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        if (!$this->body->isReadable() ||
+            (!$this->body->isSeekable() && $this->body->isConsumed())
+        ) {
+            return '';
+        }
+
+        $originalPos = $this->body->ftell();
+        $this->body->seek($this->offset);
+        $data = '';
+        while (!$this->feof()) {
+            $data .= $this->read(1048576);
+        }
+        $this->body->seek($originalPos);
+
+        return (string)$data ?: '';
+    }
+
     public function read($length)
     {
         // Check if the current position is less than the total allowed bytes + original offset
@@ -118,5 +86,35 @@ class ReadLimitEntityBody extends AbstractEntityBodyDecorator
         } else {
             return false;
         }
+    }
+
+    public function isConsumed()
+    {
+        return $this->body->isConsumed() ||
+        ($this->body->ftell() >= $this->offset + $this->limit);
+    }
+
+    /**
+     * Returns the Content-Length of the limited subset of data
+     * {@inheritdoc}
+     */
+    public function getContentLength()
+    {
+        $length = $this->body->getContentLength();
+
+        return $length === false
+            ? $this->limit
+            : min($this->limit, min($length, $this->offset + $this->limit) - $this->offset);
+    }
+
+    /**
+     * Allow for a bounded seek on the read limited entity body
+     * {@inheritdoc}
+     */
+    public function seek($offset, $whence = SEEK_SET)
+    {
+        return $whence === SEEK_SET
+            ? $this->body->seek(max($this->offset, min($this->offset + $this->limit, $offset)))
+            : false;
     }
 }

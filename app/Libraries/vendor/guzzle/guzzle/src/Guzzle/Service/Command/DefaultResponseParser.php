@@ -33,7 +33,7 @@ class DefaultResponseParser implements ResponseParserInterface
         if ($contentType = $command['command.expects']) {
             $response->setHeader('Content-Type', $contentType);
         } else {
-            $contentType = (string) $response->getHeader('Content-Type');
+            $contentType = (string)$response->getHeader('Content-Type');
         }
 
         return $this->handleParsing($command, $response, $contentType);

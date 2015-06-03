@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Stream;
 
-use Guzzle\Stream\Stream;
-use Guzzle\Stream\PhpStreamRequestFactory;
 use Guzzle\Http\Client;
+use Guzzle\Stream\PhpStreamRequestFactory;
+use Guzzle\Stream\Stream;
 
 /**
  * @group server
@@ -29,7 +29,7 @@ class PhpStreamRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $this->getServer()->enqueue("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nhi");
         $request = $this->client->get('/');
         $stream = $this->factory->fromRequest($request);
-        $this->assertEquals('hi', (string) $stream);
+        $this->assertEquals('hi', (string)$stream);
         $headers = $this->factory->getLastResponseHeaders();
         $this->assertContains('HTTP/1.1 200 OK', $headers);
         $this->assertContains('Content-Length: 2', $headers);
@@ -78,7 +78,7 @@ class PhpStreamRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $this->getServer()->enqueue("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nhi");
         $request = $this->client->post('/', array('Foo' => 'Bar'), array('foo' => 'baz bar'));
         $stream = $this->factory->fromRequest($request);
-        $this->assertEquals('hi', (string) $stream);
+        $this->assertEquals('hi', (string)$stream);
 
         $headers = $this->factory->getLastResponseHeaders();
         $this->assertContains('HTTP/1.1 200 OK', $headers);
@@ -101,7 +101,7 @@ class PhpStreamRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
         $this->getServer()->enqueue("HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nhi");
         $request = $this->client->put('/', array('Foo' => 'Bar'), 'Testing...123');
         $stream = $this->factory->fromRequest($request);
-        $this->assertEquals('hi', (string) $stream);
+        $this->assertEquals('hi', (string)$stream);
 
         $headers = $this->factory->getLastResponseHeaders();
         $this->assertContains('HTTP/1.1 200 OK', $headers);
@@ -159,7 +159,7 @@ class PhpStreamRequestFactoryTest extends \Guzzle\Tests\GuzzleTestCase
             ->method('createStream')
             ->will($this->returnValue(new Stream(fopen('php://temp', 'r'))));
         $this->factory->fromRequest($request);
-        $this->assertContains('Foo:Bar@', (string) $this->readAttribute($this->factory, 'url'));
+        $this->assertContains('Foo:Bar@', (string)$this->readAttribute($this->factory, 'url'));
     }
 
     public function testCanCreateCustomStreamClass()

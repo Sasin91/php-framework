@@ -6,14 +6,6 @@ use Guzzle\Common\Exception\ExceptionCollection;
 
 class ExceptionCollectionTest extends \Guzzle\Tests\GuzzleTestCase
 {
-    private function getExceptions()
-    {
-        return array(
-            new \Exception('Test'),
-            new \Exception('Testing')
-        );
-    }
-
     public function testAggregatesExceptions()
     {
         $e = new ExceptionCollection();
@@ -23,6 +15,14 @@ class ExceptionCollectionTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertContains("(Exception) ./tests/Guzzle/Tests/Common/Exception/ExceptionCollectionTest.php line ", $e->getMessage());
         $this->assertContains("    Test\n\n    #0 ./", $e->getMessage());
         $this->assertSame($exceptions[0], $e->getFirst());
+    }
+
+    private function getExceptions()
+    {
+        return array(
+            new \Exception('Test'),
+            new \Exception('Testing')
+        );
     }
 
     public function testCanSetExceptions()

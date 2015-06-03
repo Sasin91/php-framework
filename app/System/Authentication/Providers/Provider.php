@@ -9,8 +9,8 @@
 namespace System\Authentication\Providers;
 
 
-
-abstract class Provider {
+abstract class Provider
+{
 
 
     abstract protected function getAuthUrl();

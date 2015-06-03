@@ -9,33 +9,33 @@
 
 use System\Authentication\Session;
 use System\Factories\Factory;
-use Config\Config;
 
 /**
  * Class app
  */
-class app {
+class app
+{
 
     /**
-     * This class represents the application, methods in here will be available by classes which extends from Core.
-     * This class is also a security measurement, only Core may instantiate it.
+     * This class represents the application, methods in here will be available by classes which extends from kernel.
+     * This class is also a security measurement, only kernel may instantiate it.
      * In a ecoSystemConf, like Linux, this would represent userspace.
      */
-    protected $Core;
-    protected $cache;
-    protected $db;
-    protected $config = array();
-
+    public $kernel;
+    public $cache;
+    public $db;
+    public $config = array();
+    private static $instance;
     /**
-     * The very core of our Application.
-     * @param \System\MVC\Core $Core
+     * The very kernel of our Application.
+     * @param \System\kernel $kernel
      */
-    public function __construct(\System\MVC\Core $Core)
+    public function __construct(\System\Kernel $kernel)
     {
-        $this->config = Config::get('System/Config');
-        $this->Core = $Core;
-        define('App_loaded', microtime(true));
+        $this->config = Config::get('Config');
+        $this->kernel = $kernel;
         Session::init();
+        static::$instance = $this;
     }
 
     /**
@@ -46,9 +46,9 @@ class app {
      */
     public function newDatabase($db)
     {
-        if(is_null($this->db)) {
-            $config = $this->config['Database']['Databases'];
-            $this->db = Factory::make('Database')->with(array('database' => $db, 'path' => $config['Factory']['path'], 'config' => $config))->create();
+        if (is_null($this->db)) {
+            $config = $this->config['Database']['Factory'];
+            $this->db = Factory::make('Database')->with(array('database' => $db, 'path' => $config['class'], 'config' => $config))->create();
         }
         return !is_null($this->db) ? $this->db : $this->newDatabase($db);
     }
@@ -60,33 +60,54 @@ class app {
      */
     public function cache()
     {
-        if(is_null($this->cache)) {
-            $this->cache = Factory::make('Cache')->create($this->config['Cache']['type']);
+        if (is_null($this->cache)) {
+            $this->cache = Factory::make('Cache')->config($this->config['Cache'])->create($this->config['Cache']['type']);
         }
         return $this->cache;
     }
 
     /**
-     * Retrieve the ROOT_PATH path of our app
+     * Retrieve the base path of our app
      * @return string
      */
     public function path()
     {
-        return ROOT_PATH.'/'.$this->config()->fetch()->Paths->sfw_Application;
+        return BASE_PATH . '/' . $this->config['Paths']['sfw_Application'];
+    }
+
+    public function config()
+    {
+        return $this->config;
+    }
+
+    public function kernel()
+    {
+        return $this->kernel;
+    }
+
+    public static function baseUrl()
+    {
+        return static::$instance->config['Base']['url'];
     }
 
     /**
      * Returns the current URL.
-     * @return string
+     * @param bool $last
+     * @param bool $asString
+     * @return array|string
      */
-    public static function currentUrl($last = false)
+    public static function currentUrl($last = false, $asString = false)
     {
-        if($last === true)
-        {
+        $link = "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $array = explode('/', rtrim(htmlspecialchars($link, ENT_QUOTES, 'UTF-8')));
+
+        if ($last === true)
             return basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-        }
-        $link =  "$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        return explode('/',rtrim(htmlspecialchars($link, ENT_QUOTES, 'UTF-8')));
+
+        if($asString === true)
+            return 'http://'.\Toolbox\ArrayTools::array2string($array, '/');
+
+        return $array;
     }
 
     /**
@@ -95,10 +116,17 @@ class app {
      * @param int $status
      * @return bool
      */
-     public static function redirect($location, $status = 302) {
-        if ( !$location )
+    public static function redirect($location, $status = 302)
+    {
+        if (!$location)
             return false;
-         $url = DS.$location;
+        $url = DS . $location;
         header("Location: $url", true, $status);
     }
+
+    public static function getLoadTime($length = 3)
+    {
+        return number_format((microtime(true) - App_started), $length);
+    }
+
 }

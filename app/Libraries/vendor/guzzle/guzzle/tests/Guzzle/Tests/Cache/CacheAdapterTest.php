@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Cache;
 
-use Guzzle\Cache\DoctrineCacheAdapter;
 use Doctrine\Common\Cache\ArrayCache;
+use Guzzle\Cache\DoctrineCacheAdapter;
 
 /**
  * @covers Guzzle\Cache\DoctrineCacheAdapter
@@ -16,26 +16,6 @@ class CacheAdapterTest extends \Guzzle\Tests\GuzzleTestCase
 
     /** @var DoctrineCacheAdapter */
     private $adapter;
-
-    /**
-     * Prepares the environment before running a test.
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->cache = new ArrayCache();
-        $this->adapter = new DoctrineCacheAdapter($this->cache);
-    }
-
-    /**
-     * Cleans up the environment after running a test.
-     */
-    protected function tearDown()
-    {
-        $this->adapter = null;
-        $this->cache = null;
-        parent::tearDown();
-    }
 
     public function testGetCacheObject()
     {
@@ -64,5 +44,25 @@ class CacheAdapterTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertTrue($this->adapter->save('test', 'data', 1000));
         $this->assertTrue($this->adapter->delete('test'));
         $this->assertFalse($this->adapter->contains('test'));
+    }
+
+    /**
+     * Prepares the environment before running a test.
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->cache = new ArrayCache();
+        $this->adapter = new DoctrineCacheAdapter($this->cache);
+    }
+
+    /**
+     * Cleans up the environment after running a test.
+     */
+    protected function tearDown()
+    {
+        $this->adapter = null;
+        $this->cache = null;
+        parent::tearDown();
     }
 }

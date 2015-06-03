@@ -2,8 +2,8 @@
 
 namespace Guzzle\Service\Command\Factory;
 
-use Guzzle\Service\Description\ServiceDescriptionInterface;
 use Guzzle\Inflection\InflectorInterface;
+use Guzzle\Service\Description\ServiceDescriptionInterface;
 
 /**
  * Command factory used to create commands based on service descriptions
@@ -18,7 +18,7 @@ class ServiceDescriptionFactory implements FactoryInterface
 
     /**
      * @param ServiceDescriptionInterface $description Service description
-     * @param InflectorInterface          $inflector   Optional inflector to use if the command is not at first found
+     * @param InflectorInterface $inflector Optional inflector to use if the command is not at first found
      */
     public function __construct(ServiceDescriptionInterface $description, InflectorInterface $inflector = null)
     {

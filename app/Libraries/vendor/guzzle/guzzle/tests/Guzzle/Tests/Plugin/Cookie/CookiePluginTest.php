@@ -3,10 +3,10 @@
 namespace Guzzle\Tests\Plugin\Cookie;
 
 use Guzzle\Common\Event;
-use Guzzle\Plugin\Cookie\Cookie;
-use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 use Guzzle\Http\Client;
 use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Cookie\Cookie;
+use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
 use Guzzle\Plugin\Cookie\CookiePlugin;
 
 /**
@@ -35,7 +35,7 @@ class CookiePluginTest extends \Guzzle\Tests\GuzzleTestCase
     public function testAddsCookiesToRequests()
     {
         $cookie = new Cookie(array(
-            'name'  => 'foo',
+            'name' => 'foo',
             'value' => 'bar'
         ));
 
@@ -95,10 +95,10 @@ class CookiePluginTest extends \Guzzle\Tests\GuzzleTestCase
         $plugin = new CookiePlugin($jar);
 
         $jar->add(new Cookie(array(
-            'domain'  => 'example.com',
-            'path'    => '/',
-            'name'    => 'test',
-            'value'   => 'hi',
+            'domain' => 'example.com',
+            'path' => '/',
+            'name' => 'test',
+            'value' => 'hi',
             'expires' => time() + 3600
         )));
 

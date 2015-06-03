@@ -4,8 +4,8 @@ namespace Guzzle\Tests\Plugin\Md5;
 
 use Guzzle\Common\Event;
 use Guzzle\Plugin\Md5\CommandContentMd5Plugin;
-use Guzzle\Service\Description\ServiceDescription;
 use Guzzle\Service\Client;
+use Guzzle\Service\Description\ServiceDescription;
 
 /**
  * @covers Guzzle\Plugin\Md5\CommandContentMd5Plugin
@@ -20,7 +20,7 @@ class CommandContentMd5PluginTest extends \Guzzle\Tests\GuzzleTestCase
                     'httpMethod' => 'PUT',
                     'parameters' => array(
                         'ContentMD5' => array(),
-                        'Body'       => array(
+                        'Body' => array(
                             'location' => 'body'
                         )
                     )
@@ -43,14 +43,14 @@ class CommandContentMd5PluginTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $client = $this->getClient();
         $command = $client->getCommand('test', array(
-            'Body'       => 'Foo',
+            'Body' => 'Foo',
             'ContentMD5' => true
         ));
         $event = new Event(array('command' => $command));
         $request = $command->prepare();
         $plugin = new CommandContentMd5Plugin();
         $plugin->onCommandBeforeSend($event);
-        $this->assertEquals('E1bGfXrRY42Ba/uCLdLCXQ==', (string) $request->getHeader('Content-MD5'));
+        $this->assertEquals('E1bGfXrRY42Ba/uCLdLCXQ==', (string)$request->getHeader('Content-MD5'));
     }
 
     public function testDoesNothingWhenNoPayloadExists()

@@ -37,7 +37,7 @@ class GenericEvent extends Event implements \ArrayAccess, \IteratorAggregate
     /**
      * Encapsulate an event with $subject and $args.
      *
-     * @param mixed $subject   The subject of the event, usually an object.
+     * @param mixed $subject The subject of the event, usually an object.
      * @param array $arguments Arguments to store in the event.
      */
     public function __construct($subject = null, array $arguments = array())
@@ -54,39 +54,6 @@ class GenericEvent extends Event implements \ArrayAccess, \IteratorAggregate
     public function getSubject()
     {
         return $this->subject;
-    }
-
-    /**
-     * Get argument by key.
-     *
-     * @param string $key Key.
-     *
-     * @throws \InvalidArgumentException If key is not found.
-     *
-     * @return mixed Contents of array key.
-     */
-    public function getArgument($key)
-    {
-        if ($this->hasArgument($key)) {
-            return $this->arguments[$key];
-        }
-
-        throw new \InvalidArgumentException(sprintf('%s not found in %s', $key, $this->getName()));
-    }
-
-    /**
-     * Add argument to event.
-     *
-     * @param string $key   Argument name.
-     * @param mixed  $value Value.
-     *
-     * @return GenericEvent
-     */
-    public function setArgument($key, $value)
-    {
-        $this->arguments[$key] = $value;
-
-        return $this;
     }
 
     /**
@@ -114,18 +81,6 @@ class GenericEvent extends Event implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Has argument.
-     *
-     * @param string $key Key of arguments array.
-     *
-     * @return bool
-     */
-    public function hasArgument($key)
-    {
-        return array_key_exists($key, $this->arguments);
-    }
-
-    /**
      * ArrayAccess for argument getter.
      *
      * @param string $key Array key.
@@ -140,14 +95,59 @@ class GenericEvent extends Event implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Get argument by key.
+     *
+     * @param string $key Key.
+     *
+     * @throws \InvalidArgumentException If key is not found.
+     *
+     * @return mixed Contents of array key.
+     */
+    public function getArgument($key)
+    {
+        if ($this->hasArgument($key)) {
+            return $this->arguments[$key];
+        }
+
+        throw new \InvalidArgumentException(sprintf('%s not found in %s', $key, $this->getName()));
+    }
+
+    /**
+     * Has argument.
+     *
+     * @param string $key Key of arguments array.
+     *
+     * @return bool
+     */
+    public function hasArgument($key)
+    {
+        return array_key_exists($key, $this->arguments);
+    }
+
+    /**
      * ArrayAccess for argument setter.
      *
-     * @param string $key   Array key to set.
-     * @param mixed  $value Value.
+     * @param string $key Array key to set.
+     * @param mixed $value Value.
      */
     public function offsetSet($key, $value)
     {
         $this->setArgument($key, $value);
+    }
+
+    /**
+     * Add argument to event.
+     *
+     * @param string $key Argument name.
+     * @param mixed $value Value.
+     *
+     * @return GenericEvent
+     */
+    public function setArgument($key, $value)
+    {
+        $this->arguments[$key] = $value;
+
+        return $this;
     }
 
     /**

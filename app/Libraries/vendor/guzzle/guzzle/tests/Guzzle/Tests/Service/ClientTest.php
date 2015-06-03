@@ -2,16 +2,16 @@
 
 namespace Guzzle\Tests\Service;
 
-use Guzzle\Inflection\Inflector;
 use Guzzle\Http\Message\Response;
+use Guzzle\Inflection\Inflector;
 use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Service\Description\Operation;
 use Guzzle\Service\Client;
-use Guzzle\Service\Exception\CommandTransferException;
-use Guzzle\Service\Description\ServiceDescription;
-use Guzzle\Tests\Service\Mock\Command\MockCommand;
-use Guzzle\Service\Resource\ResourceIteratorClassFactory;
 use Guzzle\Service\Command\AbstractCommand;
+use Guzzle\Service\Description\Operation;
+use Guzzle\Service\Description\ServiceDescription;
+use Guzzle\Service\Exception\CommandTransferException;
+use Guzzle\Service\Resource\ResourceIteratorClassFactory;
+use Guzzle\Tests\Service\Mock\Command\MockCommand;
 
 /**
  * @group server
@@ -122,9 +122,9 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
 
         $mock = $this->getMock('Guzzle\\Service\\Command\\Factory\\FactoryInterface');
         $mock->expects($this->any())
-             ->method('factory')
-             ->with($this->equalTo('test'))
-             ->will($this->returnValue(null));
+            ->method('factory')
+            ->with($this->equalTo('test'))
+            ->will($this->returnValue(null));
 
         $client->setCommandFactory($mock);
         $client->getCommand('test');
@@ -137,9 +137,9 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
         $client = new Mock\MockClient();
         $mock = $this->getMock('Guzzle\\Service\\Command\\Factory\\FactoryInterface');
         $mock->expects($this->any())
-             ->method('factory')
-             ->with($this->equalTo('foo'))
-             ->will($this->returnValue($mockCommand));
+            ->method('factory')
+            ->with($this->equalTo('foo'))
+            ->will($this->returnValue($mockCommand));
 
         $client->setCommandFactory($mock);
 
@@ -261,7 +261,7 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
         $client = new Mock\MockClient('http://www.foo.com', array(
             Client::COMMAND_PARAMS => array(
                 'mesa' => 'bar',
-                'jar'  => 'jar'
+                'jar' => 'jar'
             )
         ));
         $command = $client->getCommand('mock_command', array('jar' => 'test'));

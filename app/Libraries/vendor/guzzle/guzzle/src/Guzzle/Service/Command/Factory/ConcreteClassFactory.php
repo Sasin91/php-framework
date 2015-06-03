@@ -2,8 +2,8 @@
 
 namespace Guzzle\Service\Command\Factory;
 
-use Guzzle\Inflection\InflectorInterface;
 use Guzzle\Inflection\Inflector;
+use Guzzle\Inflection\InflectorInterface;
 use Guzzle\Service\ClientInterface;
 
 /**
@@ -18,7 +18,7 @@ class ConcreteClassFactory implements FactoryInterface
     protected $inflector;
 
     /**
-     * @param ClientInterface    $client    Client that owns the commands
+     * @param ClientInterface $client Client that owns the commands
      * @param InflectorInterface $inflector Inflector used to resolve class names
      */
     public function __construct(ClientInterface $client, InflectorInterface $inflector = null)

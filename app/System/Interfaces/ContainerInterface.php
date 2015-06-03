@@ -9,7 +9,8 @@
 namespace System\Interfaces;
 
 
-interface ContainerInterface {
+interface ContainerInterface
+{
 
     function available();
 

@@ -166,6 +166,84 @@ class DecoderTest extends \PHPUnit_Framework_TestCase
         '2147483647' => array(0x4, 0x1, 0x7f, 0xff, 0xff, 0xff),
         '-2147483647' => array(0x4, 0x1, 0x80, 0x0, 0x0, 0x1),
     );
+    private $uint32 = array(
+        0 => array(0xc0),
+        255 => array(0xc1, 0xff),
+        500 => array(0xc2, 0x1, 0xf4),
+        10872 => array(0xc2, 0x2a, 0x78),
+        65535 => array(0xc2, 0xff, 0xff),
+        16777215 => array(0xc3, 0xff, 0xff, 0xff),
+        4294967295 => array(0xc4, 0xff, 0xff, 0xff, 0xff),
+    );
+
+    public function testArrays()
+    {
+        $this->validateTypeDecodingList('array', $this->arrays);
+    }
+
+    private function validateTypeDecodingList($type, $tests)
+    {
+        foreach ($tests as $test) {
+            $this->checkDecoding(
+                $type,
+                $test['input'],
+                $test['expected'],
+                $test['name']
+            );
+        }
+    }
+
+    private function checkDecoding($type, $input, $expected, $name = null)
+    {
+        $name = $name || $expected;
+        $description = "decoded $type - $name";
+        $handle = fopen('php://memory', 'rw');
+
+        foreach ($input as $byte) {
+            fwrite($handle, pack('C', $byte));
+        }
+        fseek($handle, 0);
+        $decoder = new Decoder($handle, 0, true);
+        list($actual) = $decoder->decode(0);
+
+        if ($type == 'float') {
+            $actual = round($actual, 2);
+        }
+
+        $this->assertEquals($expected, $actual, $description);
+
+    }
+
+    public function testBooleans()
+    {
+        $this->validateTypeDecoding('boolean', $this->booleans);
+    }
+
+    private function validateTypeDecoding($type, $tests)
+    {
+
+        foreach ($tests as $expected => $input) {
+            $this->checkDecoding($type, $input, $expected);
+        }
+    }
+
+    public function testBytes()
+    {
+        $this->validateTypeDecoding('byte', $this->bytes());
+    }
+
+    private function bytes()
+    {
+        // ugly deep clone
+        $bytes = unserialize(serialize($this->strings()));
+
+        foreach ($bytes as $key => $byte_array) {
+            $byte_array[0] ^= 0xc0;
+            $bytes[$key] = $byte_array;
+
+        }
+        return $bytes;
+    }
 
     private function strings()
     {
@@ -216,66 +294,6 @@ class DecoderTest extends \PHPUnit_Framework_TestCase
         return $strings;
     }
 
-    private $uint32 = array(
-        0 => array(0xc0),
-        255 => array(0xc1, 0xff),
-        500 => array(0xc2, 0x1, 0xf4),
-        10872 => array(0xc2, 0x2a, 0x78),
-        65535 => array(0xc2, 0xff, 0xff),
-        16777215 => array(0xc3, 0xff, 0xff, 0xff),
-        4294967295 => array(0xc4, 0xff, 0xff, 0xff, 0xff),
-    );
-
-    private function bytes()
-    {
-        // ugly deep clone
-        $bytes = unserialize(serialize($this->strings()));
-
-        foreach ($bytes as $key => $byte_array) {
-            $byte_array[0] ^= 0xc0;
-            $bytes[$key] = $byte_array;
-
-        }
-        return $bytes;
-    }
-
-    public function generateLargeUint($bits)
-    {
-
-        $ctrlByte = $bits == 64 ? 0x2 : 0x3;
-
-        $uints = array(
-            0 => array(0x0, $ctrlByte),
-            500 => array(0x2, $ctrlByte, 0x1, 0xf4),
-            10872 => array(0x2, $ctrlByte, 0x2a, 0x78),
-        );
-
-        for ($power = 1; $power <= $bits / 8; $power++) {
-            $expected = bcsub(bcpow(2, 8 * $power), 1);
-            $input = array($power, $ctrlByte);
-            for ($i = 2; $i < 2 + $power; $i++) {
-                $input[$i] = 0xff;
-            }
-            $uints[$expected] = $input;
-        }
-        return $uints;
-    }
-
-    public function testArrays()
-    {
-        $this->validateTypeDecodingList('array', $this->arrays);
-    }
-
-    public function testBooleans()
-    {
-        $this->validateTypeDecoding('boolean', $this->booleans);
-    }
-
-    public function testBytes()
-    {
-        $this->validateTypeDecoding('byte', $this->bytes());
-    }
-
     public function testDoubles()
     {
         $this->validateTypeDecoding('double', $this->doubles);
@@ -321,49 +339,30 @@ class DecoderTest extends \PHPUnit_Framework_TestCase
         $this->validateTypeDecoding('uint64', $this->generateLargeUint(64));
     }
 
+    public function generateLargeUint($bits)
+    {
+
+        $ctrlByte = $bits == 64 ? 0x2 : 0x3;
+
+        $uints = array(
+            0 => array(0x0, $ctrlByte),
+            500 => array(0x2, $ctrlByte, 0x1, 0xf4),
+            10872 => array(0x2, $ctrlByte, 0x2a, 0x78),
+        );
+
+        for ($power = 1; $power <= $bits / 8; $power++) {
+            $expected = bcsub(bcpow(2, 8 * $power), 1);
+            $input = array($power, $ctrlByte);
+            for ($i = 2; $i < 2 + $power; $i++) {
+                $input[$i] = 0xff;
+            }
+            $uints[$expected] = $input;
+        }
+        return $uints;
+    }
+
     public function testUint128()
     {
         $this->validateTypeDecoding('uint128', $this->generateLargeUint(128));
-    }
-
-    private function validateTypeDecoding($type, $tests)
-    {
-
-        foreach ($tests as $expected => $input) {
-            $this->checkDecoding($type, $input, $expected);
-        }
-    }
-
-    private function validateTypeDecodingList($type, $tests)
-    {
-        foreach ($tests as $test) {
-            $this->checkDecoding(
-                $type,
-                $test['input'],
-                $test['expected'],
-                $test['name']
-            );
-        }
-    }
-
-    private function checkDecoding($type, $input, $expected, $name = null)
-    {
-        $name = $name || $expected;
-        $description = "decoded $type - $name";
-        $handle = fopen('php://memory', 'rw');
-
-        foreach ($input as $byte) {
-            fwrite($handle, pack('C', $byte));
-        }
-        fseek($handle, 0);
-        $decoder = new Decoder($handle, 0, true);
-        list($actual) = $decoder->decode(0);
-
-        if ($type == 'float') {
-            $actual = round($actual, 2);
-        }
-
-        $this->assertEquals($expected, $actual, $description);
-
     }
 }

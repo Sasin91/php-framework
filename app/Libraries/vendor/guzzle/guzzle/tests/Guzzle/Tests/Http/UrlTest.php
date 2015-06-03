@@ -13,7 +13,7 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
     public function testEmptyUrl()
     {
         $url = Url::factory('');
-        $this->assertEquals('', (string) $url);
+        $this->assertEquals('', (string)$url);
     }
 
     public function testPortIsDeterminedFromScheme()
@@ -34,12 +34,12 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
     public function testValidatesUrlPartsInFactory()
     {
         $url = Url::factory('/index.php');
-        $this->assertEquals('/index.php', (string) $url);
+        $this->assertEquals('/index.php', (string)$url);
         $this->assertFalse($url->isAbsolute());
 
         $url = 'http://michael:test@test.com:80/path/123?q=abc#test';
         $u = Url::factory($url);
-        $this->assertEquals('http://michael:test@test.com/path/123?q=abc#test', (string) $u);
+        $this->assertEquals('http://michael:test@test.com/path/123?q=abc#test', (string)$u);
         $this->assertTrue($u->isAbsolute());
     }
 
@@ -49,29 +49,29 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertSame('0', $url->getHost());
         $this->assertEquals(50, $url->getPort());
         $this->assertSame('/0', $url->getPath());
-        $this->assertEquals('0', (string) $url->getQuery());
+        $this->assertEquals('0', (string)$url->getQuery());
         $this->assertSame('0', $url->getFragment());
-        $this->assertEquals('http://0:50/0?0#0', (string) $url);
+        $this->assertEquals('http://0:50/0?0#0', (string)$url);
 
         $url = Url::factory('');
-        $this->assertSame('', (string) $url);
+        $this->assertSame('', (string)$url);
 
         $url = Url::factory('0');
-        $this->assertSame('0', (string) $url);
+        $this->assertSame('0', (string)$url);
     }
 
     public function testBuildsRelativeUrlsWithFalsyParts()
     {
         $url = Url::buildUrl(array(
-                'host' => '0',
-                'path' => '0',
-            ));
+            'host' => '0',
+            'path' => '0',
+        ));
 
         $this->assertSame('//0/0', $url);
 
         $url = Url::buildUrl(array(
-                'path' => '0',
-            ));
+            'path' => '0',
+        ));
         $this->assertSame('0', $url);
     }
 
@@ -85,7 +85,7 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals(8081, $url->getPort());
         $this->assertEquals('/path/path2/', $url->getPath());
         $this->assertEquals('fragment', $url->getFragment());
-        $this->assertEquals('a=1&b=2', (string) $url->getQuery());
+        $this->assertEquals('a=1&b=2', (string)$url->getQuery());
 
         $this->assertEquals(array(
             'fragment' => 'fragment',
@@ -126,17 +126,17 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
     public function testAddsToPath()
     {
         // Does nothing here
-        $this->assertEquals('http://e.com/base?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath(false));
-        $this->assertEquals('http://e.com/base?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath(null));
-        $this->assertEquals('http://e.com/base?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath(array()));
-        $this->assertEquals('http://e.com/base?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath(new \stdClass()));
-        $this->assertEquals('http://e.com/base?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath(''));
-        $this->assertEquals('http://e.com/base?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath('/'));
-        $this->assertEquals('http://e.com/baz/foo', (string) Url::factory('http://e.com/baz/')->addPath('foo'));
-        $this->assertEquals('http://e.com/base/relative?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath('relative'));
-        $this->assertEquals('http://e.com/base/relative?a=1', (string) Url::factory('http://e.com/base?a=1')->addPath('/relative'));
-        $this->assertEquals('http://e.com/base/0', (string) Url::factory('http://e.com/base')->addPath('0'));
-        $this->assertEquals('http://e.com/base/0/1', (string) Url::factory('http://e.com/base')->addPath('0')->addPath('1'));
+        $this->assertEquals('http://e.com/base?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath(false));
+        $this->assertEquals('http://e.com/base?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath(null));
+        $this->assertEquals('http://e.com/base?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath(array()));
+        $this->assertEquals('http://e.com/base?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath(new \stdClass()));
+        $this->assertEquals('http://e.com/base?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath(''));
+        $this->assertEquals('http://e.com/base?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath('/'));
+        $this->assertEquals('http://e.com/baz/foo', (string)Url::factory('http://e.com/baz/')->addPath('foo'));
+        $this->assertEquals('http://e.com/base/relative?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath('relative'));
+        $this->assertEquals('http://e.com/base/relative?a=1', (string)Url::factory('http://e.com/base?a=1')->addPath('/relative'));
+        $this->assertEquals('http://e.com/base/0', (string)Url::factory('http://e.com/base')->addPath('0'));
+        $this->assertEquals('http://e.com/base/0/1', (string)Url::factory('http://e.com/base')->addPath('0')->addPath('1'));
     }
 
     /**
@@ -171,7 +171,7 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
      */
     public function testCombinesUrls($a, $b, $c)
     {
-        $this->assertEquals($c, (string) Url::factory($a)->combine($b));
+        $this->assertEquals($c, (string)Url::factory($a)->combine($b));
     }
 
     public function testHasGettersAndSetters()
@@ -184,19 +184,19 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('b', $url->setUsername('b')->getUsername());
         $this->assertEquals('abc', $url->setFragment('abc')->getFragment());
         $this->assertEquals('https', $url->setScheme('https')->getScheme());
-        $this->assertEquals('a=123', (string) $url->setQuery('a=123')->getQuery());
-        $this->assertEquals('https://b:a@example.com:8080/foo/bar?a=123#abc', (string) $url);
-        $this->assertEquals('b=boo', (string) $url->setQuery(new QueryString(array(
+        $this->assertEquals('a=123', (string)$url->setQuery('a=123')->getQuery());
+        $this->assertEquals('https://b:a@example.com:8080/foo/bar?a=123#abc', (string)$url);
+        $this->assertEquals('b=boo', (string)$url->setQuery(new QueryString(array(
             'b' => 'boo'
         )))->getQuery());
-        $this->assertEquals('https://b:a@example.com:8080/foo/bar?b=boo#abc', (string) $url);
+        $this->assertEquals('https://b:a@example.com:8080/foo/bar?b=boo#abc', (string)$url);
     }
 
     public function testSetQueryAcceptsArray()
     {
         $url = Url::factory('http://www.test.com');
         $url->setQuery(array('a' => 'b'));
-        $this->assertEquals('http://www.test.com?a=b', (string) $url);
+        $this->assertEquals('http://www.test.com?a=b', (string)$url);
     }
 
     public function urlProvider()
@@ -251,7 +251,7 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $url = Url::factory('http://foo.com/baz bar?a=b');
         $url->addPath('?');
-        $this->assertEquals('http://foo.com/baz%20bar/%3F?a=b', (string) $url);
+        $this->assertEquals('http://foo.com/baz%20bar/%3F?a=b', (string)$url);
     }
 
     /**
@@ -298,6 +298,6 @@ class UrlTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $a = Url::factory('http://a/b/c/d;p?q');
         $b = Url::factory($relative);
-        $this->assertEquals($result, trim((string) $a->combine($b, true), '='));
+        $this->assertEquals($result, trim((string)$a->combine($b, true), '='));
     }
 }

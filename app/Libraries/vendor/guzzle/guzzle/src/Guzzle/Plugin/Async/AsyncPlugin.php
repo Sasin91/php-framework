@@ -3,8 +3,8 @@
 namespace Guzzle\Plugin\Async;
 
 use Guzzle\Common\Event;
-use Guzzle\Http\Message\Response;
 use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Message\Response;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -15,9 +15,9 @@ class AsyncPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            'request.before_send'    => 'onBeforeSend',
-            'request.exception'      => 'onRequestTimeout',
-            'request.sent'           => 'onRequestSent',
+            'request.before_send' => 'onBeforeSend',
+            'request.exception' => 'onRequestTimeout',
+            'request.sent' => 'onRequestSent',
             'curl.callback.progress' => 'onCurlProgress'
         );
     }

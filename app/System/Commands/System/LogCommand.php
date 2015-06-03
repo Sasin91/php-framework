@@ -8,13 +8,15 @@ namespace System\Commands\System;
  * Date: 24-04-15
  * Time: 19:46
  */
-use \Symfony\Component\Console\Output\OutputInterface;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class LogCommand extends \Wizard {
+class LogCommand extends \Wizard
+{
 
     protected $name;
+
     protected function configure()
     {
         $this
@@ -40,8 +42,8 @@ class LogCommand extends \Wizard {
 
     protected function clear()
     {
-        chdir(ROOT_PATH.DS.'app/Storage/Logs');
-        shell_exec('truncate -s 0 '.$this->name);
+        chdir(ROOT_PATH . DS . 'app/Storage/Logs');
+        shell_exec('truncate -s 0 ' . $this->name);
     }
 
 }

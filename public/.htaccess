@@ -1,0 +1,55 @@
+## Sets multiviews and enables the rewrite engine
+# -MultiViews is necessary to prevent problems when using a controller named # "index" and having a root index.php
+# more here: http://stackoverflow.com/q/20918746/1114320
+#Options -MultiViews
+RewriteEngine On
+
+# When using the script within a sub-folder, put this path here, like /mysubfolder/
+# If your app is in the root of your web folder, then please delete this line or comment it out
+# RewriteBase /public/
+
+# use other file than index as default
+# DirectoryIndex first.html
+
+# Folder view on page
+# Options: Fancy, FolderFirst
+# IndexOptions FancyIndexing
+
+# Error pages
+# ErrorDocument {CODE} {PATH} // eg. 404 (File Not Found)
+
+# Redirection
+# Redirect {CODE} {PATH}
+
+# Limit access to range or IP. 
+#<Limit {METHOD}> // eg. GET POST
+# order allow,deny // parse allow first then go to deny. { Deny by default }
+# allow from all // everybody but 1.2.3.4 can access.
+# deny from 1.2.3.4
+#</Limit>
+
+
+# Require password authentication
+# More: https://wiki.apache.org/httpd/PasswordBasicAuth
+#<Directory {PATH} >
+#  AuthType Basic
+#  AuthName "Authentication Required"
+#  AuthUserFile "/etc/htpasswd/.htpasswd" // On *nix apache usually comes with htpassword command to generate this.
+#  										 // Perl scripting for this works perfectly fine tho, i use this.
+#  										 // More: http://bash.cyberciti.biz/web-server/htpasswd-replacement-perl-script/
+#  Require valid-user
+
+#  Order allow,deny
+#  Allow from all
+#</Directory>
+
+## Sets our rewrite condition to not include files or folders that exists.
+## num. 7, Remove file extension, use Rewrite conditions.
+# Smartness
+# Redirect Trailing Slashes...
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# Handle Front Controller...
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]

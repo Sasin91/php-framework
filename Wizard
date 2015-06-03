@@ -4,11 +4,13 @@ require __DIR__ . '/shared.php';
 require __DIR__ . '/app/Libraries/vendor/autoload.php';
 
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 
 
-abstract class Wizard extends Command {}
+abstract class Wizard extends Command
+{
+}
 
 $Wizard = new Application();
 $Wizard->add(new \System\Commands\MVC\ScaffoldCommand());

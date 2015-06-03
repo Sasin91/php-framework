@@ -6,14 +6,15 @@
  * Time: 22:17
  */
 
-namespace Core\Models;
+namespace Modules\Shop;
 
 
 use System\MVC\Model;
 
-class StoreModel extends Model {
+class StoreModel extends Model
+{
 
-    protected $database = 'Shop';
+    protected $table = 'Shop';
 
     public function __construct(array $fillable = array())
     {

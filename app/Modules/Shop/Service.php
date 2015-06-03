@@ -6,10 +6,11 @@
  * Time: 21:40
  */
 
-namespace Core\Application\Cart;
+namespace Modules\Shop;
 
 
-class Service {
+class Service
+{
 
     public $service;
 

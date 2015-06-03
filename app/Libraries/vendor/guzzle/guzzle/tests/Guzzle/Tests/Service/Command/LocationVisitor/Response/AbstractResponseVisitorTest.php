@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Service\Command\LocationVisitor\Response;
 
-use Guzzle\Tests\Service\Mock\Command\MockCommand;
 use Guzzle\Http\Message\Response;
+use Guzzle\Tests\Service\Mock\Command\MockCommand;
 
 abstract class AbstractResponseVisitorTest extends \Guzzle\Tests\GuzzleTestCase
 {
@@ -21,9 +21,9 @@ abstract class AbstractResponseVisitorTest extends \Guzzle\Tests\GuzzleTestCase
         $this->value = array();
         $this->command = new MockCommand();
         $this->response = new Response(200, array(
-            'X-Foo'          => 'bar',
+            'X-Foo' => 'bar',
             'Content-Length' => 3,
-            'Content-Type'   => 'text/plain'
+            'Content-Type' => 'text/plain'
         ), 'Foo');
     }
 }

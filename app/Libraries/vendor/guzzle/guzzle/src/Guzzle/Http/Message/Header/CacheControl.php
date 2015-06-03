@@ -39,6 +39,25 @@ class CacheControl extends Header
     }
 
     /**
+     * Get an associative array of cache control directives
+     *
+     * @return array
+     */
+    public function getDirectives()
+    {
+        if ($this->directives === null) {
+            $this->directives = array();
+            foreach ($this->parseParams() as $collection) {
+                foreach ($collection as $key => $value) {
+                    $this->directives[$key] = $value === '' ? true : $value;
+                }
+            }
+        }
+
+        return $this->directives;
+    }
+
+    /**
      * Get a specific cache control directive
      *
      * @param string $param Directive to retrieve
@@ -70,6 +89,21 @@ class CacheControl extends Header
     }
 
     /**
+     * Updates the header value based on the parsed directives
+     *
+     * @param array $directives Array of cache control directives
+     */
+    protected function updateFromDirectives(array $directives)
+    {
+        $this->directives = $directives;
+        $this->values = array();
+
+        foreach ($directives as $key => $value) {
+            $this->values[] = $value === true ? $key : "{$key}={$value}";
+        }
+    }
+
+    /**
      * Remove a cache control directive by name
      *
      * @param string $param Directive to remove
@@ -83,39 +117,5 @@ class CacheControl extends Header
         $this->updateFromDirectives($directives);
 
         return $this;
-    }
-
-    /**
-     * Get an associative array of cache control directives
-     *
-     * @return array
-     */
-    public function getDirectives()
-    {
-        if ($this->directives === null) {
-            $this->directives = array();
-            foreach ($this->parseParams() as $collection) {
-                foreach ($collection as $key => $value) {
-                    $this->directives[$key] = $value === '' ? true : $value;
-                }
-            }
-        }
-
-        return $this->directives;
-    }
-
-    /**
-     * Updates the header value based on the parsed directives
-     *
-     * @param array $directives Array of cache control directives
-     */
-    protected function updateFromDirectives(array $directives)
-    {
-        $this->directives = $directives;
-        $this->values = array();
-
-        foreach ($directives as $key => $value) {
-            $this->values[] = $value === true ? $key : "{$key}={$value}";
-        }
     }
 }

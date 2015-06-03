@@ -9,11 +9,12 @@
 namespace System\Exception;
 
 
-class BadMethodCallException extends Exception {
+class BadMethodCallException extends Exception
+{
 
     function __construct($message, $code = 5, Exception $previous = null)
     {
-        $msg = 'The method, {'.$message.'}, you requested is either unavailable or does not exist.';
+        $msg = 'The method, {' . $message . '}, you requested is either unavailable or does not exist.';
         parent::__construct($msg, $code, $previous);
     }
 

@@ -1,12 +1,46 @@
 <?php
+/*
+ *   _____ ___ _ _____
+ *  |   __|   | |   __|
+ *  |__   | | | |   __|
+ *  |_____|_|___|__|
+ *
+ *        Version 0.0.4
+ *
+ *  Jonas Hansen <sasin91@gmail.com>
+ *
+ */
+
+/**
+ * Shared configures,
+ * mostly global variables and constants
+ */
 include('../shared.php');
-$config = \Config::get('Config');
-if($config['Installed'] === false)
-{
+
+/**
+ * System PSR-0 AutoLoader
+ */
+require_once(BASE_PATH . DS . '/app/Libraries/vendor/autoload.php');
+
+/**
+ * Bind config to variable
+ */
+$config = Config::get('Config');
+
+/**
+ * Run install if not installed.
+ */
+if ($config['Installed'] === false) {
     require_once 'install.php';
-    new Install($config);
+    return new Install($config);
 }
 
-require_once( ROOT_PATH . DS . 'Bootstrap.php');
+/**
+ * Require Bootstrap
+ */
+require_once(BASE_PATH . '/app/Bootstrap.php');
 
-new Bootstrap($config);
+/**
+ * Instantiate Bootstrap
+ */
+new Bootstrap($config, $AutoLoader);

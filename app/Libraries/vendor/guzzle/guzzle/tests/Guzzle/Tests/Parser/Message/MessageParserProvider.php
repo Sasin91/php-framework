@@ -15,88 +15,88 @@ class MessageParserProvider extends \Guzzle\Tests\GuzzleTestCase
 
             // Converts casing of request. Does not require host header.
             array("GET / HTTP/1.1\r\n\r\n", array(
-                'method'   => 'GET',
+                'method' => 'GET',
                 'protocol' => 'HTTP',
                 'version' => '1.1',
                 'request_url' => array(
                     'scheme' => 'http',
-                    'host'   => '',
-                    'port'   => '',
-                    'path'   => '/',
-                    'query'  => ''
+                    'host' => '',
+                    'port' => '',
+                    'path' => '/',
+                    'query' => ''
                 ),
                 'headers' => array(),
-                'body'    => ''
+                'body' => ''
             )),
             // Path and query string, multiple header values per header and case sensitive storage
             array("HEAD /path?query=foo HTTP/1.0\r\nHost: example.com\r\nX-Foo: foo\r\nx-foo: Bar\r\nX-Foo: foo\r\nX-Foo: Baz\r\n\r\n", array(
-                'method'   => 'HEAD',
+                'method' => 'HEAD',
                 'protocol' => 'HTTP',
                 'version' => '1.0',
                 'request_url' => array(
                     'scheme' => 'http',
-                    'host'   => 'example.com',
-                    'port'   => '',
-                    'path'   => '/path',
-                    'query'  => 'query=foo'
+                    'host' => 'example.com',
+                    'port' => '',
+                    'path' => '/path',
+                    'query' => 'query=foo'
                 ),
                 'headers' => array(
-                    'Host'  => 'example.com',
+                    'Host' => 'example.com',
                     'X-Foo' => array('foo', 'foo', 'Baz'),
                     'x-foo' => 'Bar'
                 ),
-                'body'    => ''
+                'body' => ''
             )),
             // Includes a body
             array("PUT / HTTP/1.0\r\nhost: example.com:443\r\nContent-Length: 4\r\n\r\ntest", array(
-                'method'   => 'PUT',
+                'method' => 'PUT',
                 'protocol' => 'HTTP',
                 'version' => '1.0',
                 'request_url' => array(
                     'scheme' => 'https',
-                    'host'   => 'example.com',
-                    'port'   => '443',
-                    'path'   => '/',
-                    'query'  => ''
+                    'host' => 'example.com',
+                    'port' => '443',
+                    'path' => '/',
+                    'query' => ''
                 ),
                 'headers' => array(
-                    'host'           => 'example.com:443',
+                    'host' => 'example.com:443',
                     'Content-Length' => '4'
                 ),
                 'body' => 'test'
             )),
             // Includes Authorization headers
             array("GET / HTTP/1.1\r\nHost: example.com:8080\r\nAuthorization: Basic {$auth}\r\n\r\n", array(
-                'method'   => 'GET',
+                'method' => 'GET',
                 'protocol' => 'HTTP',
                 'version' => '1.1',
                 'request_url' => array(
                     'scheme' => 'http',
-                    'host'   => 'example.com',
-                    'port'   => '8080',
-                    'path'   => '/',
-                    'query'  => ''
+                    'host' => 'example.com',
+                    'port' => '8080',
+                    'path' => '/',
+                    'query' => ''
                 ),
                 'headers' => array(
-                    'Host'           => 'example.com:8080',
+                    'Host' => 'example.com:8080',
                     'Authorization' => "Basic {$auth}"
                 ),
                 'body' => ''
             )),
             // Include authorization header
             array("GET / HTTP/1.1\r\nHost: example.com:8080\r\nauthorization: Basic {$auth}\r\n\r\n", array(
-                'method'   => 'GET',
+                'method' => 'GET',
                 'protocol' => 'HTTP',
                 'version' => '1.1',
                 'request_url' => array(
                     'scheme' => 'http',
-                    'host'   => 'example.com',
-                    'port'   => '8080',
-                    'path'   => '/',
-                    'query'  => ''
+                    'host' => 'example.com',
+                    'port' => '8080',
+                    'path' => '/',
+                    'query' => ''
                 ),
                 'headers' => array(
-                    'Host'           => 'example.com:8080',
+                    'Host' => 'example.com:8080',
                     'authorization' => "Basic {$auth}"
                 ),
                 'body' => ''
@@ -111,53 +111,53 @@ class MessageParserProvider extends \Guzzle\Tests\GuzzleTestCase
             array('', false),
 
             array("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n", array(
-                'protocol'      => 'HTTP',
-                'version'       => '1.1',
-                'code'          => '200',
+                'protocol' => 'HTTP',
+                'version' => '1.1',
+                'code' => '200',
                 'reason_phrase' => 'OK',
-                'headers'       => array(
+                'headers' => array(
                     'Content-Length' => 0
                 ),
-                'body'          => ''
+                'body' => ''
             )),
             array("HTTP/1.0 400 Bad Request\r\nContent-Length: 0\r\n\r\n", array(
-                'protocol'      => 'HTTP',
-                'version'       => '1.0',
-                'code'          => '400',
+                'protocol' => 'HTTP',
+                'version' => '1.0',
+                'code' => '400',
                 'reason_phrase' => 'Bad Request',
-                'headers'       => array(
+                'headers' => array(
                     'Content-Length' => 0
                 ),
-                'body'          => ''
+                'body' => ''
             )),
             array("HTTP/1.0 100 Continue\r\n\r\n", array(
-                'protocol'      => 'HTTP',
-                'version'       => '1.0',
-                'code'          => '100',
+                'protocol' => 'HTTP',
+                'version' => '1.0',
+                'code' => '100',
                 'reason_phrase' => 'Continue',
-                'headers'       => array(),
-                'body'          => ''
+                'headers' => array(),
+                'body' => ''
             )),
             array("HTTP/1.1 204 No Content\r\nX-Foo: foo\r\nx-foo: Bar\r\nX-Foo: foo\r\n\r\n", array(
-                'protocol'      => 'HTTP',
-                'version'       => '1.1',
-                'code'          => '204',
+                'protocol' => 'HTTP',
+                'version' => '1.1',
+                'code' => '204',
                 'reason_phrase' => 'No Content',
-                'headers'       => array(
+                'headers' => array(
                     'X-Foo' => array('foo', 'foo'),
                     'x-foo' => 'Bar'
                 ),
-                'body'          => ''
+                'body' => ''
             )),
             array("HTTP/1.1 200 Ok that is great!\r\nContent-Length: 4\r\n\r\nTest", array(
-                'protocol'      => 'HTTP',
-                'version'       => '1.1',
-                'code'          => '200',
+                'protocol' => 'HTTP',
+                'version' => '1.1',
+                'code' => '200',
                 'reason_phrase' => 'Ok that is great!',
-                'headers'       => array(
+                'headers' => array(
                     'Content-Length' => 4
                 ),
-                'body'          => 'Test'
+                'body' => 'Test'
             )),
         );
     }
@@ -177,19 +177,12 @@ class MessageParserProvider extends \Guzzle\Tests\GuzzleTestCase
         $this->compareHttpHeaders($result['headers'], $expected['headers']);
     }
 
-    public function compareResponseResults($result, $expected)
+    public function compareHttpHeaders($result, $expected)
     {
-        if (!$result) {
-            $this->assertFalse($expected);
-            return;
-        }
-
-        $this->assertEquals($result['protocol'], $expected['protocol']);
-        $this->assertEquals($result['version'], $expected['version']);
-        $this->assertEquals($result['code'], $expected['code']);
-        $this->assertEquals($result['reason_phrase'], $expected['reason_phrase']);
-        $this->assertEquals($result['body'], $expected['body']);
-        $this->compareHttpHeaders($result['headers'], $expected['headers']);
+        // Aggregate all headers case-insensitively
+        $result = $this->normalizeHeaders($result);
+        $expected = $this->normalizeHeaders($expected);
+        $this->assertEquals($result, $expected);
     }
 
     protected function normalizeHeaders($headers)
@@ -215,11 +208,18 @@ class MessageParserProvider extends \Guzzle\Tests\GuzzleTestCase
         return $normalized;
     }
 
-    public function compareHttpHeaders($result, $expected)
+    public function compareResponseResults($result, $expected)
     {
-        // Aggregate all headers case-insensitively
-        $result = $this->normalizeHeaders($result);
-        $expected = $this->normalizeHeaders($expected);
-        $this->assertEquals($result, $expected);
+        if (!$result) {
+            $this->assertFalse($expected);
+            return;
+        }
+
+        $this->assertEquals($result['protocol'], $expected['protocol']);
+        $this->assertEquals($result['version'], $expected['version']);
+        $this->assertEquals($result['code'], $expected['code']);
+        $this->assertEquals($result['reason_phrase'], $expected['reason_phrase']);
+        $this->assertEquals($result['body'], $expected['body']);
+        $this->compareHttpHeaders($result['headers'], $expected['headers']);
     }
 }

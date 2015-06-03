@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Plugin\Backoff;
 
-use Guzzle\Plugin\Backoff\HttpBackoffStrategy;
 use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Backoff\HttpBackoffStrategy;
 
 /**
  * @covers Guzzle\Plugin\Backoff\HttpBackoffStrategy

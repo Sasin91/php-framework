@@ -10,14 +10,15 @@ $categories = $this->content->get('categories');
 $posts = $this->content->get('posts');
 ?>
 <div class="container">
-<div class="row-fluid">
-    <?php foreach($posts as $post) {
-    ?><div class="well blog-bg" >
-        <div class="media" >
-            <?php echo $this->md($post['content']);?>
+    <div class="row-fluid">
+        <?php foreach ($posts as $post) {
+            ?>
+            <div class="well blog-bg">
+            <div class="media">
+                <?php echo $this->md($post['content']); ?>
             </div>
-        </div>
+            </div>
 
-    <?php } ?>
-</div>
+        <?php } ?>
+    </div>
 </div>

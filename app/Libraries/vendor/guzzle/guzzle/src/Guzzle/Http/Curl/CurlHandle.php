@@ -2,13 +2,13 @@
 
 namespace Guzzle\Http\Curl;
 
+use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Common\Exception\RuntimeException;
-use Guzzle\Common\Collection;
 use Guzzle\Http\Message\EntityEnclosingRequest;
 use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Parser\ParserRegistry;
 use Guzzle\Http\Url;
+use Guzzle\Parser\ParserRegistry;
 
 /**
  * Immutable wrapper for a cURL handle
@@ -50,22 +50,22 @@ class CurlHandle
 
         // Prepare url
         $url = (string)$request->getUrl();
-        if(($pos = strpos($url, '#')) !== false ){
+        if (($pos = strpos($url, '#')) !== false) {
             // strip fragment from url
             $url = substr($url, 0, $pos);
         }
 
         // Array of default cURL options.
         $curlOptions = array(
-            CURLOPT_URL            => $url,
+            CURLOPT_URL => $url,
             CURLOPT_CONNECTTIMEOUT => 150,
             CURLOPT_RETURNTRANSFER => false,
-            CURLOPT_HEADER         => false,
-            CURLOPT_PORT           => $request->getPort(),
-            CURLOPT_HTTPHEADER     => array(),
-            CURLOPT_WRITEFUNCTION  => array($mediator, 'writeResponseBody'),
+            CURLOPT_HEADER => false,
+            CURLOPT_PORT => $request->getPort(),
+            CURLOPT_HTTPHEADER => array(),
+            CURLOPT_WRITEFUNCTION => array($mediator, 'writeResponseBody'),
             CURLOPT_HEADERFUNCTION => array($mediator, 'receiveResponseHeader'),
-            CURLOPT_HTTP_VERSION   => $request->getProtocolVersion() === '1.0'
+            CURLOPT_HTTP_VERSION => $request->getProtocolVersion() === '1.0'
                 ? CURL_HTTP_VERSION_1_0 : CURL_HTTP_VERSION_1_1,
             // Verifies the authenticity of the peer's certificate
             CURLOPT_SSL_VERIFYPEER => 1,
@@ -80,7 +80,7 @@ class CurlHandle
 
         // Add CURLOPT_ENCODING if Accept-Encoding header is provided
         if ($acceptEncodingHeader = $request->getHeader('Accept-Encoding')) {
-            $curlOptions[CURLOPT_ENCODING] = (string) $acceptEncodingHeader;
+            $curlOptions[CURLOPT_ENCODING] = (string)$acceptEncodingHeader;
             // Let cURL set the Accept-Encoding header, prevents duplicate values
             $request->removeHeader('Accept-Encoding');
         }
@@ -113,11 +113,11 @@ class CurlHandle
             if ($request->getBody()) {
                 // You can send the body as a string using curl's CURLOPT_POSTFIELDS
                 if ($bodyAsString) {
-                    $curlOptions[CURLOPT_POSTFIELDS] = (string) $request->getBody();
+                    $curlOptions[CURLOPT_POSTFIELDS] = (string)$request->getBody();
                     // Allow curl to add the Content-Length for us to account for the times when
                     // POST redirects are followed by GET requests
                     if ($tempContentLength = $request->getHeader('Content-Length')) {
-                        $tempContentLength = (int) (string) $tempContentLength;
+                        $tempContentLength = (int)(string)$tempContentLength;
                     }
                     // Remove the curl generated Content-Type header if none was set manually
                     if (!$request->hasHeader('Content-Type')) {
@@ -127,7 +127,7 @@ class CurlHandle
                     $curlOptions[CURLOPT_UPLOAD] = true;
                     // Let cURL handle setting the Content-Length header
                     if ($tempContentLength = $request->getHeader('Content-Length')) {
-                        $tempContentLength = (int) (string) $tempContentLength;
+                        $tempContentLength = (int)(string)$tempContentLength;
                         $curlOptions[CURLOPT_INFILESIZE] = $tempContentLength;
                     }
                     // Add a callback for curl to read data to send with the request only if a body was specified
@@ -151,7 +151,7 @@ class CurlHandle
                         }
                     }
                 } elseif (count($request->getPostFields())) {
-                    $postFields = (string) $request->getPostFields()->useUrlEncoding(true);
+                    $postFields = (string)$request->getPostFields()->useUrlEncoding(true);
                 }
 
                 if ($postFields !== false) {
@@ -226,7 +226,7 @@ class CurlHandle
     /**
      * Construct a new CurlHandle object that wraps a cURL handle
      *
-     * @param resource         $handle  Configured cURL handle resource
+     * @param resource $handle Configured cURL handle resource
      * @param Collection|array $options Curl options to use with the handle
      *
      * @throws InvalidArgumentException

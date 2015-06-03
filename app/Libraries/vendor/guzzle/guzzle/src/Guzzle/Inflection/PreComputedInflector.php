@@ -18,9 +18,9 @@ class PreComputedInflector implements InflectorInterface
 
     /**
      * @param InflectorInterface $inflector Inflector being decorated
-     * @param array              $snake     Hash of pre-computed camel to snake
-     * @param array              $camel     Hash of pre-computed snake to camel
-     * @param bool               $mirror    Mirror snake and camel reflections
+     * @param array $snake Hash of pre-computed camel to snake
+     * @param array $camel Hash of pre-computed snake to camel
+     * @param bool $mirror Mirror snake and camel reflections
      */
     public function __construct(InflectorInterface $inflector, array $snake = array(), array $camel = array(), $mirror = false)
     {

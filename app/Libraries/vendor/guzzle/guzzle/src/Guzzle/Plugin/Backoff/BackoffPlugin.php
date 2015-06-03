@@ -2,12 +2,12 @@
 
 namespace Guzzle\Plugin\Backoff;
 
-use Guzzle\Common\Event;
 use Guzzle\Common\AbstractHasDispatcher;
-use Guzzle\Http\Message\EntityEnclosingRequestInterface;
-use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Common\Event;
 use Guzzle\Http\Curl\CurlMultiInterface;
 use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Message\EntityEnclosingRequestInterface;
+use Guzzle\Http\Message\RequestInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -34,9 +34,9 @@ class BackoffPlugin extends AbstractHasDispatcher implements EventSubscriberInte
     /**
      * Retrieve a basic truncated exponential backoff plugin that will retry HTTP errors and cURL errors
      *
-     * @param int   $maxRetries Maximum number of retries
-     * @param array $httpCodes  HTTP response codes to retry
-     * @param array $curlCodes  cURL error codes to retry
+     * @param int $maxRetries Maximum number of retries
+     * @param array $httpCodes HTTP response codes to retry
+     * @param array $curlCodes cURL error codes to retry
      *
      * @return self
      */
@@ -44,7 +44,8 @@ class BackoffPlugin extends AbstractHasDispatcher implements EventSubscriberInte
         $maxRetries = 3,
         array $httpCodes = null,
         array $curlCodes = null
-    ) {
+    )
+    {
         return new self(new TruncatedBackoffStrategy($maxRetries,
             new HttpBackoffStrategy($httpCodes,
                 new CurlBackoffStrategy($curlCodes,
@@ -62,7 +63,7 @@ class BackoffPlugin extends AbstractHasDispatcher implements EventSubscriberInte
     public static function getSubscribedEvents()
     {
         return array(
-            'request.sent'      => 'onRequestSent',
+            'request.sent' => 'onRequestSent',
             'request.exception' => 'onRequestSent',
             CurlMultiInterface::POLLING_REQUEST => 'onRequestPoll'
         );
@@ -80,7 +81,7 @@ class BackoffPlugin extends AbstractHasDispatcher implements EventSubscriberInte
         $exception = $event['exception'];
 
         $params = $request->getParams();
-        $retries = (int) $params->get(self::RETRY_PARAM);
+        $retries = (int)$params->get(self::RETRY_PARAM);
         $delay = $this->strategy->getBackoffPeriod($retries, $request, $response, $exception);
 
         if ($delay !== false) {
@@ -90,11 +91,11 @@ class BackoffPlugin extends AbstractHasDispatcher implements EventSubscriberInte
             // Send the request again
             $request->setState(RequestInterface::STATE_TRANSFER);
             $this->dispatch(self::RETRY_EVENT, array(
-                'request'  => $request,
+                'request' => $request,
                 'response' => $response,
-                'handle'   => ($exception && $exception instanceof CurlException) ? $exception->getCurlHandle() : null,
-                'retries'  => $retries,
-                'delay'    => $delay
+                'handle' => ($exception && $exception instanceof CurlException) ? $exception->getCurlHandle() : null,
+                'retries' => $retries,
+                'delay' => $delay
             ));
         }
     }

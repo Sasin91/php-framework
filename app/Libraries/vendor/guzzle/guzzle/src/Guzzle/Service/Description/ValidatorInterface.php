@@ -13,7 +13,7 @@ interface ValidatorInterface
      * must be run correctly through the matching schema's filters attribute.
      *
      * @param Parameter $param Schema that is being validated against the value
-     * @param mixed     $value Value to validate and process. The value may change during this process.
+     * @param mixed $value Value to validate and process. The value may change during this process.
      *
      * @return bool  Returns true if the input data is valid for the schema
      */

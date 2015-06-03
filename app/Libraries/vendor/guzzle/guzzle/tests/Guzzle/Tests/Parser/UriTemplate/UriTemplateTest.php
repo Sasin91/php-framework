@@ -23,31 +23,31 @@ class UriTemplateTest extends AbstractUriTemplateTest
         return array(
             array(
                 '{+var*}', array(
-                    'operator' => '+',
-                    'values'   => array(
-                        array('value' => 'var', 'modifier' => '*')
-                    )
-                ),
+                'operator' => '+',
+                'values' => array(
+                    array('value' => 'var', 'modifier' => '*')
+                )
+            ),
             ),
             array(
                 '{?keys,var,val}', array(
-                    'operator' => '?',
-                    'values'   => array(
-                        array('value' => 'keys', 'modifier' => ''),
-                        array('value' => 'var', 'modifier' => ''),
-                        array('value' => 'val', 'modifier' => '')
-                    )
-                ),
+                'operator' => '?',
+                'values' => array(
+                    array('value' => 'keys', 'modifier' => ''),
+                    array('value' => 'var', 'modifier' => ''),
+                    array('value' => 'val', 'modifier' => '')
+                )
+            ),
             ),
             array(
                 '{+x,hello,y}', array(
-                    'operator' => '+',
-                    'values'   => array(
-                        array('value' => 'x', 'modifier' => ''),
-                        array('value' => 'hello', 'modifier' => ''),
-                        array('value' => 'y', 'modifier' => '')
-                    )
+                'operator' => '+',
+                'values' => array(
+                    array('value' => 'x', 'modifier' => ''),
+                    array('value' => 'hello', 'modifier' => ''),
+                    array('value' => 'y', 'modifier' => '')
                 )
+            )
             )
         );
     }
@@ -76,15 +76,15 @@ class UriTemplateTest extends AbstractUriTemplateTest
         $template = new UriTemplate();
 
         $result = $template->expand('http://example.com{+path}{/segments}{?query,data*,foo*}', array(
-            'path'     => '/foo/bar',
+            'path' => '/foo/bar',
             'segments' => array('one', 'two'),
-            'query'    => 'test',
-            'data'     => array(
+            'query' => 'test',
+            'data' => array(
                 'more' => array('fun', 'ice cream')
             ),
             'foo' => array(
                 'baz' => array(
-                    'bar'  => 'fizz',
+                    'bar' => 'fizz',
                     'test' => 'buzz'
                 ),
                 'bam' => 'boo'

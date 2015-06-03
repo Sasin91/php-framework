@@ -12,16 +12,17 @@ namespace System\Authentication;
 use Toolbox\ArrayTools;
 use Toolbox\StringTools;
 
-class Permission extends Auth {
+class Permission extends Auth
+{
 
-   protected static $granted = array();
-   protected static $permissions = array(
-       'Read',
-       'Write',
-       'Edit',
-       'Create',
-       'Delete'
-   );
+    protected static $granted = array();
+    protected static $permissions = array(
+        'Read',
+        'Write',
+        'Edit',
+        'Create',
+        'Delete'
+    );
 
     protected static $predefinedPermissions = array(
         'Member' => 'Read',
@@ -30,11 +31,11 @@ class Permission extends Auth {
         'Admin' => '*'
     );
 
-    public function __call($method, $arguments)
+    public function __call($method, $arguments = '')
     {
         $methods = array();
         $methods[] = get_class_methods($this);
-        if(ArrayTools::inArray($methods, $method))
+        if (ArrayTools::inArray($methods, $method))
             return static::$method($arguments);
     }
 
@@ -60,7 +61,7 @@ class Permission extends Auth {
 
     public static function remove($permission, $name)
     {
-        if(static::has($permission, $name))
+        if (static::has($permission, $name))
             unset(static::$granted[$name]);
     }
 

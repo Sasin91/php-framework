@@ -31,7 +31,7 @@ var http = require("http");
  * Guzzle node.js server
  * @class
  */
-var GuzzleServer = function(port, log) {
+var GuzzleServer = function (port, log) {
 
     this.port = port;
     this.log = log;
@@ -39,7 +39,7 @@ var GuzzleServer = function(port, log) {
     this.requests = [];
     var that = this;
 
-    var controlRequest = function(request, req, res) {
+    var controlRequest = function (request, req, res) {
         if (req.url == '/guzzle-server/perf') {
             res.writeHead(200, "OK", {"Content-Length": 16});
             res.end("Body of response");
@@ -47,14 +47,14 @@ var GuzzleServer = function(port, log) {
             if (req.url == "/guzzle-server/requests") {
                 // Clear the received requests
                 that.requests = [];
-                res.writeHead(200, "OK", { "Content-Length": 0 });
+                res.writeHead(200, "OK", {"Content-Length": 0});
                 res.end();
                 if (this.log) {
                     console.log("Flushing requests");
                 }
             } else if (req.url == "/guzzle-server") {
                 // Shutdown the server
-                res.writeHead(200, "OK", { "Content-Length": 0, "Connection": "close" });
+                res.writeHead(200, "OK", {"Content-Length": 0, "Connection": "close"});
                 res.end();
                 if (this.log) {
                     console.log("Shutting down");
@@ -65,7 +65,7 @@ var GuzzleServer = function(port, log) {
             if (req.url === "/guzzle-server/requests") {
                 // Get received requests
                 var data = that.requests.join("\n----[request]\n");
-                res.writeHead(200, "OK", { "Content-Length": data.length });
+                res.writeHead(200, "OK", {"Content-Length": data.length});
                 res.end(data);
                 if (that.log) {
                     console.log("Sending receiving requests");
@@ -82,20 +82,20 @@ var GuzzleServer = function(port, log) {
                     if (that.log) {
                         console.log("No response data was provided");
                     }
-                    res.writeHead(400, "NO RESPONSES IN REQUEST", { "Content-Length": 0 });
+                    res.writeHead(400, "NO RESPONSES IN REQUEST", {"Content-Length": 0});
                 } else {
                     that.responses = eval("(" + data + ")");
                     if (that.log) {
                         console.log(that.responses);
                     }
-                    res.writeHead(200, "OK", { "Content-Length": 0 });
+                    res.writeHead(200, "OK", {"Content-Length": 0});
                 }
                 res.end();
             }
         }
     };
 
-    var receivedRequest = function(request, req, res) {
+    var receivedRequest = function (request, req, res) {
         if (req.url.indexOf("/guzzle-server") === 0) {
             controlRequest(request, req, res);
         } else if (req.url.indexOf("/guzzle-server") == -1 && !that.responses.length) {
@@ -109,9 +109,9 @@ var GuzzleServer = function(port, log) {
         }
     };
 
-    this.start = function() {
+    this.start = function () {
 
-        that.server = http.createServer(function(req, res) {
+        that.server = http.createServer(function (req, res) {
 
             var request = req.method + " " + req.url + " HTTP/" + req.httpVersion + "\r\n";
             for (var i in req.headers) {
@@ -120,12 +120,12 @@ var GuzzleServer = function(port, log) {
             request += "\r\n";
 
             // Receive each chunk of the request body
-            req.addListener("data", function(chunk) {
+            req.addListener("data", function (chunk) {
                 request += chunk;
             });
 
             // Called when the request completes
-            req.addListener("end", function() {
+            req.addListener("end", function () {
                 receivedRequest(request, req, res);
             });
         });

@@ -13,7 +13,7 @@ interface ConfigLoaderInterface
     /**
      * Loads configuration data and returns an array of the loaded result
      *
-     * @param mixed $config  Data to load (filename or array of data)
+     * @param mixed $config Data to load (filename or array of data)
      * @param array $options Array of options to use when loading
      *
      * @return mixed

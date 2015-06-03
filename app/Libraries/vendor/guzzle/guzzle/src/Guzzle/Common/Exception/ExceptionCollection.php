@@ -55,6 +55,27 @@ class ExceptionCollection extends \Exception implements GuzzleException, \Iterat
         return $this;
     }
 
+    private function getExceptionMessage(\Exception $e, $depth = 0)
+    {
+        static $sp = '    ';
+        $prefix = $depth ? str_repeat($sp, $depth) : '';
+        $message = "{$prefix}(" . get_class($e) . ') ' . $e->getFile() . ' line ' . $e->getLine() . "\n";
+
+        if ($e instanceof self) {
+            if ($e->shortMessage) {
+                $message .= "\n{$prefix}{$sp}" . str_replace("\n", "\n{$prefix}{$sp}", $e->shortMessage) . "\n";
+            }
+            foreach ($e as $ee) {
+                $message .= "\n" . $this->getExceptionMessage($ee, $depth + 1);
+            }
+        } else {
+            $message .= "\n{$prefix}{$sp}" . str_replace("\n", "\n{$prefix}{$sp}", $e->getMessage()) . "\n";
+            $message .= "\n{$prefix}{$sp}" . str_replace("\n", "\n{$prefix}{$sp}", $e->getTraceAsString()) . "\n";
+        }
+
+        return str_replace(getcwd(), '.', $message);
+    }
+
     /**
      * Get the total number of request exceptions
      *
@@ -83,26 +104,5 @@ class ExceptionCollection extends \Exception implements GuzzleException, \Iterat
     public function getFirst()
     {
         return $this->exceptions ? $this->exceptions[0] : null;
-    }
-
-    private function getExceptionMessage(\Exception $e, $depth = 0)
-    {
-        static $sp = '    ';
-        $prefix = $depth ? str_repeat($sp, $depth) : '';
-        $message = "{$prefix}(" . get_class($e) . ') ' . $e->getFile() . ' line ' . $e->getLine() . "\n";
-
-        if ($e instanceof self) {
-            if ($e->shortMessage) {
-                $message .= "\n{$prefix}{$sp}" . str_replace("\n", "\n{$prefix}{$sp}", $e->shortMessage) . "\n";
-            }
-            foreach ($e as $ee) {
-                $message .= "\n" . $this->getExceptionMessage($ee, $depth + 1);
-            }
-        }  else {
-            $message .= "\n{$prefix}{$sp}" . str_replace("\n", "\n{$prefix}{$sp}", $e->getMessage()) . "\n";
-            $message .= "\n{$prefix}{$sp}" . str_replace("\n", "\n{$prefix}{$sp}", $e->getTraceAsString()) . "\n";
-        }
-
-        return str_replace(getcwd(), '.', $message);
     }
 }

@@ -2,8 +2,6 @@
 
 namespace MaxMind\Db\Reader;
 
-use MaxMind\Db\Reader\InvalidDatabaseException;
-
 class Util
 {
     public static function read($stream, $offset, $numberOfBytes)

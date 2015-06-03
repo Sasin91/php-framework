@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Http\Exception;
 
-use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Curl\CurlHandle;
+use Guzzle\Http\Exception\CurlException;
 
 /**
  * @covers Guzzle\Http\Exception\CurlException

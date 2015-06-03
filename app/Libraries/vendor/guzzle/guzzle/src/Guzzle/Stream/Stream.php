@@ -15,19 +15,6 @@ class Stream implements StreamInterface
     const IS_READABLE = 'is_readable';
     const IS_WRITABLE = 'is_writable';
     const SEEKABLE = 'seekable';
-
-    /** @var resource Stream resource */
-    protected $stream;
-
-    /** @var int Size of the stream contents in bytes */
-    protected $size;
-
-    /** @var array Stream cached data */
-    protected $cache = array();
-
-    /** @var array Custom stream data */
-    protected $customData = array();
-
     /** @var array Hash table of readable and writeable stream types for fast lookups */
     protected static $readWriteHash = array(
         'read' => array(
@@ -41,10 +28,18 @@ class Stream implements StreamInterface
             'w+t' => true, 'r+t' => true, 'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true
         )
     );
+    /** @var resource Stream resource */
+    protected $stream;
+    /** @var int Size of the stream contents in bytes */
+    protected $size;
+    /** @var array Stream cached data */
+    protected $cache = array();
+    /** @var array Custom stream data */
+    protected $customData = array();
 
     /**
      * @param resource $stream Stream resource to wrap
-     * @param int      $size   Size of the stream in bytes. Only pass if the size cannot be obtained from the stream.
+     * @param int $size Size of the stream in bytes. Only pass if the size cannot be obtained from the stream.
      *
      * @throws InvalidArgumentException if the stream is not a stream resource
      */
@@ -54,41 +49,11 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Closes the stream when the helper is destructed
-     */
-    public function __destruct()
-    {
-        $this->close();
-    }
-
-    public function __toString()
-    {
-        if (!$this->isReadable() || (!$this->isSeekable() && $this->isConsumed())) {
-            return '';
-        }
-
-        $originalPos = $this->ftell();
-        $body = stream_get_contents($this->stream, -1, 0);
-        $this->seek($originalPos);
-
-        return $body;
-    }
-
-    public function close()
-    {
-        if (is_resource($this->stream)) {
-            fclose($this->stream);
-        }
-        $this->cache[self::IS_READABLE] = false;
-        $this->cache[self::IS_WRITABLE] = false;
-    }
-
-    /**
      * Calculate a hash of a Stream
      *
-     * @param StreamInterface $stream    Stream to calculate the hash for
-     * @param string          $algo      Hash algorithm (e.g. md5, crc32, etc)
-     * @param bool            $rawOutput Whether or not to use raw output
+     * @param StreamInterface $stream Stream to calculate the hash for
+     * @param string $algo Hash algorithm (e.g. md5, crc32, etc)
+     * @param bool $rawOutput Whether or not to use raw output
      *
      * @return bool|string Returns false on failure or a hash string on success
      */
@@ -104,35 +69,65 @@ class Stream implements StreamInterface
             hash_update($ctx, $stream->read(8192));
         }
 
-        $out = hash_final($ctx, (bool) $rawOutput);
+        $out = hash_final($ctx, (bool)$rawOutput);
         $stream->seek($pos);
 
         return $out;
     }
 
-    public function getMetaData($key = null)
+    /**
+     * Closes the stream when the helper is destructed
+     */
+    public function __destruct()
     {
-        $meta = stream_get_meta_data($this->stream);
-
-        return !$key ? $meta : (array_key_exists($key, $meta) ? $meta[$key] : null);
+        $this->close();
     }
 
-    public function getStream()
+    public function close()
     {
-        return $this->stream;
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+        }
+        $this->cache[self::IS_READABLE] = false;
+        $this->cache[self::IS_WRITABLE] = false;
     }
 
-    public function setStream($stream, $size = null)
+    public function __toString()
     {
-        if (!is_resource($stream)) {
-            throw new InvalidArgumentException('Stream must be a resource');
+        if (!$this->isReadable() || (!$this->isSeekable() && $this->isConsumed())) {
+            return '';
         }
 
-        $this->size = $size;
-        $this->stream = $stream;
-        $this->rebuildCache();
+        $originalPos = $this->ftell();
+        $body = stream_get_contents($this->stream, -1, 0);
+        $this->seek($originalPos);
 
-        return $this;
+        return $body;
+    }
+
+    public function isReadable()
+    {
+        return $this->cache[self::IS_READABLE];
+    }
+
+    public function isSeekable()
+    {
+        return $this->cache[self::SEEKABLE];
+    }
+
+    public function isConsumed()
+    {
+        return feof($this->stream);
+    }
+
+    public function ftell()
+    {
+        return ftell($this->stream);
+    }
+
+    public function seek($offset, $whence = SEEK_SET)
+    {
+        return $this->cache[self::SEEKABLE] ? fseek($this->stream, $offset, $whence) === 0 : false;
     }
 
     public function detachStream()
@@ -150,6 +145,13 @@ class Stream implements StreamInterface
     public function getWrapperData()
     {
         return $this->getMetaData('wrapper_data') ?: array();
+    }
+
+    public function getMetaData($key = null)
+    {
+        $meta = stream_get_meta_data($this->stream);
+
+        return !$key ? $meta : (array_key_exists($key, $meta) ? $meta[$key] : null);
     }
 
     public function getStreamType()
@@ -177,7 +179,7 @@ class Stream implements StreamInterface
         } elseif ($this->cache[self::IS_READABLE] && $this->cache[self::SEEKABLE]) {
             // Only get the size based on the content if the the stream is readable and seekable
             $pos = $this->ftell();
-            $this->size = strlen((string) $this);
+            $this->size = strlen((string)$this);
             $this->seek($pos);
             return $this->size;
         }
@@ -185,9 +187,11 @@ class Stream implements StreamInterface
         return false;
     }
 
-    public function isReadable()
+    public function setSize($size)
     {
-        return $this->cache[self::IS_READABLE];
+        $this->size = $size;
+
+        return $this;
     }
 
     public function isRepeatable()
@@ -200,11 +204,6 @@ class Stream implements StreamInterface
         return $this->cache[self::IS_WRITABLE];
     }
 
-    public function isConsumed()
-    {
-        return feof($this->stream);
-    }
-
     public function feof()
     {
         return $this->isConsumed();
@@ -213,23 +212,6 @@ class Stream implements StreamInterface
     public function isLocal()
     {
         return $this->cache[self::IS_LOCAL];
-    }
-
-    public function isSeekable()
-    {
-        return $this->cache[self::SEEKABLE];
-    }
-
-    public function setSize($size)
-    {
-        $this->size = $size;
-
-        return $this;
-    }
-
-    public function seek($offset, $whence = SEEK_SET)
-    {
-        return $this->cache[self::SEEKABLE] ? fseek($this->stream, $offset, $whence) === 0 : false;
     }
 
     public function read($length)
@@ -243,11 +225,6 @@ class Stream implements StreamInterface
         $this->size = null;
 
         return fwrite($this->stream, $string);
-    }
-
-    public function ftell()
-    {
-        return ftell($this->stream);
     }
 
     public function rewind()
@@ -264,9 +241,20 @@ class Stream implements StreamInterface
         }
     }
 
-    public function setCustomData($key, $value)
+    public function getStream()
     {
-        $this->customData[$key] = $value;
+        return $this->stream;
+    }
+
+    public function setStream($stream, $size = null)
+    {
+        if (!is_resource($stream)) {
+            throw new InvalidArgumentException('Stream must be a resource');
+        }
+
+        $this->size = $size;
+        $this->stream = $stream;
+        $this->rebuildCache();
 
         return $this;
     }
@@ -274,6 +262,13 @@ class Stream implements StreamInterface
     public function getCustomData($key)
     {
         return isset($this->customData[$key]) ? $this->customData[$key] : null;
+    }
+
+    public function setCustomData($key, $value)
+    {
+        $this->customData[$key] = $value;
+
+        return $this;
     }
 
     /**

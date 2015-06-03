@@ -3,8 +3,8 @@
 namespace Guzzle\Tests\Plugin\Backoff;
 
 use Guzzle\Http\Message\Request;
-use Guzzle\Plugin\Backoff\TruncatedBackoffStrategy;
 use Guzzle\Plugin\Backoff\CallbackBackoffStrategy;
+use Guzzle\Plugin\Backoff\TruncatedBackoffStrategy;
 
 /**
  * @covers Guzzle\Plugin\Backoff\AbstractBackoffStrategy
@@ -66,10 +66,18 @@ class AbstractBackoffStrategyTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testSkipsOtherDecisionsInChainWhenOneReturnsTrue()
     {
-        $a = new CallbackBackoffStrategy(function () { return null; }, true);
-        $b = new CallbackBackoffStrategy(function () { return true; }, true);
-        $c = new CallbackBackoffStrategy(function () { return null; }, true);
-        $d = new CallbackBackoffStrategy(function () { return 10; }, false);
+        $a = new CallbackBackoffStrategy(function () {
+            return null;
+        }, true);
+        $b = new CallbackBackoffStrategy(function () {
+            return true;
+        }, true);
+        $c = new CallbackBackoffStrategy(function () {
+            return null;
+        }, true);
+        $d = new CallbackBackoffStrategy(function () {
+            return 10;
+        }, false);
         $a->setNext($b);
         $b->setNext($c);
         $c->setNext($d);
@@ -78,8 +86,12 @@ class AbstractBackoffStrategyTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testReturnsZeroWhenDecisionMakerReturnsTrueButNoFurtherStrategiesAreInTheChain()
     {
-        $a = new CallbackBackoffStrategy(function () { return null; }, true);
-        $b = new CallbackBackoffStrategy(function () { return true; }, true);
+        $a = new CallbackBackoffStrategy(function () {
+            return null;
+        }, true);
+        $b = new CallbackBackoffStrategy(function () {
+            return true;
+        }, true);
         $a->setNext($b);
         $this->assertSame(0, $a->getBackoffPeriod(2, new Request('GET', 'http://www.foo.com')));
     }

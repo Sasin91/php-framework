@@ -3,15 +3,14 @@
 namespace Guzzle\Tests\Plugin\Backoff;
 
 use Guzzle\Common\Event;
-use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Client;
-use Guzzle\Plugin\Backoff\BackoffPlugin;
-use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\EntityEnclosingRequest;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Curl\CurlMulti;
 use Guzzle\Http\Curl\CurlMultiInterface;
+use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Message\EntityEnclosingRequest;
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Backoff\BackoffPlugin;
 use Guzzle\Plugin\Backoff\ConstantBackoffStrategy;
 use Guzzle\Plugin\Backoff\CurlBackoffStrategy;
 use Guzzle\Plugin\Backoff\HttpBackoffStrategy;
@@ -95,27 +94,27 @@ class BackoffPluginTest extends \Guzzle\Tests\GuzzleTestCase implements EventSub
         $plugin->addSubscriber($this);
 
         $event = new Event(array(
-            'request'   => $request,
-            'response'  => $response,
+            'request' => $request,
+            'response' => $response,
             'exception' => $e
         ));
 
         $plugin->onRequestSent($event);
         $this->assertEquals(array(
-            'request'  => $request,
+            'request' => $request,
             'response' => $response,
-            'handle'   => $handle,
-            'retries'  => 1,
-            'delay'    => 10
+            'handle' => $handle,
+            'retries' => 1,
+            'delay' => 10
         ), $this->readAttribute($this->retried, 'context'));
 
         $plugin->onRequestSent($event);
         $this->assertEquals(array(
-            'request'  => $request,
+            'request' => $request,
             'response' => $response,
-            'handle'   => $handle,
-            'retries'  => 2,
-            'delay'    => 10
+            'handle' => $handle,
+            'retries' => 2,
+            'delay' => 10
         ), $this->readAttribute($this->retried, 'context'));
     }
 
@@ -287,7 +286,7 @@ class BackoffPluginTest extends \Guzzle\Tests\GuzzleTestCase implements EventSub
 
         // Create an event that is expected for the Poll event
         $event = new Event(array(
-            'request'    => $request,
+            'request' => $request,
             'curl_multi' => $multi
         ));
         $event->setName(CurlMultiInterface::POLLING_REQUEST);

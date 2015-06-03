@@ -19,6 +19,15 @@ class SchemaValidator implements ValidatorInterface
     protected $errors;
 
     /**
+     * @param bool $castIntegerToStringType Set to true to convert integers into strings when a required type is a
+     *                                      string and the input value is an integer. Defaults to true.
+     */
+    public function __construct($castIntegerToStringType = true)
+    {
+        $this->castIntegerToStringType = $castIntegerToStringType;
+    }
+
+    /**
      * @return self
      * @codeCoverageIgnore
      */
@@ -29,15 +38,6 @@ class SchemaValidator implements ValidatorInterface
         }
 
         return self::$instance;
-    }
-
-    /**
-     * @param bool $castIntegerToStringType Set to true to convert integers into strings when a required type is a
-     *                                      string and the input value is an integer. Defaults to true.
-     */
-    public function __construct($castIntegerToStringType = true)
-    {
-        $this->castIntegerToStringType = $castIntegerToStringType;
     }
 
     public function validate(Parameter $param, &$value)
@@ -54,22 +54,12 @@ class SchemaValidator implements ValidatorInterface
     }
 
     /**
-     * Get the errors encountered while validating
-     *
-     * @return array
-     */
-    public function getErrors()
-    {
-        return $this->errors ?: array();
-    }
-
-    /**
      * Recursively validate a parameter
      *
-     * @param Parameter $param  API parameter being validated
-     * @param mixed     $value  Value to validate and validate. The value may change during this validate.
-     * @param string    $path   Current validation path (used for error reporting)
-     * @param int       $depth  Current depth in the validation validate
+     * @param Parameter $param API parameter being validated
+     * @param mixed $value Value to validate and validate. The value may change during this validate.
+     * @param string $path Current validation path (used for error reporting)
+     * @param int $depth Current depth in the validation validate
      *
      * @return bool Returns true if valid, or false if invalid
      */
@@ -182,7 +172,7 @@ class SchemaValidator implements ValidatorInterface
 
         // If the value is required and the type is not null, then there is an error if the value is not set
         if ($required && $value === null && $type != 'null') {
-            $message = "{$path} is " . ($param->getType() ? ('a required ' . implode(' or ', (array) $param->getType())) : 'required');
+            $message = "{$path} is " . ($param->getType() ? ('a required ' . implode(' or ', (array)$param->getType())) : 'required');
             if ($param->getDescription()) {
                 $message .= ': ' . $param->getDescription();
             }
@@ -194,9 +184,9 @@ class SchemaValidator implements ValidatorInterface
         // instructed to cast the integer to a string to pass validation. This is the default behavior.
         if ($type && (!$type = $this->determineType($type, $value))) {
             if ($this->castIntegerToStringType && $param->getType() == 'string' && is_integer($value)) {
-                $value = (string) $value;
+                $value = (string)$value;
             } else {
-                $this->errors[] = "{$path} must be of type " . implode(' or ', (array) $param->getType());
+                $this->errors[] = "{$path} must be of type " . implode(' or ', (array)$param->getType());
             }
         }
 
@@ -206,11 +196,11 @@ class SchemaValidator implements ValidatorInterface
             // Strings can have enums which are a list of predefined values
             if (($enum = $param->getEnum()) && !in_array($value, $enum)) {
                 $this->errors[] = "{$path} must be one of " . implode(' or ', array_map(function ($s) {
-                    return '"' . addslashes($s) . '"';
-                }, $enum));
+                        return '"' . addslashes($s) . '"';
+                    }, $enum));
             }
             // Strings can have a regex pattern that the value must match
-            if (($pattern  = $param->getPattern()) && !preg_match($pattern, $value)) {
+            if (($pattern = $param->getPattern()) && !preg_match($pattern, $value)) {
                 $this->errors[] = "{$path} must match the following regular expression: {$pattern}";
             }
 
@@ -257,14 +247,14 @@ class SchemaValidator implements ValidatorInterface
     /**
      * From the allowable types, determine the type that the variable matches
      *
-     * @param string $type  Parameter type
-     * @param mixed  $value Value to determine the type
+     * @param string $type Parameter type
+     * @param mixed $value Value to determine the type
      *
      * @return string|bool Returns the matching type on
      */
     protected function determineType($type, $value)
     {
-        foreach ((array) $type as $t) {
+        foreach ((array)$type as $t) {
             if ($t == 'string' && (is_string($value) || (is_object($value) && method_exists($value, '__toString')))) {
                 return 'string';
             } elseif ($t == 'object' && (is_array($value) || is_object($value))) {
@@ -287,5 +277,15 @@ class SchemaValidator implements ValidatorInterface
         }
 
         return false;
+    }
+
+    /**
+     * Get the errors encountered while validating
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors ?: array();
     }
 }

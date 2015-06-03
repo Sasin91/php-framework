@@ -1,33 +1,37 @@
 {
-    "name": "sasin91/sfw",
-    "type": "project",
-    "description": "A simple namespaced PHP Framework.",
-    "keywords": ["simple", "php", "namespace"],
-    "homepage": "https://github.com/sasin91/sfw",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Lotd",
-            "homepage": "http://blog.mwow.dk",
-            "role": "Developer"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/sasin91/sfw/issues",
-        "source": "https://github.com/sasin91/sfw"
-    },
-    "require":{
-        "fzaninotto/faker": "1.5.*@dev",
-        "symfony/finder": "2.7.*@dev",
-        "symfony/console": "2.7.*@dev",
-        "geoip2/geoip2": "dev-master",
-	    "erusev/parsedown-extra": "dev-master"
-
-    },
-    "require-dev": {
-      "ezyang/htmlpurifier": "dev-master"
-    },
-    "suggest": {
-        "phpspec/nyan-formatters": "~1.0 – Adds Nyan formatters"
+  "name": "sasin91/sfw",
+  "type": "project",
+  "description": "A simple namespaced PHP Framework.",
+  "keywords": [
+    "simple",
+    "php",
+    "namespace"
+  ],
+  "homepage": "https://github.com/sasin91/sfw",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Lotd",
+      "homepage": "http://blog.mwow.dk",
+      "role": "Developer"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/sasin91/sfw/issues",
+    "source": "https://github.com/sasin91/sfw"
+  },
+  "require": {
+    "fzaninotto/faker": "1.5.*@dev",
+    "symfony/finder": "2.7.*@dev",
+    "symfony/console": "2.7.*@dev",
+    "geoip2/geoip2": "dev-master",
+    "erusev/parsedown-extra": "dev-master",
+    "symfony/yaml": "3.0.*@dev"
+  },
+  "require-dev": {
+    "ezyang/htmlpurifier": "dev-master"
+  },
+  "suggest": {
+    "phpspec/nyan-formatters": "~1.0 – Adds Nyan formatters"
+  }
 }

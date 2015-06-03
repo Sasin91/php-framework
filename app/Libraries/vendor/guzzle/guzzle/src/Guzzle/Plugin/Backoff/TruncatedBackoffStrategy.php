@@ -2,9 +2,9 @@
 
 namespace Guzzle\Plugin\Backoff;
 
+use Guzzle\Http\Exception\HttpException;
 use Guzzle\Http\Message\RequestInterface;
 use Guzzle\Http\Message\Response;
-use Guzzle\Http\Exception\HttpException;
 
 /**
  * Strategy that will not retry more than a certain number of times.
@@ -15,7 +15,7 @@ class TruncatedBackoffStrategy extends AbstractBackoffStrategy
     protected $max;
 
     /**
-     * @param int                      $maxRetries Maximum number of retries per request
+     * @param int $maxRetries Maximum number of retries per request
      * @param BackoffStrategyInterface $next The optional next strategy
      */
     public function __construct($maxRetries, BackoffStrategyInterface $next = null)

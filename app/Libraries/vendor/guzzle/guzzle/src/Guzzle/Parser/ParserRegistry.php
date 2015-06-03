@@ -15,11 +15,19 @@ class ParserRegistry
 
     /** @var array Mapping of parser name to default class */
     protected $mapping = array(
-        'message'      => 'Guzzle\\Parser\\Message\\MessageParser',
-        'cookie'       => 'Guzzle\\Parser\\Cookie\\CookieParser',
-        'url'          => 'Guzzle\\Parser\\Url\\UrlParser',
+        'message' => 'Guzzle\\Parser\\Message\\MessageParser',
+        'cookie' => 'Guzzle\\Parser\\Cookie\\CookieParser',
+        'url' => 'Guzzle\\Parser\\Url\\UrlParser',
         'uri_template' => 'Guzzle\\Parser\\UriTemplate\\UriTemplate',
     );
+
+    public function __construct()
+    {
+        // Use the PECL URI template parser if available
+        if (extension_loaded('uri_template')) {
+            $this->mapping['uri_template'] = 'Guzzle\\Parser\\UriTemplate\\PeclUriTemplate';
+        }
+    }
 
     /**
      * @return self
@@ -32,14 +40,6 @@ class ParserRegistry
         }
 
         return self::$instance;
-    }
-
-    public function __construct()
-    {
-        // Use the PECL URI template parser if available
-        if (extension_loaded('uri_template')) {
-            $this->mapping['uri_template'] = 'Guzzle\\Parser\\UriTemplate\\PeclUriTemplate';
-        }
     }
 
     /**
@@ -65,8 +65,8 @@ class ParserRegistry
     /**
      * Register a custom parser by name with the register
      *
-     * @param string $name   Name or handle of the parser to register
-     * @param mixed  $parser Instantiated parser to register
+     * @param string $name Name or handle of the parser to register
+     * @param mixed $parser Instantiated parser to register
      */
     public function registerParser($name, $parser)
     {

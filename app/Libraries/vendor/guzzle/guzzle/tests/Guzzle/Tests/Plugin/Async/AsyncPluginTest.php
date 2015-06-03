@@ -2,13 +2,13 @@
 
 namespace Guzzle\Tests\Plugin\Async;
 
-use Guzzle\Plugin\Async\AsyncPlugin;
-use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Http\Message\RequestFactory;
-use Guzzle\Http\Curl\CurlHandle;
-use Guzzle\Http\Exception\CurlException;
 use Guzzle\Common\Event;
 use Guzzle\Http\Client;
+use Guzzle\Http\Curl\CurlHandle;
+use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Plugin\Async\AsyncPlugin;
 
 /**
  * @covers Guzzle\Plugin\Async\AsyncPlugin
@@ -40,11 +40,11 @@ class AsyncPluginTest extends \Guzzle\Tests\GuzzleTestCase
         $request = RequestFactory::getInstance()->create('PUT', 'http://www.example.com');
         $handle = CurlHandle::factory($request);
         $event = new Event(array(
-            'request'     => $request,
-            'handle'      => $handle->getHandle(),
-            'uploaded'    => 10,
+            'request' => $request,
+            'handle' => $handle->getHandle(),
+            'uploaded' => 10,
             'upload_size' => 10,
-            'downloaded'  => 0
+            'downloaded' => 0
         ));
         $p->onCurlProgress($event);
     }
@@ -53,9 +53,9 @@ class AsyncPluginTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $p = new AsyncPlugin();
         $event = new Event(array(
-            'uploaded'    => 10,
+            'uploaded' => 10,
             'upload_size' => 10,
-            'downloaded'  => 0
+            'downloaded' => 0
         ));
         $p->onCurlProgress($event);
     }
@@ -66,7 +66,7 @@ class AsyncPluginTest extends \Guzzle\Tests\GuzzleTestCase
         $request = RequestFactory::getInstance()->create('PUT', 'http://www.example.com');
         $e = new CurlException('Error');
         $event = new Event(array(
-            'request'   => $request,
+            'request' => $request,
             'exception' => $e
         ));
         $p->onRequestTimeout($event);

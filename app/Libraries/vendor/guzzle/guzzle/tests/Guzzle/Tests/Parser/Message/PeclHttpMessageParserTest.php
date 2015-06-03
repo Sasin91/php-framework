@@ -9,13 +9,6 @@ use Guzzle\Parser\Message\PeclHttpMessageParser;
  */
 class PeclHttpMessageParserTest extends MessageParserProvider
 {
-    protected function setUp()
-    {
-        if (!function_exists('http_parse_message')) {
-            $this->markTestSkipped('pecl_http is not available.');
-        }
-    }
-
     /**
      * @dataProvider requestProvider
      */
@@ -32,5 +25,12 @@ class PeclHttpMessageParserTest extends MessageParserProvider
     {
         $parser = new PeclHttpMessageParser();
         $this->compareResponseResults($parts, $parser->parseResponse($message));
+    }
+
+    protected function setUp()
+    {
+        if (!function_exists('http_parse_message')) {
+            $this->markTestSkipped('pecl_http is not available.');
+        }
     }
 }

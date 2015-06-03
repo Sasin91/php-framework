@@ -3,11 +3,11 @@
 namespace Guzzle\Tests\Plugin\Backoff;
 
 use Guzzle\Common\Event;
-use Guzzle\Log\ClosureLogAdapter;
 use Guzzle\Http\Curl\CurlHandle;
-use Guzzle\Plugin\Backoff\BackoffLogger;
-use Guzzle\Http\Message\Response;
 use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\Response;
+use Guzzle\Log\ClosureLogAdapter;
+use Guzzle\Plugin\Backoff\BackoffLogger;
 
 /**
  * @covers Guzzle\Plugin\Backoff\BackoffLogger
@@ -42,11 +42,11 @@ class BackoffLoggerTest extends \Guzzle\Tests\GuzzleTestCase
         $handle = $this->getMockHandle();
 
         $event = new Event(array(
-            'request'  => $request,
+            'request' => $request,
             'response' => $response,
-            'retries'  => 1,
-            'delay'    => 3,
-            'handle'   => $handle
+            'retries' => 1,
+            'delay' => 3,
+            'handle' => $handle
         ));
 
         $logPlugin->onRequestRetry($event);
@@ -58,7 +58,8 @@ class BackoffLoggerTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testCanSetTemplate()
     {
-        $l = new BackoffLogger(new ClosureLogAdapter(function () {}));
+        $l = new BackoffLogger(new ClosureLogAdapter(function () {
+        }));
         $l->setTemplate('foo');
         $t = $this->readAttribute($l, 'formatter');
         $this->assertEquals('foo', $this->readAttribute($t, 'template'));
@@ -77,7 +78,7 @@ class BackoffLoggerTest extends \Guzzle\Tests\GuzzleTestCase
         $response = new Response(503);
         $request = RequestFactory::getInstance()->create('PUT', 'http://www.example.com', array(
             'Content-Length' => 3,
-            'Foo'            => 'Bar'
+            'Foo' => 'Bar'
         ));
 
         return array($logPlugin, $request, $response);

@@ -25,7 +25,9 @@ class CallbackCanCacheStrategyTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testUsesCallback()
     {
-        $c = new CallbackCanCacheStrategy(function ($request) { return true; });
+        $c = new CallbackCanCacheStrategy(function ($request) {
+            return true;
+        });
         $this->assertTrue($c->canCacheRequest(new Request('DELETE', 'http://www.foo.com')));
     }
 
@@ -36,8 +38,12 @@ class CallbackCanCacheStrategyTest extends \Guzzle\Tests\GuzzleTestCase
     public function testIntegrationWithCachePlugin()
     {
         $c = new CallbackCanCacheStrategy(
-            function ($request) { return true; },
-            function ($response) { return true; }
+            function ($request) {
+                return true;
+            },
+            function ($response) {
+                return true;
+            }
         );
 
         // Make a request and response that have no business being cached

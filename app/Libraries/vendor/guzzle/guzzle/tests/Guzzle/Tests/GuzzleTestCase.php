@@ -2,17 +2,17 @@
 
 namespace Guzzle\Tests;
 
-use Guzzle\Common\HasDispatcherInterface;
 use Guzzle\Common\Event;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Tests\Http\Message\HeaderComparison;
-use Guzzle\Plugin\Mock\MockPlugin;
+use Guzzle\Common\HasDispatcherInterface;
 use Guzzle\Http\Client;
-use Guzzle\Service\Builder\ServiceBuilderInterface;
+use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Http\Message\Response;
+use Guzzle\Plugin\Mock\MockPlugin;
 use Guzzle\Service\Builder\ServiceBuilder;
-use Guzzle\Tests\Mock\MockObserver;
+use Guzzle\Service\Builder\ServiceBuilderInterface;
+use Guzzle\Tests\Http\Message\HeaderComparison;
 use Guzzle\Tests\Http\Server;
+use Guzzle\Tests\Mock\MockObserver;
 use RuntimeException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -174,7 +174,7 @@ abstract class GuzzleTestCase extends \PHPUnit_Framework_TestCase
      * request sent by the client.
      *
      * @param Client $client Client object to modify
-     * @param string $paths  Path to files within the Mock folder of the service
+     * @param string $paths Path to files within the Mock folder of the service
      *
      * @return MockPlugin returns the created mock plugin
      */
@@ -184,7 +184,7 @@ abstract class GuzzleTestCase extends \PHPUnit_Framework_TestCase
         $that = $this;
         $mock = new MockPlugin(null, true);
         $client->getEventDispatcher()->removeSubscriber($mock);
-        $mock->getEventDispatcher()->addListener('mock.request', function(Event $event) use ($that) {
+        $mock->getEventDispatcher()->addListener('mock.request', function (Event $event) use ($that) {
             $that->addMockedRequest($event['request']);
         });
 
@@ -194,7 +194,7 @@ abstract class GuzzleTestCase extends \PHPUnit_Framework_TestCase
             $paths = array($paths);
         }
 
-        foreach ((array) $paths as $path) {
+        foreach ((array)$paths as $path) {
             $mock->addResponse($this->getMockResponse($path));
         }
 

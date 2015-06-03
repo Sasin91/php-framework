@@ -6,16 +6,14 @@
  * Time: 17:23
  */
 
-namespace Core\Application\Cart;
+namespace Modules\Shop;
 
-use Core\Models\StoreModel;
 use System\Exception\CartException;
 
 /**
  * Class Store
  * @package Core\Models
  */
-
 class Store implements \Countable, \Iterator
 {
     public $model;
@@ -45,19 +43,19 @@ class Store implements \Countable, \Iterator
      */
     public function populate()
     {
-        $items = $this->model->query("SELECT * FROM products
-          INNER JOIN categories ON  products.fk_categories_id = categories.category_id
-          LEFT JOIN product_pictures ON products.id = product_pictures.fk_product_id
-          LEFT JOIN services ON products.id = services.fk_product_id");
-        array_walk_recursive($items, function($item, $key){
+        $items = $this->model->query("SELECT * FROM shop_products
+          INNER JOIN shop_categories ON  shop_products.fk_categories_id = shop_categories.category_id
+          LEFT JOIN shop_product_pictures ON shop_products.id = shop_product_pictures.fk_product_id
+          LEFT JOIN shop_services ON shop_products.id = shop_services.fk_product_id");
+        array_walk_recursive($items, function ($item, $key) {
             $pictures = array(
                 $item->picture_id => array(
                     'path' => $item->path,
                     'placement' => $item->placement
-            ));
+                ));
             $this->newCategory($item->category, $item->category_description, $item->category_link, $item->category_pic);
             $this->newService($item->service, $item->service_price, $item->service_description);
-            $this->newItem($item->category, $item->id, $item->label, $item->qty, $item->price,  $pictures);
+            $this->newItem($item->category, $item->id, $item->label, $item->qty, $item->price, $pictures);
         });
     }
 
@@ -86,6 +84,11 @@ class Store implements \Countable, \Iterator
     public function categories()
     {
         return $this->categories;
+    }
+
+    public function allCategories()
+    {
+        return $this->model->select('*', 'shop_categories')->execute();
     }
 
     /**
@@ -136,7 +139,8 @@ class Store implements \Countable, \Iterator
         return $this->items[$label] = new Item($category, $id, $label, $qty, $price, $pictures);
     }
 
-    public function addItem(Item $item) {
+    public function addItem(Item $item)
+    {
 
         // Need the item id:
         $id = $item->getId();
@@ -154,7 +158,8 @@ class Store implements \Countable, \Iterator
 
     }
 
-    public function updateItem(Item $item, $qty) {
+    public function updateItem(Item $item, $qty)
+    {
 
         // Need the unique item id:
         $id = $item->getId();
@@ -162,12 +167,11 @@ class Store implements \Countable, \Iterator
         // Delete or update accordingly:
         if ($qty === 0) {
             $this->deleteItem($item);
-        } elseif ( ($qty > 0) && ($qty != $this->items[$id]['qty'])) {
+        } elseif (($qty > 0) && ($qty != $this->items[$id]['qty'])) {
             $this->items[$id]['qty'] = $qty;
         }
 
     }
-
 
 
     /**
@@ -176,6 +180,7 @@ class Store implements \Countable, \Iterator
      */
     private $call;
     private $element;
+
     public function subtract($element)
     {
         $this->element = $element;
@@ -203,8 +208,7 @@ class Store implements \Countable, \Iterator
      */
     private function action($action, $item, $element, $num)
     {
-        if($action == 'subtract')
-        {
+        if ($action == 'subtract') {
             $this->items[$item->id][$element] = $num;
         }
     }
@@ -241,7 +245,8 @@ class Store implements \Countable, \Iterator
     }
 
     // Required by Iterator; returns the current value:
-    public function current() {
+    public function current()
+    {
 
         // Get the index for the current position:
         $index = $this->ids[$this->position];
@@ -252,22 +257,26 @@ class Store implements \Countable, \Iterator
     } // End of current() method.
 
     // Required by Iterator; returns the current key:
-    public function key() {
+    public function key()
+    {
         return $this->position;
     }
 
     // Required by Iterator; increments the position:
-    public function next() {
+    public function next()
+    {
         $this->position++;
     }
 
     // Required by Iterator; returns the position to the first spot:
-    public function rewind() {
+    public function rewind()
+    {
         $this->position = 0;
     }
 
     // Required by Iterator; returns a Boolean indicating if a value is indexed at this position:
-    public function valid() {
+    public function valid()
+    {
         return (isset($this->ids[$this->position]));
     }
 }

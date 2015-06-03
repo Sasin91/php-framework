@@ -2,21 +2,21 @@
 
 namespace Guzzle\Http;
 
-use Guzzle\Common\Collection;
 use Guzzle\Common\AbstractHasDispatcher;
+use Guzzle\Common\Collection;
 use Guzzle\Common\Exception\ExceptionCollection;
 use Guzzle\Common\Exception\InvalidArgumentException;
 use Guzzle\Common\Exception\RuntimeException;
 use Guzzle\Common\Version;
-use Guzzle\Parser\ParserRegistry;
-use Guzzle\Parser\UriTemplate\UriTemplateInterface;
-use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Http\Message\RequestFactory;
-use Guzzle\Http\Message\RequestFactoryInterface;
+use Guzzle\Http\Curl\CurlHandle;
 use Guzzle\Http\Curl\CurlMultiInterface;
 use Guzzle\Http\Curl\CurlMultiProxy;
-use Guzzle\Http\Curl\CurlHandle;
 use Guzzle\Http\Curl\CurlVersion;
+use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\RequestFactoryInterface;
+use Guzzle\Http\Message\RequestInterface;
+use Guzzle\Parser\ParserRegistry;
+use Guzzle\Parser\UriTemplate\UriTemplateInterface;
 
 /**
  * HTTP client
@@ -60,8 +60,8 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     }
 
     /**
-     * @param string           $baseUrl Base URL of the web service
-     * @param array|Collection $config  Configuration settings
+     * @param string $baseUrl Base URL of the web service
+     * @param array|Collection $config Configuration settings
      *
      * @throws RuntimeException if cURL is not installed
      */
@@ -105,7 +105,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * Set a default request option on the client that will be used as a default for each request
      *
      * @param string $keyOrPath request.options key (e.g. allow_redirects) or path to a nested key (e.g. headers/foo)
-     * @param mixed  $value     Value to set
+     * @param mixed $value Value to set
      *
      * @return $this
      */
@@ -198,7 +198,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
             }
         }
 
-        return $this->prepareRequest($this->requestFactory->create($method, (string) $url, $headers, $body), $options);
+        return $this->prepareRequest($this->requestFactory->create($method, (string)$url, $headers, $body), $options);
     }
 
     public function getBaseUrl($expand = true)
@@ -231,8 +231,8 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     public function getDefaultUserAgent()
     {
         return 'Guzzle/' . Version::VERSION
-            . ' curl/' . CurlVersion::getInstance()->get('version')
-            . ' PHP/' . PHP_VERSION;
+        . ' curl/' . CurlVersion::getInstance()->get('version')
+        . ' PHP/' . PHP_VERSION;
     }
 
     public function get($uri = null, $headers = null, $options = array())
@@ -280,7 +280,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
         }
 
         try {
-            /** @var $requests RequestInterface  */
+            /** @var $requests RequestInterface */
             $this->getCurlMulti()->add($requests)->send();
             return $requests->getResponse();
         } catch (ExceptionCollection $e) {
@@ -341,8 +341,8 @@ class Client extends AbstractHasDispatcher implements ClientInterface
     /**
      * Expand a URI template while merging client config settings into the template variables
      *
-     * @param string $template  Template to expand
-     * @param array  $variables Variables to inject
+     * @param string $template Template to expand
+     * @param array $variables Variables to inject
      *
      * @return string
      */
@@ -398,7 +398,7 @@ class Client extends AbstractHasDispatcher implements ClientInterface
      * Prepare a request to be sent from the Client by adding client specific behaviors and properties to the request.
      *
      * @param RequestInterface $request Request to prepare for the client
-     * @param array            $options Options to apply to the request
+     * @param array $options Options to apply to the request
      *
      * @return RequestInterface
      */

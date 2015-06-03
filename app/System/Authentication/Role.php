@@ -12,7 +12,8 @@ namespace System\Authentication;
 use Toolbox\ArrayTools;
 use Toolbox\StringTools;
 
-class Role extends Auth {
+class Role extends Auth
+{
 
     protected static $granted = array();
     protected static $roles = array(
@@ -22,11 +23,11 @@ class Role extends Auth {
         'Member' => 1,
     );
 
-    public function __call($method, $arguments)
+    public function __call($method, $arguments = '')
     {
         $methods = array();
         $methods[] = get_class_methods($this);
-        if(ArrayTools::inArray($methods, $method))
+        if (ArrayTools::inArray($methods, $method))
             return static::$method($arguments);
     }
 
@@ -55,7 +56,7 @@ class Role extends Auth {
 
     public static function remove($role, $name)
     {
-        if(static::has($role, $name))
+        if (static::has($role, $name))
             unset(static::$granted[$name]);
     }
 

@@ -13,7 +13,7 @@ class ClosureLogAdapterTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $that = $this;
         $modified = null;
-        $this->adapter = new ClosureLogAdapter(function($message, $priority, $extras = null) use ($that, &$modified) {
+        $this->adapter = new ClosureLogAdapter(function ($message, $priority, $extras = null) use ($that, &$modified) {
             $modified = array($message, $priority, $extras);
         });
         $this->adapter->log('test', LOG_NOTICE, '127.0.0.1');

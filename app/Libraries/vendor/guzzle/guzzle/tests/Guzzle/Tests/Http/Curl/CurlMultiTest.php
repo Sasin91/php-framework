@@ -3,14 +3,14 @@
 namespace Guzzle\Tests\Http\Curl;
 
 use Guzzle\Common\Event;
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Http\Exception\MultiTransferException;
 use Guzzle\Http\Client;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\RequestFactory;
 use Guzzle\Http\Curl\CurlMulti;
+use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Exception\CurlException;
+use Guzzle\Http\Exception\MultiTransferException;
+use Guzzle\Http\Message\Request;
+use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\Response;
 use Guzzle\Tests\Mock\MockMulti;
 
 /**
@@ -107,7 +107,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertTrue($response1->getBody(true) == 'data' || $response2->getBody(true) == 'data');
         $this->assertTrue($response1->getBody(true) == '' || $response2->getBody(true) == '');
         $this->assertTrue($response1->getStatusCode() == '204' || $response2->getStatusCode() == '204');
-        $this->assertNotEquals((string) $response1, (string) $response2);
+        $this->assertNotEquals((string)$response1, (string)$response2);
     }
 
     public function testSendsThroughCurlAndAggregatesRequestExceptions()
@@ -151,8 +151,8 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
             $response2 = $request2->getResponse();
             $response3 = $request3->getResponse();
 
-            $this->assertNotEquals((string) $response1, (string) $response2);
-            $this->assertNotEquals((string) $response3, (string) $response1);
+            $this->assertNotEquals((string)$response1, (string)$response2);
+            $this->assertNotEquals((string)$response3, (string)$response1);
             $this->assertInstanceOf('Guzzle\\Http\\Message\\Response', $response1);
             $this->assertInstanceOf('Guzzle\\Http\\Message\\Response', $response2);
             $this->assertInstanceOf('Guzzle\\Http\\Message\\Response', $response3);
@@ -223,7 +223,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         $multi = new CurlMulti();
         $client->setCurlMulti($multi);
         $request = $client->get();
-        $request->getEventDispatcher()->addListener('request.before_send', function() {
+        $request->getEventDispatcher()->addListener('request.before_send', function () {
             throw new \RuntimeException('Testing!');
         });
         try {
@@ -243,7 +243,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $client = new Client($this->getServer()->getUrl());
         $request = $client->get();
-        $request->getEventDispatcher()->addListener('request.before_send', function() {
+        $request->getEventDispatcher()->addListener('request.before_send', function () {
             throw new \RuntimeException('Thrown before sending!');
         });
         $client->send(array($request));
@@ -254,7 +254,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         $this->getServer()->enqueue("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n");
         $client = new Client($this->getServer()->getUrl());
         $r = $client->get();
-        $r->getEventDispatcher()->addListener('request.sent', function() use ($client) {
+        $r->getEventDispatcher()->addListener('request.sent', function () use ($client) {
             // Create a request using a queued response
             $client->get()->setResponse(new Response(404), true)->send();
         });
@@ -271,7 +271,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         $this->getServer()->enqueue("HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n");
         $client = new Client($this->getServer()->getUrl());
         $r = $client->get();
-        $r->getEventDispatcher()->addListener('request.before_send', function() use ($client) {
+        $r->getEventDispatcher()->addListener('request.before_send', function () use ($client) {
             // Create a request using a queued response
             $client->get()->setResponse(new Response(404), true)->send();
         });
@@ -306,7 +306,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
 
         // Create a client that is bound to fail connecting
         $client = new Client('http://127.0.0.1:123', array(
-            'curl.CURLOPT_PORT'              => 123,
+            'curl.CURLOPT_PORT' => 123,
             'curl.CURLOPT_CONNECTTIMEOUT_MS' => 1,
         ));
 
@@ -317,7 +317,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         // Listen for request exceptions, and when they occur, first change the
         // state of the request back to transferring, and then just allow it to
         // exception out
-        $request->getEventDispatcher()->addListener('request.exception', function(Event $event) use ($multi) {
+        $request->getEventDispatcher()->addListener('request.exception', function (Event $event) use ($multi) {
             $retries = $event['request']->getParams()->get('retries');
             // Allow the first failure to retry
             if ($retries == 0) {
@@ -342,7 +342,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         $this->getServer()->flush();
         $client = new Client($this->getServer()->getUrl());
         $request = $client->get();
-        $request->getEventDispatcher()->addListener('request.before_send', function(Event $event) {
+        $request->getEventDispatcher()->addListener('request.before_send', function (Event $event) {
             $event['request']->setResponse(new Response(200));
         });
 
@@ -360,7 +360,7 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         // Ensure it times out quickly if needed
         $request->getCurlOptions()->set(CURLOPT_TIMEOUT_MS, 1)->set(CURLOPT_CONNECTTIMEOUT_MS, 1);
 
-        $request->getEventDispatcher()->addListener('request.exception', function(Event $event) use (&$count) {
+        $request->getEventDispatcher()->addListener('request.exception', function (Event $event) use (&$count) {
             $event['request']->setResponse(new Response(200));
         });
 
@@ -450,6 +450,6 @@ class CurlMultiTest extends \Guzzle\Tests\GuzzleTestCase
         $request->send();
         $received = $this->getServer()->getReceivedRequests(true);
         $this->assertFalse($received[1]->hasHeader('Transfer-Encoding'));
-        $this->assertEquals(4, (string) $received[1]->getHeader('Content-Length'));
+        $this->assertEquals(4, (string)$received[1]->getHeader('Content-Length'));
     }
 }

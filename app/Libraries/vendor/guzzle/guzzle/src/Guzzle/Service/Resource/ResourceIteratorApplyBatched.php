@@ -2,10 +2,10 @@
 
 namespace Guzzle\Service\Resource;
 
-use Guzzle\Common\AbstractHasDispatcher;
 use Guzzle\Batch\BatchBuilder;
-use Guzzle\Batch\BatchSizeDivisor;
 use Guzzle\Batch\BatchClosureTransfer;
+use Guzzle\Batch\BatchSizeDivisor;
+use Guzzle\Common\AbstractHasDispatcher;
 use Guzzle\Common\Version;
 
 /**
@@ -41,7 +41,7 @@ class ResourceIteratorApplyBatched extends AbstractHasDispatcher
 
     /**
      * @param ResourceIteratorInterface $iterator Resource iterator to apply a callback to
-     * @param array|callable            $callback Callback method accepting the resource iterator
+     * @param array|callable $callback Callback method accepting the resource iterator
      *                                            and an array of the iterator's current resources
      */
     public function __construct(ResourceIteratorInterface $iterator, $callback)

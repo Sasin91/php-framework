@@ -3,7 +3,6 @@
 namespace Guzzle\Tests\Service\Description;
 
 use Guzzle\Service\Description\ServiceDescription;
-use Guzzle\Service\Description\ServiceDescriptionLoader;
 
 /**
  * @covers Guzzle\Service\Description\ServiceDescriptionLoader
@@ -35,9 +34,9 @@ class ServiceDescriptionLoaderTest extends \Guzzle\Tests\GuzzleTestCase
                     )
                 ),
                 'abstract2' => array('uri' => '/test', 'extends' => 'abstract'),
-                'concrete'  => array('extends' => 'abstract2'),
-                'override'  => array('extends' => 'abstract', 'httpMethod' => 'PUT'),
-                'override2'  => array('extends' => 'override', 'httpMethod' => 'POST', 'uri' => '/')
+                'concrete' => array('extends' => 'abstract2'),
+                'override' => array('extends' => 'abstract', 'httpMethod' => 'PUT'),
+                'override2' => array('extends' => 'override', 'httpMethod' => 'POST', 'uri' => '/')
             )
         ));
 
@@ -77,9 +76,9 @@ class ServiceDescriptionLoaderTest extends \Guzzle\Tests\GuzzleTestCase
                     'httpMethod' => 'GET',
                     'parameters' => array(
                         'a1' => array(
-                            'default'  => 'foo',
+                            'default' => 'foo',
                             'required' => true,
-                            'prepend'  => 'hi'
+                            'prepend' => 'hi'
                         )
                     )
                 ),
@@ -92,8 +91,8 @@ class ServiceDescriptionLoaderTest extends \Guzzle\Tests\GuzzleTestCase
                 'c' => array(
                     'parameters' => array(
                         'a1' => array(
-                            'default'     => 'bar',
-                            'required'    => true,
+                            'default' => 'bar',
+                            'required' => true,
                             'description' => 'test'
                         ),
                         'c3' => array()
@@ -101,7 +100,7 @@ class ServiceDescriptionLoaderTest extends \Guzzle\Tests\GuzzleTestCase
                 ),
                 'd' => array(
                     'httpMethod' => 'DELETE',
-                    'extends'    => array('b', 'c'),
+                    'extends' => array('b', 'c'),
                     'parameters' => array(
                         'test' => array()
                     )
@@ -124,9 +123,9 @@ class ServiceDescriptionLoaderTest extends \Guzzle\Tests\GuzzleTestCase
     public function testAddsOtherFields()
     {
         $description = ServiceDescription::factory(array(
-            'operations'  => array(),
+            'operations' => array(),
             'description' => 'Foo',
-            'apiVersion'  => 'bar'
+            'apiVersion' => 'bar'
         ));
         $this->assertEquals('Foo', $description->getDescription());
         $this->assertEquals('bar', $description->getApiVersion());
@@ -135,7 +134,7 @@ class ServiceDescriptionLoaderTest extends \Guzzle\Tests\GuzzleTestCase
     public function testCanLoadNestedExtends()
     {
         $description = ServiceDescription::factory(array(
-            'operations'  => array(
+            'operations' => array(
                 'ROOT_PATH' => array(
                     'class' => 'foo'
                 ),

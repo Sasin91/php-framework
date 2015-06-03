@@ -2,13 +2,11 @@
 
 namespace Guzzle\Tests\Http;
 
-use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Common\Exception\RuntimeException;
-use Guzzle\Http\Message\Request;
-use Guzzle\Http\Message\Response;
-use Guzzle\Http\Message\RequestInterface;
-use Guzzle\Http\Message\RequestFactory;
 use Guzzle\Http\Client;
+use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Http\Message\RequestFactory;
+use Guzzle\Http\Message\Response;
 
 /**
  * The Server class is used to control a scripted webserver using node.js that
@@ -71,7 +69,7 @@ class Server
     public function enqueue($responses)
     {
         $data = array();
-        foreach ((array) $responses as $response) {
+        foreach ((array)$responses as $response) {
 
             // Create the response object from a string
             if (is_string($response)) {
@@ -81,10 +79,10 @@ class Server
             }
 
             $data[] = array(
-                'statusCode'   => $response->getStatusCode(),
+                'statusCode' => $response->getStatusCode(),
                 'reasonPhrase' => $response->getReasonPhrase(),
-                'headers'      => $response->getHeaders()->toArray(),
-                'body'         => $response->getBody(true)
+                'headers' => $response->getHeaders()->toArray(),
+                'body' => $response->getBody(true)
             );
         }
 
@@ -147,7 +145,7 @@ class Server
         $response = $this->client->get('guzzle-server/requests')->send();
         $data = array_filter(explode(self::REQUEST_DELIMITER, $response->getBody(true)));
         if ($hydrate) {
-            $data = array_map(function($message) {
+            $data = array_map(function ($message) {
                 return RequestFactory::getInstance()->fromMessage($message);
             }, $data);
         }
@@ -167,7 +165,7 @@ class Server
             // Wait at most 5 seconds for the server the setup before
             // proceeding.
             $start = time();
-            while (!$this->isRunning() && time() - $start < 5);
+            while (!$this->isRunning() && time() - $start < 5) ;
             if (!$this->running) {
                 throw new RuntimeException(
                     'Unable to contact server.js. Have you installed node.js v0.5.0+? node must be in your path.'

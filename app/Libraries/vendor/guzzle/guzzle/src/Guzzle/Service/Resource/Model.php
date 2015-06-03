@@ -14,7 +14,7 @@ class Model extends Collection
     protected $structure;
 
     /**
-     * @param array     $data      Data contained by the model
+     * @param array $data Data contained by the model
      * @param Parameter $structure The structure of the model
      */
     public function __construct(array $data = array(), Parameter $structure = null)
@@ -50,7 +50,7 @@ class Model extends Collection
         $output .= "This data can be retrieved from the model object using the get() method of the model "
             . "(e.g. \$model->get(\$key)) or accessing the model like an associative array (e.g. \$model['key']).\n\n";
         $lines = array_slice(explode("\n", trim(print_r($this->toArray(), true))), 2, -1);
-        $output .=  implode("\n", $lines);
+        $output .= implode("\n", $lines);
 
         if ($this->structure) {
             $output .= "\n\nModel structure\n---------------\n\n";

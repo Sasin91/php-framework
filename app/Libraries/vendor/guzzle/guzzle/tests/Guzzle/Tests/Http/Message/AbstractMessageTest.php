@@ -4,7 +4,6 @@ namespace Guzzle\Tests\Http\Message;
 
 use Guzzle\Http\Message\Header;
 use Guzzle\Http\Message\Request;
-use Guzzle\Common\Collection;
 
 /**
  * @covers Guzzle\Http\Message\AbstractMessage
@@ -124,7 +123,7 @@ class AbstractMessageTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $this->mock->setHeader('Content-Length', 0);
         $this->assertTrue($this->mock->hasHeader('Content-Length'));
-        $this->assertEquals(0, (string) $this->mock->getHeader('Content-Length'));
+        $this->assertEquals(0, (string)$this->mock->getHeader('Content-Length'));
     }
 
     public function testCanSetCustomHeaderFactory()

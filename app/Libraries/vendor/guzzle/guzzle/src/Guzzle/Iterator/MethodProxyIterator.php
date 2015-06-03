@@ -11,7 +11,7 @@ class MethodProxyIterator extends \IteratorIterator
      * Proxy method calls to the wrapped iterator
      *
      * @param string $name Name of the method
-     * @param array  $args Arguments to proxy
+     * @param array $args Arguments to proxy
      *
      * @return mixed
      */

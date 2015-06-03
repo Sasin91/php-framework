@@ -9,13 +9,15 @@
 namespace Http\Models;
 
 
-use System\Models\Auth;
-use System\Models\Role;
+use System\Authentication\Auth;
+use System\Authentication\Role;
 use System\MVC\Model;
 
-class User extends Model {
+class User extends Model
+{
 
-    protected $database = 'Auth';
+    protected $table = 'users';
+
     public function __construct()
     {
         parent::__construct(array(
@@ -28,9 +30,9 @@ class User extends Model {
      * returns bool on user having an active Session or not.
      * @return mixed
      */
-    public static function Authenticate()
+    public static function isAuthenticated()
     {
-        return Auth::what('user')->has('authenticated')->session();
+        return Auth::check();
     }
 
     /**

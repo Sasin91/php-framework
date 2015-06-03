@@ -9,6 +9,7 @@
 namespace System\Commands\Database;
 
 
-class MySQLCommand {
+class MySQLCommand
+{
 
 }

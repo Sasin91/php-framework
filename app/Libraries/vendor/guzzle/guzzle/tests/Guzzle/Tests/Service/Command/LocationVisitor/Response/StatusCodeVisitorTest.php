@@ -2,9 +2,8 @@
 
 namespace Guzzle\Tests\Service\Command\LocationVisitor\Response;
 
-use Guzzle\Service\Description\Parameter;
-use Guzzle\Http\Message\Response;
 use Guzzle\Service\Command\LocationVisitor\Response\StatusCodeVisitor as Visitor;
+use Guzzle\Service\Description\Parameter;
 
 /**
  * @covers Guzzle\Service\Command\LocationVisitor\Response\StatusCodeVisitor

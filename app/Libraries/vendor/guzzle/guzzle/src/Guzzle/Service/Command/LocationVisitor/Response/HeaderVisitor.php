@@ -3,8 +3,8 @@
 namespace Guzzle\Service\Command\LocationVisitor\Response;
 
 use Guzzle\Http\Message\Response;
-use Guzzle\Service\Description\Parameter;
 use Guzzle\Service\Command\CommandInterface;
+use Guzzle\Service\Description\Parameter;
 
 /**
  * Location visitor used to add a particular header of a response to a key in the result
@@ -16,21 +16,22 @@ class HeaderVisitor extends AbstractResponseVisitor
         Response $response,
         Parameter $param,
         &$value,
-        $context =  null
-    ) {
+        $context = null
+    )
+    {
         if ($param->getType() == 'object' && $param->getAdditionalProperties() instanceof Parameter) {
             $this->processPrefixedHeaders($response, $param, $value);
         } else {
-            $value[$param->getName()] = $param->filter((string) $response->getHeader($param->getWireName()));
+            $value[$param->getName()] = $param->filter((string)$response->getHeader($param->getWireName()));
         }
     }
 
     /**
      * Process a prefixed header array
      *
-     * @param Response  $response Response that contains the headers
-     * @param Parameter $param    Parameter object
-     * @param array     $value    Value response array to modify
+     * @param Response $response Response that contains the headers
+     * @param Parameter $param Parameter object
+     * @param array $value Value response array to modify
      */
     protected function processPrefixedHeaders(Response $response, Parameter $param, &$value)
     {

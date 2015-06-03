@@ -11,8 +11,8 @@
 
 namespace Symfony\Component\EventDispatcher\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Compiler pass to register tagged services for an event dispatcher.
@@ -38,8 +38,8 @@ class RegisterListenersPass implements CompilerPassInterface
      * Constructor.
      *
      * @param string $dispatcherService Service name of the event dispatcher in processed container
-     * @param string $listenerTag       Tag name used for listener
-     * @param string $subscriberTag     Tag name used for subscribers
+     * @param string $listenerTag Tag name used for listener
+     * @param string $subscriberTag Tag name used for subscribers
      */
     public function __construct($dispatcherService = 'event_dispatcher', $listenerTag = 'kernel.event_listener', $subscriberTag = 'kernel.event_subscriber')
     {
@@ -74,10 +74,12 @@ class RegisterListenersPass implements CompilerPassInterface
                 }
 
                 if (!isset($event['method'])) {
-                    $event['method'] = 'on'.preg_replace_callback(array(
-                        '/(?<=\b)[a-z]/i',
-                        '/[^a-z0-9]/i',
-                    ), function ($matches) { return strtoupper($matches[0]); }, $event['event']);
+                    $event['method'] = 'on' . preg_replace_callback(array(
+                            '/(?<=\b)[a-z]/i',
+                            '/[^a-z0-9]/i',
+                        ), function ($matches) {
+                            return strtoupper($matches[0]);
+                        }, $event['event']);
                     $event['method'] = preg_replace('/[^a-z0-9]/i', '', $event['method']);
                 }
 

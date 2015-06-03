@@ -8,23 +8,21 @@
 
 namespace System\Factories\Cache;
 
-
-
-use Config\Config;
-
-class Cache {
+class Cache
+{
 
     protected $cache;
-    protected $options = array();
-    public function __construct($options = array())
+    protected $config = array();
+
+    public function __construct($config)
     {
-        $this->options = $options;
+        $this->config = $config;
         return $this;
     }
 
     public function make(array $arguments = array())
     {
-        $class = __NAMESPACE__.Config::get('System/Cache')['Factory']['path'];
+        $class = __NAMESPACE__ . $this->config['Factory']['path'];
         return !empty($arguments) ? new $class($arguments) : new $class();
     }
 

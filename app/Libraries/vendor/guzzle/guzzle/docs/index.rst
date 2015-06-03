@@ -1,5 +1,5 @@
 .. title:: Guzzle | PHP HTTP client and framework for consuming RESTful web services
 .. toctree::
-    :hidden:
+:hidden:
 
-    docs.rst
+        docs.rst

@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Http;
 
-use Guzzle\Http\QueryString;
-use Guzzle\Http\QueryAggregator\DuplicateAggregator;
 use Guzzle\Http\QueryAggregator\CommaAggregator;
+use Guzzle\Http\QueryAggregator\DuplicateAggregator;
+use Guzzle\Http\QueryString;
 
 class QueryStringTest extends \Guzzle\Tests\GuzzleTestCase
 {
@@ -57,18 +57,18 @@ class QueryStringTest extends \Guzzle\Tests\GuzzleTestCase
     public function testUrlEncode()
     {
         $params = array(
-            'test'   => 'value',
+            'test' => 'value',
             'test 2' => 'this is a test?',
-            'test3'  => array('v1', 'v2', 'v3'),
-            'ሴ'      => 'bar'
+            'test3' => array('v1', 'v2', 'v3'),
+            'ሴ' => 'bar'
         );
         $encoded = array(
-            'test'         => 'value',
-            'test%202'     => rawurlencode('this is a test?'),
+            'test' => 'value',
+            'test%202' => rawurlencode('this is a test?'),
             'test3%5B0%5D' => 'v1',
             'test3%5B1%5D' => 'v2',
             'test3%5B2%5D' => 'v3',
-            '%E1%88%B4'    => 'bar'
+            '%E1%88%B4' => 'bar'
         );
         $this->q->replace($params);
         $this->assertEquals($encoded, $this->q->urlEncode());
@@ -86,10 +86,10 @@ class QueryStringTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('', $this->q->__toString());
 
         $params = array(
-            'test'   => 'value',
+            'test' => 'value',
             'test 2' => 'this is a test?',
-            'test3'  => array('v1', 'v2', 'v3'),
-            'test4'  => null,
+            'test3' => array('v1', 'v2', 'v3'),
+            'test4' => null,
         );
         $this->q->replace($params);
         $this->assertEquals('test=value&test%202=this%20is%20a%20test%3F&test3%5B0%5D=v1&test3%5B1%5D=v2&test3%5B2%5D=v3&test4', $this->q->__toString());
@@ -170,23 +170,23 @@ class QueryStringTest extends \Guzzle\Tests\GuzzleTestCase
     public function testAllowsBlankQueryStringValues()
     {
         $query = QueryString::fromString('foo');
-        $this->assertEquals('foo', (string) $query);
+        $this->assertEquals('foo', (string)$query);
         $query->set('foo', QueryString::BLANK);
-        $this->assertEquals('foo', (string) $query);
+        $this->assertEquals('foo', (string)$query);
     }
 
     public function testAllowsFalsyQueryStringValues()
     {
         $query = QueryString::fromString('0');
-        $this->assertEquals('0', (string) $query);
+        $this->assertEquals('0', (string)$query);
         $query->set('0', QueryString::BLANK);
-        $this->assertSame('0', (string) $query);
+        $this->assertSame('0', (string)$query);
     }
 
     public function testFromStringIgnoresQuestionMark()
     {
         $query = QueryString::fromString('foo=baz&bar=boo');
-        $this->assertEquals('foo=baz&bar=boo', (string) $query);
+        $this->assertEquals('foo=baz&bar=boo', (string)$query);
     }
 
     public function testConvertsPlusSymbolsToSpaces()
@@ -210,7 +210,7 @@ class QueryStringTest extends \Guzzle\Tests\GuzzleTestCase
             'boo' => false,
             'bam' => ''
         ));
-        $this->assertEquals('foo=0&baz=0&bar&boo&bam=', (string) $query);
+        $this->assertEquals('foo=0&baz=0&bar&boo&bam=', (string)$query);
     }
 
     public function testFromStringDoesntStripTrailingEquals()
@@ -222,12 +222,12 @@ class QueryStringTest extends \Guzzle\Tests\GuzzleTestCase
     public function testGuessesIfDuplicateAggregatorShouldBeUsed()
     {
         $query = QueryString::fromString('test=a&test=b');
-        $this->assertEquals('test=a&test=b', (string) $query);
+        $this->assertEquals('test=a&test=b', (string)$query);
     }
 
     public function testGuessesIfDuplicateAggregatorShouldBeUsedAndChecksForPhpStyle()
     {
         $query = QueryString::fromString('test[]=a&test[]=b');
-        $this->assertEquals('test%5B0%5D=a&test%5B1%5D=b', (string) $query);
+        $this->assertEquals('test%5B0%5D=a&test%5B1%5D=b', (string)$query);
     }
 }

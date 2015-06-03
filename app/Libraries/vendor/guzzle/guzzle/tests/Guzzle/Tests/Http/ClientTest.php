@@ -3,14 +3,13 @@
 namespace Guzzle\Tests\Http;
 
 use Guzzle\Common\Collection;
+use Guzzle\Common\Version;
+use Guzzle\Http\Client;
+use Guzzle\Http\Message\Response;
 use Guzzle\Log\ClosureLogAdapter;
 use Guzzle\Parser\UriTemplate\UriTemplate;
-use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\Log\LogPlugin;
 use Guzzle\Plugin\Mock\MockPlugin;
-use Guzzle\Http\Curl\CurlMulti;
-use Guzzle\Http\Client;
-use Guzzle\Common\Version;
 
 /**
  * @group server
@@ -24,8 +23,8 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
     private function getLogPlugin()
     {
         return new LogPlugin(new ClosureLogAdapter(
-            function($message, $priority, $extras = null) {
-                echo $message . ' ' . $priority . ' ' . implode(' - ', (array) $extras) . "\n";
+            function ($message, $priority, $extras = null) {
+                echo $message . ' ' . $priority . ' ' . implode(' - ', (array)$extras) . "\n";
             }
         ));
     }
@@ -114,10 +113,10 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
             'api' => 'v1',
             // Adds the option using the curl values
             'curl.options' => array(
-                'CURLOPT_HTTPAUTH'     => 'CURLAUTH_DIGEST',
-                'abc'                  => 'foo',
-                'blacklist'            => 'abc',
-                'debug'                => true
+                'CURLOPT_HTTPAUTH' => 'CURLAUTH_DIGEST',
+                'abc' => 'foo',
+                'blacklist' => 'abc',
+                'debug' => true
             )
         ));
 
@@ -244,7 +243,7 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
             array($u, 'relative/path/to/resource?a=b&c=d', $u . 'relative/path/to/resource?a=b&c=d'),
             array($u, '/absolute/path/to/resource', $this->getServer()->getUrl() . 'absolute/path/to/resource'),
             array($u, '/absolute/path/to/resource?a=b&c=d', $this->getServer()->getUrl() . 'absolute/path/to/resource?a=b&c=d'),
-            array($u2, '/absolute/path/to/resource?a=b&c=d', $this->getServer()->getUrl()  . 'absolute/path/to/resource?a=b&c=d&z=1'),
+            array($u2, '/absolute/path/to/resource?a=b&c=d', $this->getServer()->getUrl() . 'absolute/path/to/resource?a=b&c=d&z=1'),
             array($u2, 'relative/path/to/resource', $this->getServer()->getUrl() . 'base/relative/path/to/resource?z=1'),
             array($u2, 'relative/path/to/resource?another=query', $this->getServer()->getUrl() . 'base/relative/path/to/resource?another=query&z=1')
         );
@@ -423,9 +422,9 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
     public function testQueryStringsAreNotDoubleEncoded()
     {
         $client = new Client('http://test.com', array(
-            'path'  => array('foo', 'bar'),
+            'path' => array('foo', 'bar'),
             'query' => 'hi there',
-            'data'  => array(
+            'data' => array(
                 'test' => 'a&b'
             )
         ));
@@ -439,7 +438,7 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
     public function testQueryStringsAreNotDoubleEncodedUsingAbsolutePaths()
     {
         $client = new Client('http://test.com', array(
-            'path'  => array('foo', 'bar'),
+            'path' => array('foo', 'bar'),
             'query' => 'hi there',
         ));
         $request = $client->get('http://test.com{?query}');
@@ -473,12 +472,12 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
         $vars = array(
             'var' => 'hi'
         );
-        $this->assertEquals('/hi', (string) $client->createRequest('GET', array('/{var}', $vars))->getUrl());
-        $this->assertEquals('/hi', (string) $client->get(array('/{var}', $vars))->getUrl());
-        $this->assertEquals('/hi', (string) $client->put(array('/{var}', $vars))->getUrl());
-        $this->assertEquals('/hi', (string) $client->post(array('/{var}', $vars))->getUrl());
-        $this->assertEquals('/hi', (string) $client->head(array('/{var}', $vars))->getUrl());
-        $this->assertEquals('/hi', (string) $client->options(array('/{var}', $vars))->getUrl());
+        $this->assertEquals('/hi', (string)$client->createRequest('GET', array('/{var}', $vars))->getUrl());
+        $this->assertEquals('/hi', (string)$client->get(array('/{var}', $vars))->getUrl());
+        $this->assertEquals('/hi', (string)$client->put(array('/{var}', $vars))->getUrl());
+        $this->assertEquals('/hi', (string)$client->post(array('/{var}', $vars))->getUrl());
+        $this->assertEquals('/hi', (string)$client->head(array('/{var}', $vars))->getUrl());
+        $this->assertEquals('/hi', (string)$client->options(array('/{var}', $vars))->getUrl());
     }
 
     public function testAllowsDefaultHeaders()
@@ -529,14 +528,14 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $client = new Client();
         $request = $client->createRequest('GET', 'http://www.foo.com', array('User-agent' => 'foo'));
-        $this->assertEquals('foo', (string) $request->getHeader('User-Agent'));
+        $this->assertEquals('foo', (string)$request->getHeader('User-Agent'));
     }
 
     public function testUsesDefaultUserAgent()
     {
         $client = new Client();
         $request = $client->createRequest('GET', 'http://www.foo.com');
-        $this->assertContains('Guzzle/', (string) $request->getHeader('User-Agent'));
+        $this->assertContains('Guzzle/', (string)$request->getHeader('User-Agent'));
     }
 
     public function testCanSetDefaultRequestOptions()
@@ -548,11 +547,11 @@ class ClientTest extends \Guzzle\Tests\GuzzleTestCase
         ));
         $request = $client->createRequest('GET', 'http://www.foo.com?test=hello', array('Foo' => 'Test'));
         // Explicit options on a request should overrule default options
-        $this->assertEquals('Test', (string) $request->getHeader('Foo'));
+        $this->assertEquals('Test', (string)$request->getHeader('Foo'));
         $this->assertEquals('hello', $request->getQuery()->get('test'));
         // Default options should still be set
         $this->assertEquals('abc', $request->getQuery()->get('other'));
-        $this->assertEquals('Bam', (string) $request->getHeader('Baz'));
+        $this->assertEquals('Bam', (string)$request->getHeader('Baz'));
     }
 
     public function testCanSetSetOptionsOnRequests()

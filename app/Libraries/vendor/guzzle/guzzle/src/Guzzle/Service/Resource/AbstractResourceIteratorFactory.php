@@ -23,7 +23,7 @@ abstract class AbstractResourceIteratorFactory implements ResourceIteratorFactor
 
     public function canBuild(CommandInterface $command)
     {
-        return (bool) $this->getClassName($command);
+        return (bool)$this->getClassName($command);
     }
 
     /**

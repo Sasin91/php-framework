@@ -10,12 +10,6 @@ use Guzzle\Common\Exception\RuntimeException;
  */
 abstract class AbstractConfigLoader implements ConfigLoaderInterface
 {
-    /** @var array Array of aliases for actual filenames */
-    protected $aliases = array();
-
-    /** @var array Hash of previously loaded filenames */
-    protected $loadedFiles = array();
-
     /** @var array JSON error code mappings */
     protected static $jsonErrors = array(
         JSON_ERROR_NONE => 'JSON_ERROR_NONE - No errors',
@@ -25,6 +19,10 @@ abstract class AbstractConfigLoader implements ConfigLoaderInterface
         JSON_ERROR_SYNTAX => 'JSON_ERROR_SYNTAX - Syntax error, malformed JSON',
         JSON_ERROR_UTF8 => 'JSON_ERROR_UTF8 - Malformed UTF-8 characters, possibly incorrectly encoded'
     );
+    /** @var array Array of aliases for actual filenames */
+    protected $aliases = array();
+    /** @var array Hash of previously loaded filenames */
+    protected $loadedFiles = array();
 
     public function load($config, array $options = array())
     {
@@ -41,45 +39,6 @@ abstract class AbstractConfigLoader implements ConfigLoaderInterface
 
         return $this->build($config, $options);
     }
-
-    /**
-     * Add an include alias to the loader
-     *
-     * @param string $filename Filename to alias (e.g. _foo)
-     * @param string $alias    Actual file to use (e.g. /path/to/foo.json)
-     *
-     * @return self
-     */
-    public function addAlias($filename, $alias)
-    {
-        $this->aliases[$filename] = $alias;
-
-        return $this;
-    }
-
-    /**
-     * Remove an alias from the loader
-     *
-     * @param string $alias Alias to remove
-     *
-     * @return self
-     */
-    public function removeAlias($alias)
-    {
-        unset($this->aliases[$alias]);
-
-        return $this;
-    }
-
-    /**
-     * Perform the parsing of a config file and create the end result
-     *
-     * @param array $config  Configuration data
-     * @param array $options Options to use when building
-     *
-     * @return mixed
-     */
-    protected abstract function build($config, array $options);
 
     /**
      * Load a configuration file (can load JSON or PHP files that return an array when included)
@@ -140,7 +99,7 @@ abstract class AbstractConfigLoader implements ConfigLoaderInterface
     /**
      * Merges in all include files
      *
-     * @param array  $config   Config data that contains includes
+     * @param array $config Config data that contains includes
      * @param string $basePath Base path to use when a relative path is encountered
      *
      * @return array Returns the merged and included data
@@ -173,5 +132,44 @@ abstract class AbstractConfigLoader implements ConfigLoaderInterface
     protected function mergeData(array $a, array $b)
     {
         return array_merge_recursive($a, $b);
+    }
+
+    /**
+     * Perform the parsing of a config file and create the end result
+     *
+     * @param array $config Configuration data
+     * @param array $options Options to use when building
+     *
+     * @return mixed
+     */
+    protected abstract function build($config, array $options);
+
+    /**
+     * Add an include alias to the loader
+     *
+     * @param string $filename Filename to alias (e.g. _foo)
+     * @param string $alias Actual file to use (e.g. /path/to/foo.json)
+     *
+     * @return self
+     */
+    public function addAlias($filename, $alias)
+    {
+        $this->aliases[$filename] = $alias;
+
+        return $this;
+    }
+
+    /**
+     * Remove an alias from the loader
+     *
+     * @param string $alias Alias to remove
+     *
+     * @return self
+     */
+    public function removeAlias($alias)
+    {
+        unset($this->aliases[$alias]);
+
+        return $this;
     }
 }

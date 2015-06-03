@@ -25,6 +25,109 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    private function checkMetadata($reader, $ipVersion, $recordSize)
+    {
+        $metadata = $reader->metadata();
+
+        $this->assertEquals(
+            2,
+            $metadata->binaryFormatMajorVersion,
+            'major version'
+        );
+        $this->assertEquals(0, $metadata->binaryFormatMinorVersion);
+        $this->assertGreaterThan(1373571901, $metadata->buildEpoch);
+        $this->assertEquals('Test', $metadata->databaseType);
+
+        $this->assertEquals(
+            array('en' => 'Test Database', 'zh' => 'Test Database Chinese'),
+            $metadata->description
+        );
+
+        $this->assertEquals($ipVersion, $metadata->ipVersion);
+        $this->assertEquals(array('en', 'zh'), $metadata->languages);
+        $this->assertEquals($recordSize / 4, $metadata->nodeByteSize);
+        $this->assertGreaterThan(36, $metadata->nodeCount);
+
+        $this->assertEquals($recordSize, $metadata->recordSize);
+        $this->assertGreaterThan(200, $metadata->searchTreeSize);
+    }
+
+    private function checkIpV4(Reader $reader, $fileName)
+    {
+        for ($i = 0; $i <= 5; $i++) {
+            $address = '1.1.1.' . pow(2, $i);
+            $this->assertEquals(
+                array('ip' => $address),
+                $reader->get($address),
+                'found expected data record for '
+                . $address . ' in ' . $fileName
+            );
+        }
+
+        $pairs = array(
+            '1.1.1.3' => '1.1.1.2',
+            '1.1.1.5' => '1.1.1.4',
+            '1.1.1.7' => '1.1.1.4',
+            '1.1.1.9' => '1.1.1.8',
+            '1.1.1.15' => '1.1.1.8',
+            '1.1.1.17' => '1.1.1.16',
+            '1.1.1.31' => '1.1.1.16'
+        );
+        foreach ($pairs as $keyAddress => $valueAddress) {
+            $data = array('ip' => $valueAddress);
+
+            $this->assertEquals(
+                $data,
+                $reader->get($keyAddress),
+                'found expected data record for ' . $keyAddress . ' in '
+                . $fileName
+            );
+        }
+
+        foreach (array('1.1.1.33', '255.254.253.123') as $ip) {
+            $this->assertNull($reader->get($ip));
+        }
+    }
+
+    private function checkIpV6(Reader $reader, $fileName)
+    {
+        $subnets = array('::1:ffff:ffff', '::2:0:0',
+            '::2:0:40', '::2:0:50', '::2:0:58');
+
+        foreach ($subnets as $address) {
+            $this->assertEquals(
+                array('ip' => $address),
+                $reader->get($address),
+                'found expected data record for ' . $address . ' in '
+                . $fileName
+            );
+        }
+
+        $pairs = array(
+            '::2:0:1' => '::2:0:0',
+            '::2:0:33' => '::2:0:0',
+            '::2:0:39' => '::2:0:0',
+            '::2:0:41' => '::2:0:40',
+            '::2:0:49' => '::2:0:40',
+            '::2:0:52' => '::2:0:50',
+            '::2:0:57' => '::2:0:50',
+            '::2:0:59' => '::2:0:58'
+        );
+
+        foreach ($pairs as $keyAddress => $valueAddress) {
+            $this->assertEquals(
+                array('ip' => $valueAddress),
+                $reader->get($keyAddress),
+                'found expected data record for ' . $keyAddress . ' in '
+                . $fileName
+            );
+        }
+
+        foreach (array('1.1.1.33', '255.254.253.123', '89fa::') as $ip) {
+            $this->assertNull($reader->get($ip));
+        }
+    }
+
     public function testDecoder()
     {
         $reader = new Reader('tests/data/test-data/MaxMind-DB-test-decoder.mmdb');
@@ -263,6 +366,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $reader->get('1.1.1.1');
     }
 
+    // XXX - logic could be combined with above
+
     /**
      * @expectedException BadMethodCallException
      * @expectedExceptionMessage Attempt to read from a closed MaxMind DB.
@@ -274,109 +379,5 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         );
         $reader->close();
         $reader->metadata();
-    }
-
-    private function checkMetadata($reader, $ipVersion, $recordSize)
-    {
-        $metadata = $reader->metadata();
-
-        $this->assertEquals(
-            2,
-            $metadata->binaryFormatMajorVersion,
-            'major version'
-        );
-        $this->assertEquals(0, $metadata->binaryFormatMinorVersion);
-        $this->assertGreaterThan(1373571901, $metadata->buildEpoch);
-        $this->assertEquals('Test', $metadata->databaseType);
-
-        $this->assertEquals(
-            array('en' => 'Test Database', 'zh' => 'Test Database Chinese'),
-            $metadata->description
-        );
-
-        $this->assertEquals($ipVersion, $metadata->ipVersion);
-        $this->assertEquals(array('en', 'zh'), $metadata->languages);
-        $this->assertEquals($recordSize / 4, $metadata->nodeByteSize);
-        $this->assertGreaterThan(36, $metadata->nodeCount);
-
-        $this->assertEquals($recordSize, $metadata->recordSize);
-        $this->assertGreaterThan(200, $metadata->searchTreeSize);
-    }
-
-    private function checkIpV4(Reader $reader, $fileName)
-    {
-        for ($i = 0; $i <= 5; $i++) {
-            $address = '1.1.1.' . pow(2, $i);
-            $this->assertEquals(
-                array('ip' => $address),
-                $reader->get($address),
-                'found expected data record for '
-                . $address . ' in ' . $fileName
-            );
-        }
-
-        $pairs = array(
-            '1.1.1.3' => '1.1.1.2',
-            '1.1.1.5' => '1.1.1.4',
-            '1.1.1.7' => '1.1.1.4',
-            '1.1.1.9' => '1.1.1.8',
-            '1.1.1.15' => '1.1.1.8',
-            '1.1.1.17' => '1.1.1.16',
-            '1.1.1.31' => '1.1.1.16'
-        );
-        foreach ($pairs as $keyAddress => $valueAddress) {
-            $data = array('ip' => $valueAddress);
-
-            $this->assertEquals(
-                $data,
-                $reader->get($keyAddress),
-                'found expected data record for ' . $keyAddress . ' in '
-                . $fileName
-            );
-        }
-
-        foreach (array('1.1.1.33', '255.254.253.123') as $ip) {
-            $this->assertNull($reader->get($ip));
-        }
-    }
-
-    // XXX - logic could be combined with above
-    private function checkIpV6(Reader $reader, $fileName)
-    {
-        $subnets = array('::1:ffff:ffff', '::2:0:0',
-            '::2:0:40', '::2:0:50', '::2:0:58');
-
-        foreach ($subnets as $address) {
-            $this->assertEquals(
-                array('ip' => $address),
-                $reader->get($address),
-                'found expected data record for ' . $address . ' in '
-                . $fileName
-            );
-        }
-
-        $pairs = array(
-            '::2:0:1' => '::2:0:0',
-            '::2:0:33' => '::2:0:0',
-            '::2:0:39' => '::2:0:0',
-            '::2:0:41' => '::2:0:40',
-            '::2:0:49' => '::2:0:40',
-            '::2:0:52' => '::2:0:50',
-            '::2:0:57' => '::2:0:50',
-            '::2:0:59' => '::2:0:58'
-        );
-
-        foreach ($pairs as $keyAddress => $valueAddress) {
-            $this->assertEquals(
-                array('ip' => $valueAddress),
-                $reader->get($keyAddress),
-                'found expected data record for ' . $keyAddress . ' in '
-                . $fileName
-            );
-        }
-
-        foreach (array('1.1.1.33', '255.254.253.123', '89fa::') as $ip) {
-            $this->assertNull($reader->get($ip));
-        }
     }
 }

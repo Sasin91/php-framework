@@ -31,8 +31,8 @@ class ServiceBuilder extends AbstractHasDispatcher implements ServiceBuilderInte
      * Create a new ServiceBuilder using configuration data sourced from an
      * array, .js|.json or .php file.
      *
-     * @param array|string $config           The full path to an .json|.js or .php file, or an associative array
-     * @param array        $globalParameters Array of global parameters to pass to every service as it is instantiated.
+     * @param array|string $config The full path to an .json|.js or .php file, or an associative array
+     * @param array $globalParameters Array of global parameters to pass to every service as it is instantiated.
      *
      * @return ServiceBuilderInterface
      * @throws ServiceBuilderException if a file cannot be opened

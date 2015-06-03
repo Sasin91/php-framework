@@ -16,21 +16,21 @@ class VisitorFlyweight
 
     /** @var array Default array of mappings of location names to classes */
     protected static $defaultMappings = array(
-        'request.body'          => 'Guzzle\Service\Command\LocationVisitor\Request\BodyVisitor',
-        'request.header'        => 'Guzzle\Service\Command\LocationVisitor\Request\HeaderVisitor',
-        'request.json'          => 'Guzzle\Service\Command\LocationVisitor\Request\JsonVisitor',
-        'request.postField'     => 'Guzzle\Service\Command\LocationVisitor\Request\PostFieldVisitor',
-        'request.postFile'      => 'Guzzle\Service\Command\LocationVisitor\Request\PostFileVisitor',
-        'request.query'         => 'Guzzle\Service\Command\LocationVisitor\Request\QueryVisitor',
+        'request.body' => 'Guzzle\Service\Command\LocationVisitor\Request\BodyVisitor',
+        'request.header' => 'Guzzle\Service\Command\LocationVisitor\Request\HeaderVisitor',
+        'request.json' => 'Guzzle\Service\Command\LocationVisitor\Request\JsonVisitor',
+        'request.postField' => 'Guzzle\Service\Command\LocationVisitor\Request\PostFieldVisitor',
+        'request.postFile' => 'Guzzle\Service\Command\LocationVisitor\Request\PostFileVisitor',
+        'request.query' => 'Guzzle\Service\Command\LocationVisitor\Request\QueryVisitor',
         'request.response_body' => 'Guzzle\Service\Command\LocationVisitor\Request\ResponseBodyVisitor',
-        'request.responseBody'  => 'Guzzle\Service\Command\LocationVisitor\Request\ResponseBodyVisitor',
-        'request.xml'           => 'Guzzle\Service\Command\LocationVisitor\Request\XmlVisitor',
-        'response.body'         => 'Guzzle\Service\Command\LocationVisitor\Response\BodyVisitor',
-        'response.header'       => 'Guzzle\Service\Command\LocationVisitor\Response\HeaderVisitor',
-        'response.json'         => 'Guzzle\Service\Command\LocationVisitor\Response\JsonVisitor',
+        'request.responseBody' => 'Guzzle\Service\Command\LocationVisitor\Request\ResponseBodyVisitor',
+        'request.xml' => 'Guzzle\Service\Command\LocationVisitor\Request\XmlVisitor',
+        'response.body' => 'Guzzle\Service\Command\LocationVisitor\Response\BodyVisitor',
+        'response.header' => 'Guzzle\Service\Command\LocationVisitor\Response\HeaderVisitor',
+        'response.json' => 'Guzzle\Service\Command\LocationVisitor\Response\JsonVisitor',
         'response.reasonPhrase' => 'Guzzle\Service\Command\LocationVisitor\Response\ReasonPhraseVisitor',
-        'response.statusCode'   => 'Guzzle\Service\Command\LocationVisitor\Response\StatusCodeVisitor',
-        'response.xml'          => 'Guzzle\Service\Command\LocationVisitor\Response\XmlVisitor'
+        'response.statusCode' => 'Guzzle\Service\Command\LocationVisitor\Response\StatusCodeVisitor',
+        'response.xml' => 'Guzzle\Service\Command\LocationVisitor\Response\XmlVisitor'
     );
 
     /** @var array Array of mappings of location names to classes */
@@ -88,7 +88,7 @@ class VisitorFlyweight
     /**
      * Add a response visitor to the factory by name
      *
-     * @param string                  $name    Name of the visitor
+     * @param string $name Name of the visitor
      * @param RequestVisitorInterface $visitor Visitor to add
      *
      * @return self
@@ -103,7 +103,7 @@ class VisitorFlyweight
     /**
      * Add a response visitor to the factory by name
      *
-     * @param string                   $name    Name of the visitor
+     * @param string $name Name of the visitor
      * @param ResponseVisitorInterface $visitor Visitor to add
      *
      * @return self

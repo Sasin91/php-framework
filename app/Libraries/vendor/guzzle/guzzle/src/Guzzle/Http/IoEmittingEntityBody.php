@@ -5,8 +5,8 @@ namespace Guzzle\Http;
 use Guzzle\Common\Event;
 use Guzzle\Common\HasDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * EntityBody decorator that emits events for read and write methods
@@ -60,9 +60,9 @@ class IoEmittingEntityBody extends AbstractEntityBodyDecorator implements HasDis
     public function read($length)
     {
         $event = array(
-            'body'   => $this,
+            'body' => $this,
             'length' => $length,
-            'read'   => $this->body->read($length)
+            'read' => $this->body->read($length)
         );
         $this->dispatch('body.read', $event);
 
@@ -72,8 +72,8 @@ class IoEmittingEntityBody extends AbstractEntityBodyDecorator implements HasDis
     public function write($string)
     {
         $event = array(
-            'body'   => $this,
-            'write'  => $string,
+            'body' => $this,
+            'write' => $string,
             'result' => $this->body->write($string)
         );
         $this->dispatch('body.write', $event);

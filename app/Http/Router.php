@@ -1,13 +1,12 @@
 <?php
 namespace Http;
 
-use Core\Http\Toolbox\ArrayTools;
-use Modules\Generators\Generator;
-use Core\Http\Models\Layout\Page;
+use System\Exception\FourOhFourException;
+use System\Input\InputHandler;
+use System\LazyLoader;
 use System\MVC\Controller;
-use System\MVC\View;
 
-if ( ! defined('ROOT_PATH') ) exit('No direct script access allowed');
+if (!defined('ROOT_PATH')) exit('No direct script access allowed');
 
 class Router
 {
@@ -23,6 +22,7 @@ class Router
         '{:month}' => '\d{2}',
         '{:day}' => '\d{2}(/[a-z0-9_-]+)'
     );
+    protected $view;
     protected $resourceRoutes = array('index', 'new', 'create', 'show', 'edit', 'update', 'delete');
 
     protected $routes = array();
@@ -35,14 +35,19 @@ class Router
     private $attemptedCall = array();
 
 
-
     public static function Route($action = 'get', $controller = '', $func = '', array $args = array())
     {
         $instance = new static;
 
-        $instance->defaults = array('controller' => 'home', 'namespace' => __NAMESPACE__ . '\\Controllers\\', 'func' => 'home');
+        $instance->defaults = array(
+            'controller' => 'home',
+            'namespace' => __NAMESPACE__ . '\\Controllers\\',
+            'func' => 'home'
+        );
 
-        $instance->controllerArguments = $args;
+        $inputClass = new InputHandler($action, $args);
+
+        $instance->controllerArguments = $inputClass->input;
 
         $func = empty($func) ? $instance->defaults['func'] : $func;
 
@@ -52,11 +57,25 @@ class Router
     }
 
     /**
+     * Shorthand for a route accessed using GET
+     *
+     * @param string $controller
+     * @param object $func The handling function to be executed
+     * @return bool
+     */
+    public function get($controller, $func)
+    {
+        return $this->match(strtoupper(__FUNCTION__), $controller, $func);
+    }
+
+    // Routing patterns
+
+    /**
      * Store a route and a handling function to be executed when accessed using one of the specified methods
      *
      * @param string $methods Allowed methods, | delimited
      * @param string $controller A route pattern such as /about/system
-     * @param object $func    The handling function to be executed
+     * @param object $func The handling function to be executed
      * @return bool
      */
     public function match($methods, $controller, $func)
@@ -71,18 +90,46 @@ class Router
         $this->fire();
     }
 
-    // Routing patterns
-
-    /**
-     * Shorthand for a route accessed using GET
-     *
-     * @param string $controller
-     * @param object $func The handling function to be executed
-     * @return bool
-     */
-    public function get($controller, $func)
+    public function fire()
     {
-        return $this->match(strtoupper(__FUNCTION__), $controller, $func);
+        $this->view = LazyLoader::get('View');
+
+        foreach ($this->routes as $route) {
+            for ($i = 0; $i < count($route); $i++) {
+                $this->call($route[$i]);
+            }
+        }
+    }
+
+    private function call(array $arguments = array())
+    {
+        $this->attemptedCall = $arguments;
+        $ns = isset($arguments['namespace']) ? $arguments['namespace'] : null;
+        $controller = new Controller($this->view);
+        if (!isset($ns)) {
+            $page = $this->controllerWithoutNS($controller);
+        } else {
+            $page = $this->controllerWithNS($controller, $ns);
+        }
+        if (is_object($page)) {
+            return $page->route($arguments['func'], $arguments['action'], $this->controllerArguments);
+        }
+        $this->notFound($arguments);
+    }
+
+    private function controllerWithoutNS(Controller $controller)
+    {
+        return $controller->_switchTo($this->defaults['namespace'], ucfirst($this->attemptedCall['controller']));
+    }
+
+    private function controllerWithNS(Controller $controller, $ns)
+    {
+        return $controller->_switchTo($ns, ucfirst($this->attemptedCall['controller']));
+    }
+
+    private function notFound($arguments)
+    {
+        throw new FourOhFourException($arguments);
     }
 
     /**
@@ -220,45 +267,6 @@ class Router
         });
         // Restore original route base path
         $this->routeBasePath = $curBaseRoute;
-    }
-
-    public function fire()
-    {
-        foreach ($this->routes as $route) {
-            for($i = 0; $i < count($route); $i++)
-            {
-                $this->call($route[$i]);
-            }
-        }
-    }
-
-    private function call(array $arguments = array())
-    {
-        $this->attemptedCall = $arguments;
-        $ns = isset($arguments['namespace']) ? $arguments['namespace'] : null;
-        if(!isset($ns)) {
-            $page = $this->controllerWithoutNS();
-        } else {
-            $page = $this->controllerWithNS($ns);
-        }
-            if (is_object($page)) {
-                return $page->route($arguments['func'], $arguments['action'], $this->controllerArguments);
-            }
-        return $this->notFound($arguments);
-   }
-
-    private function controllerWithNS($ns)
-    {
-        return Controller::_switchTo($ns, ucfirst($this->attemptedCall['controller']));
-    }
-    private function controllerWithoutNS()
-    {
-        return Controller::_switchTo($this->defaults['namespace'], ucfirst($this->attemptedCall['controller']));
-    }
-
-    private function notFound($arguments)
-    {
-       return View::render('error', $arguments);
     }
 
 }

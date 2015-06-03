@@ -11,7 +11,7 @@ abstract class AbstractBatchDecorator implements BatchInterface
     protected $decoratedBatch;
 
     /**
-     * @param BatchInterface $decoratedBatch  BatchInterface that is being decorated
+     * @param BatchInterface $decoratedBatch BatchInterface that is being decorated
      */
     public function __construct(BatchInterface $decoratedBatch)
     {
@@ -22,7 +22,7 @@ abstract class AbstractBatchDecorator implements BatchInterface
      * Allow decorators to implement custom methods
      *
      * @param string $method Missing method name
-     * @param array  $args   Method arguments
+     * @param array $args Method arguments
      *
      * @return mixed
      * @codeCoverageIgnore

@@ -5,8 +5,8 @@ namespace Guzzle\Tests\Message;
 use Guzzle\Common\Collection;
 use Guzzle\Http\ClientInterface;
 use Guzzle\Http\EntityBody;
-use Guzzle\Http\HttpException;
 use Guzzle\Http\Exception\BadResponseException;
+use Guzzle\Http\HttpException;
 use Guzzle\Http\Message\Response;
 
 /**
@@ -103,18 +103,18 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
     public function test__toString()
     {
         $response = new Response(200);
-        $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n", (string) $response);
+        $this->assertEquals("HTTP/1.1 200 OK\r\n\r\n", (string)$response);
 
         // Add another header
         $response = new Response(200, array(
             'X-Test' => 'Guzzle'
         ));
-        $this->assertEquals("HTTP/1.1 200 OK\r\nX-Test: Guzzle\r\n\r\n", (string) $response);
+        $this->assertEquals("HTTP/1.1 200 OK\r\nX-Test: Guzzle\r\n\r\n", (string)$response);
 
         $response = new Response(200, array(
             'Content-Length' => 4
         ), 'test');
-        $this->assertEquals("HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\ntest", (string) $response);
+        $this->assertEquals("HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\ntest", (string)$response);
     }
 
     public function testFactory()
@@ -122,12 +122,12 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
         $response = Response::fromMessage("HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\ntest");
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('OK', $response->getReasonPhrase());
-        $this->assertEquals(4, (string) $response->getContentLength());
+        $this->assertEquals(4, (string)$response->getContentLength());
         $this->assertEquals('test', $response->getBody(true));
 
         // Make sure that automatic Content-Length works
         $response = Response::fromMessage("HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\ntest");
-        $this->assertEquals(4, (string) $response->getContentLength());
+        $this->assertEquals(4, (string)$response->getContentLength());
         $this->assertEquals('test', $response->getBody(true));
     }
 
@@ -136,7 +136,7 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
         $response = Response::fromMessage("HTTP/1.1 200 OK\r\nContent-Length: 4\r\n\r\n");
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('OK', $response->getReasonPhrase());
-        $this->assertEquals(4, (string) $response->getContentLength());
+        $this->assertEquals(4, (string)$response->getContentLength());
         $this->assertEquals('', $response->getBody(true));
     }
 
@@ -377,7 +377,7 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
     public function testGetSetCookieNormalizesHeaders()
     {
         $this->response->addHeaders(array(
-            'Set-Cooke'  => 'boo',
+            'Set-Cooke' => 'boo',
             'set-cookie' => 'foo'
         ));
 
@@ -414,6 +414,7 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
     {
         $this->assertEquals('1.0 fred, 1.1 nowhere.com (Apache/1.1)', $this->response->getVia());
     }
+
     public function testGetWarning()
     {
         $this->assertEquals('199 Miscellaneous warning', $this->response->getWarning());
@@ -439,7 +440,7 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function testHasTransferInfo()
     {
-        $stats = array (
+        $stats = array(
             'url' => 'http://www.google.com/',
             'content_type' => 'text/html; charset=ISO-8859-1',
             'http_code' => 200,
@@ -634,10 +635,10 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
     public function testParsesXmlResponses()
     {
         $response = new Response(200, array(), '<abc><foo>bar</foo></abc>');
-        $this->assertEquals('bar', (string) $response->xml()->foo);
+        $this->assertEquals('bar', (string)$response->xml()->foo);
         // Always return a SimpleXMLElement from the xml method
         $response = new Response(200);
-        $this->assertEmpty((string) $response->xml()->foo);
+        $this->assertEmpty((string)$response->xml()->foo);
     }
 
     /**
@@ -655,8 +656,8 @@ class ResponseTest extends \Guzzle\Tests\GuzzleTestCase
         $response = new Response(200, array('Foo' => 'bar'), 'test');
         $r = unserialize(serialize($response));
         $this->assertEquals(200, $r->getStatusCode());
-        $this->assertEquals('bar', (string) $r->getHeader('Foo'));
-        $this->assertEquals('test', (string) $r->getBody());
+        $this->assertEquals('bar', (string)$r->getHeader('Foo'));
+        $this->assertEquals('test', (string)$r->getBody());
     }
 
     public function testPreventsComplexExternalEntities()

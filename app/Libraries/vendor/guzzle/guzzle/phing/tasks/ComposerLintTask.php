@@ -42,7 +42,7 @@ class ComposerLintTask extends Task
      */
     public function setPassthru($passthru)
     {
-        $this->passthru = (bool) $passthru;
+        $this->passthru = (bool)$passthru;
     }
 
     /**
@@ -114,20 +114,6 @@ class ComposerLintTask extends Task
     }
 
     /**
-     * Find the composer.json files using Phing's directory scanner
-     *
-     * @return array
-     */
-    protected function findFiles()
-    {
-        $ds = new DirectoryScanner();
-        $ds->setBasedir($this->dir);
-        $ds->setIncludes(array('**/composer.json'));
-        $ds->scan();
-        return $ds->getIncludedFiles();
-    }
-
-    /**
      * Find composer installation
      *
      */
@@ -148,5 +134,19 @@ class ComposerLintTask extends Task
             }
             $this->composer = $out[0];
         }
+    }
+
+    /**
+     * Find the composer.json files using Phing's directory scanner
+     *
+     * @return array
+     */
+    protected function findFiles()
+    {
+        $ds = new DirectoryScanner();
+        $ds->setBasedir($this->dir);
+        $ds->setIncludes(array('**/composer.json'));
+        $ds->scan();
+        return $ds->getIncludedFiles();
     }
 }

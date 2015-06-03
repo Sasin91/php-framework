@@ -3,8 +3,8 @@
 namespace Guzzle\Service\Command\LocationVisitor\Response;
 
 use Guzzle\Http\Message\Response;
-use Guzzle\Service\Description\Parameter;
 use Guzzle\Service\Command\CommandInterface;
+use Guzzle\Service\Description\Parameter;
 
 /**
  * Location visitor used to marshal JSON response data into a formatted array.
@@ -27,8 +27,9 @@ class JsonVisitor extends AbstractResponseVisitor
         Response $response,
         Parameter $param,
         &$value,
-        $context =  null
-    ) {
+        $context = null
+    )
+    {
         $name = $param->getName();
         $key = $param->getWireName();
         if (isset($value[$key])) {
@@ -44,7 +45,7 @@ class JsonVisitor extends AbstractResponseVisitor
      * Recursively process a parameter while applying filters
      *
      * @param Parameter $param API parameter being validated
-     * @param mixed     $value Value to validate and process. The value may change during this process.
+     * @param mixed $value Value to validate and process. The value may change during this process.
      */
     protected function recursiveProcess(Parameter $param, &$value)
     {

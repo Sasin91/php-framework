@@ -2,8 +2,8 @@
 
 namespace Guzzle\Tests\Service\Command;
 
-use Guzzle\Tests\Service\Mock\MockClient;
 use Guzzle\Service\Command\Factory\ConcreteClassFactory;
+use Guzzle\Tests\Service\Mock\MockClient;
 
 /**
  * @covers Guzzle\Service\Command\Factory\ConcreteClassFactory

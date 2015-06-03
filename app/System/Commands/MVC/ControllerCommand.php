@@ -9,7 +9,8 @@
 namespace System\Commands\MVC;
 
 
-class ControllerCommand {
+class ControllerCommand
+{
 
     /**
      * @param array $options
@@ -29,12 +30,11 @@ class ControllerCommand {
 
         $className = $options['name'];
 
-        if (isset($options['namespace']))
-        {
-            $namespace = 'namespace ' .$path.'\\'. $options['namespace'] . ';'
+        if (isset($options['namespace'])) {
+            $namespace = 'namespace ' . $path . '\\' . $options['namespace'] . ';'
                 . PHP_EOL . PHP_EOL;
         } else {
-            $namespace = 'namespace ' .$path. ';' . PHP_EOL . PHP_EOL;
+            $namespace = 'namespace ' . $path . ';' . PHP_EOL . PHP_EOL;
         }
 
         $extends = 'BaseController';
@@ -64,6 +64,6 @@ class ControllerCommand {
             $extends,
             $content
         );
-        file_put_contents(ROOT_PATH.DS.'Application/Controllers'.DS.$className.'Controller'.'.php', $code);
+        file_put_contents(ROOT_PATH . DS . 'Application/Controllers' . DS . $className . 'Controller' . '.php', $code);
     }
 }

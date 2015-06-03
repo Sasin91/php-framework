@@ -9,7 +9,8 @@
 namespace Modules;
 
 
-class Debug {
+class Debug
+{
 
     static function dd($target)
     {
@@ -22,9 +23,9 @@ class Debug {
      */
     static function prettify($data)
     {
-        echo '<pre class="prettify">';
-        if(is_array($data)):
-            foreach($data as $piece):
+        echo '<pre class="prettyprint">';
+        if (is_array($data)):
+            foreach ($data as $piece):
                 print_r($piece);
             endforeach;
         else:

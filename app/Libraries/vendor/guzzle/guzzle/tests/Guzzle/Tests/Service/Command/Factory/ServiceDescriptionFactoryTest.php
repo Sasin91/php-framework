@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Service\Command;
 
-use Guzzle\Service\Description\ServiceDescription;
-use Guzzle\Service\Command\Factory\ServiceDescriptionFactory;
 use Guzzle\Inflection\Inflector;
+use Guzzle\Service\Command\Factory\ServiceDescriptionFactory;
+use Guzzle\Service\Description\ServiceDescription;
 
 /**
  * @covers Guzzle\Service\Command\Factory\ServiceDescriptionFactory

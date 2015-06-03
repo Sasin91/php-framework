@@ -2,9 +2,9 @@
 
 namespace Guzzle\Tests\Mock;
 
+use Guzzle\Http\Message\Response;
 use Guzzle\Plugin\ErrorResponse\ErrorResponseExceptionInterface;
 use Guzzle\Service\Command\CommandInterface;
-use Guzzle\Http\Message\Response;
 
 class ErrorResponseMock extends \Exception implements ErrorResponseExceptionInterface
 {
